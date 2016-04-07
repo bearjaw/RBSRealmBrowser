@@ -53,6 +53,8 @@ class RBSRealmObjectsBrowser: UITableViewController {
     
     public override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
+        let vc = RBSRealmBrowserObjectViewController(object:self.objects[indexPath.row] as! Object)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     //MARK: private Methods
@@ -62,13 +64,13 @@ class RBSRealmObjectsBrowser: UITableViewController {
         switch property.type {
             
         case PropertyType.Int,PropertyType.Bool,PropertyType.Float,PropertyType.Double:
-            propertyValue = performSelector(Selector("\(property.name)"), withObject: object) as! String
+            propertyValue = String(object[property.name])
             break
         case PropertyType.String:
             propertyValue = object[property.name] as! String
             break
         case PropertyType.Any,PropertyType.Array,PropertyType.Object:
-            let data = performSelector(Selector("\(property.name)"), withObject: object) as! NSData
+            let data = object[property.name] as! NSData
             propertyValue = data.description
             break
             
@@ -77,28 +79,7 @@ class RBSRealmObjectsBrowser: UITableViewController {
             break
         }
         return propertyValue
+        
+        
     }
-    //
-//    - (NSString *)stringForProperty:(RLMProperty *)aProperty inObject:(RLMObject *)object {
-//        NSString *stringValue;
-    //    switch (aProperty.type) {
-    //        case RLMPropertyTypeInt:
-    //        case RLMPropertyTypeFloat:
-    //        case RLMPropertyTypeBool:
-    //        case RLMPropertyTypeDouble:
-    //            stringValue = [(NSNumber *)[object objectForKeyedSubscript:aProperty.name] stringValue];
-    //            break;
-    //        case RLMPropertyTypeString:
-    //            stringValue = (NSString *)[object objectForKeyedSubscript:aProperty.name];
-    //            break;
-    //        case RLMPropertyTypeData:
-    //        case RLMPropertyTypeAny:
-    //        case RLMPropertyTypeDate:
-    //        case RLMPropertyTypeObject:
-    //        case RLMPropertyTypeArray:
-//                stringValue = [(NSData *)[object objectForKeyedSubscript:aProperty.name] description];
-    //            break;
-    //    }
-//        return stringValue;
-//    }
 }
