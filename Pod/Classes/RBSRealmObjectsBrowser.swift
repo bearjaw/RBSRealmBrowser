@@ -8,22 +8,24 @@
 
 import UIKit
 import RealmSwift
-import Realm
 
 
 class RBSRealmObjectsBrowser: UITableViewController {
     
     private var objects:Array <AnyObject>
+    private var schema:ObjectSchema
     private var properties:Array <AnyObject>
     private var cellIdentifier = "objectCell"
     
     public init(objects:Array<Object>){
         self.objects = objects
         let realm = try! Realm()
-        //        let object = objects.first
-        properties = realm.schema.objectSchema.first!.properties
+        schema = objects[0].objectSchema
+        properties = schema.properties
         super.init(nibName: nil, bundle: nil)
         
+        
+        self.title = "Objects Browser"
         
         tableView.delegate = self
         tableView.dataSource = self
@@ -35,12 +37,13 @@ class RBSRealmObjectsBrowser: UITableViewController {
     }
     
     //MARK: TableView Datasource & Delegate
+    
     override public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier) as! RBSRealmObjectBrowserCell
         let object = objects[indexPath.row]
         let property = properties.first as! Property
         let stringvalue = self.stringForProperty(property, object: object as! Object)
-        cell.realmBrowserObjectAttributes(object.description, objectsCount:String(format:"%@: %@",property.name, stringvalue ))
+        cell.realmBrowserObjectAttributes(schema.className, objectsCount:String(format:"%@: %@",property.name, stringvalue ))
         return cell
     }
     override public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

@@ -33,8 +33,8 @@ class RBSRealmBrowserObjectViewController: UITableViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
     //MARK: TableView Datasource & Delegate
+    
     override public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier) as! RBSRealmObjectBrowserCell
         let property = properties[indexPath.row] as! Property
@@ -67,10 +67,9 @@ class RBSRealmBrowserObjectViewController: UITableViewController {
             propertyValue = object[property.name] as! String
             break
         case PropertyType.Any,PropertyType.Array,PropertyType.Object:
-            let data = object[property.name] as! NSData
-            propertyValue = data.description
+            let data =  object[property.name]
+            propertyValue = data!.description
             break
-            
         default:
             return ""
             break

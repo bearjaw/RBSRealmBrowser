@@ -15,12 +15,13 @@ public class RBSRealmBrowser: UITableViewController {
     
     private let cellIdentifier = "RBSREALMBROWSERCELL"
     private var objectsSchema:Array<AnyObject> = []
-//    private var realm = try! Realm()
     
     
     private init(realm:Realm){
-//        self.realm = realm
         super.init(nibName: nil, bundle: nil)
+        
+        
+        self.title = "Realm Browser"
         self.tableView.delegate = self
         self.tableView.dataSource = self
         self.tableView.registerClass(RBSRealmObjectBrowserCell.self, forCellReuseIdentifier: cellIdentifier)

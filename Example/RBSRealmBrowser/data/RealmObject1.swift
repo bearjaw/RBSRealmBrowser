@@ -12,7 +12,4 @@ class RealmObject1: Object {
     
     dynamic var aProperty = ""
     
-    
-    
-    
 }
