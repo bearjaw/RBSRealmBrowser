@@ -23,10 +23,12 @@ class RBSRealmBrowserObjectViewController: UITableViewController {
         
         super.init(nibName: nil, bundle: nil)
         
+        self.title = self.schema.className
+        
         
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.registerClass(RBSRealmObjectBrowserCell.self, forCellReuseIdentifier: cellIdentifier)
+        tableView.registerClass(RBSRealmObjectCell.self, forCellReuseIdentifier: cellIdentifier)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -36,10 +38,10 @@ class RBSRealmBrowserObjectViewController: UITableViewController {
     //MARK: TableView Datasource & Delegate
     
     override public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier) as! RBSRealmObjectBrowserCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier) as! RBSRealmObjectCell
         let property = properties[indexPath.row] as! Property
         let stringvalue = self.stringForProperty(property, object: object as! Object)
-        cell.realmBrowserObjectAttributes(property.name, objectsCount:String(format:"%@", stringvalue ))
+        cell.cellWithAttributes(property.name, propertyValue: stringvalue)
         return cell
     }
     override public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
