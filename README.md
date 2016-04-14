@@ -9,7 +9,32 @@
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
+```swift
+override func viewDidLoad() {
+
+super.viewDidLoad()
+    // add a UIBarButtonItem 
+
+let bbi = UIBarButtonItem(title: "Open", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(ViewController.openBrowser))
+    self.navigationItem.rightBarButtonItem = bbi
+}
+
+func openBrowser(id:AnyObject) {
+
+    // get an instance of RBSRealmBrowser
+    let rb = RBSRealmBrowser.realmBrowser()
+    self.presentViewController(rb as! UIViewController, animated: true) { 
+
+    }
+}
+```
+
+## Try
+
+To try the example project, clone the repo, and run `pod try` from the Example directory first.
+
 ## Requirements
+Requires iOS 8.0
 
 ## Installation
 
@@ -19,6 +44,9 @@ it, simply add the following line to your Podfile:
 ```ruby
 pod "RBSRealmBrowser"
 ```
+## Future features
+Implementing search for objects.
+Layout improvements.
 
 ## Author
 

@@ -11,5 +11,6 @@ import RealmSwift
 class RealmObject2: Object {
     dynamic var aProperty = ""
     dynamic var aNumber = 0
+    dynamic var isRealmBrowser = true
     let objects = List<RealmObject1>()
 }

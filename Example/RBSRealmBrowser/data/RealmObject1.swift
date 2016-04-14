@@ -11,5 +11,6 @@ import RealmSwift
 class RealmObject1: Object {
     
     dynamic var aProperty = ""
+    dynamic var justABoolean = false
     
 }

@@ -10,6 +10,7 @@
 		485A22B71CB3B807005D1A31 /* RealmObject2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 485A22B61CB3B807005D1A31 /* RealmObject2.swift */; };
 		48B4BE871CAFC59800A813BA /* RBSRealmBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48B4BE831CAFC31E00A813BA /* RBSRealmBrowser.framework */; };
 		48B4BE8A1CAFC7DA00A813BA /* RealmObject1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B4BE891CAFC7DA00A813BA /* RealmObject1.swift */; };
+		48C3EA2B1CBF89FC00E6D79D /* SampleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48C3EA2A1CBF89FC00E6D79D /* SampleView.swift */; };
 		60570DE7DE795FBF2F1296BB /* Pods_RBSRealmBrowser_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8BDC7C4965F592978831FD67 /* Pods_RBSRealmBrowser_Example.framework */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
@@ -35,6 +36,7 @@
 		485A22B61CB3B807005D1A31 /* RealmObject2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmObject2.swift; sourceTree = "<group>"; };
 		48B4BE831CAFC31E00A813BA /* RBSRealmBrowser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RBSRealmBrowser.framework; path = "../../../Library/Developer/Xcode/DerivedData/RBSRealmBrowser-bbnsmiiobnmzslczqgpmzinkcujg/Build/Products/Debug-iphoneos/RBSRealmBrowser.framework"; sourceTree = "<group>"; };
 		48B4BE891CAFC7DA00A813BA /* RealmObject1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmObject1.swift; sourceTree = "<group>"; };
+		48C3EA2A1CBF89FC00E6D79D /* SampleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SampleView.swift; sourceTree = "<group>"; };
 		4E5E5B3396D6F862B57D70FF /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		4E6CA5CFC69B468681307BC0 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		5EB2B6C84D6B5FF02A80214F /* Pods-RBSRealmBrowser_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RBSRealmBrowser_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-RBSRealmBrowser_Example/Pods-RBSRealmBrowser_Example.release.xcconfig"; sourceTree = "<group>"; };
@@ -110,6 +112,7 @@
 				48B4BE881CAFC7DA00A813BA /* data */,
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
+				48C3EA2A1CBF89FC00E6D79D /* SampleView.swift */,
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
 				607FACD31AFB9204008FA782 /* Supporting Files */,
@@ -374,6 +377,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				48C3EA2B1CBF89FC00E6D79D /* SampleView.swift in Sources */,
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
 				48B4BE8A1CAFC7DA00A813BA /* RealmObject1.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
