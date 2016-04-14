@@ -108,8 +108,10 @@ public class RBSRealmBrowser: UITableViewController {
     public override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
             let results = self.resultsForObjectSChemaAtIndex(indexPath.row)
-        let vc = RBSRealmObjectsBrowser(objects: results)
-        self.navigationController?.pushViewController(vc, animated: true)
+        if results.count > 0 {
+            let vc = RBSRealmObjectsBrowser(objects: results)
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
     }
     
     //MARK: private Methods
