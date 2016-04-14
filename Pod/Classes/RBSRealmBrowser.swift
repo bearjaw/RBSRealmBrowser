@@ -36,6 +36,9 @@ public class RBSRealmBrowser: UITableViewController {
         self.navigationItem.rightBarButtonItem = bbi
     }
     
+    /**
+        required initializer
+     */
     
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -46,6 +49,7 @@ public class RBSRealmBrowser: UITableViewController {
     
     /**
      Instantiate the browser using default Realm.
+     
      - return an instance of realmBrowser
      */
     public static func realmBrowser()-> AnyObject{
@@ -57,7 +61,7 @@ public class RBSRealmBrowser: UITableViewController {
      Instantiate the browser using a specific version of Realm.
      
      - parameter realm: Realm
-     - return an instance of realmBrowser
+     - returns an instance of realmBrowser
      */
     public static func realmBrowserForRealm(realm:Realm) -> AnyObject {
         let rbsRealmBrowser = RBSRealmBrowser(realm:realm)
@@ -69,7 +73,7 @@ public class RBSRealmBrowser: UITableViewController {
      Instantiate the browser using a specific version of Realm at a specific path.
      
      - parameter path: String
-     - return an instance of realmBrowser
+     - returns an instance of realmBrowser
      */
      public static func realmBroswerForRealmAtPath(path:String)-> AnyObject {
         let realm = try! Realm(path: path)
@@ -87,6 +91,15 @@ public class RBSRealmBrowser: UITableViewController {
     
     //MARK: TableView Datasource & Delegate
     
+    /**
+     TableView DataSource method
+     
+     - parameter tableView: UITableView
+     - parameter indexPath: NSIndexPath
+     
+     - returns a UITableViewCell
+     */
+    
     override public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier) as! RBSRealmObjectBrowserCell
         
@@ -97,13 +110,40 @@ public class RBSRealmBrowser: UITableViewController {
         
         return cell
     }
+    
+    /**
+     TableView DataSource method
+     
+     - parameter tableView: UITableView
+     - parameter section: Int
+     
+     - return number of cells per section
+     */
+    
     override public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.objectsSchema.count
     }
     
+    /**
+     TableView Delegate method
+     
+     - parameter tableView: UITableView
+     - parameter indexPath: NSIndexPath
+     
+     - return height of a single tableView row
+     */
+    
     override public func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         return 60;
     }
+    
+    /**
+     TableView Delegate method to handle cell selection
+     
+     - parameter tableView: UITableView
+     - parameter indexPath: NSIndexPath
+     
+     */
     
     public override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
