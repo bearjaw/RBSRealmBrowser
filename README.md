@@ -28,9 +28,12 @@ func openBrowser(id:AnyObject) {
     }
 }
 ```
+
+Use one of the three methods to browse your Realm database
+
 ```swift
 // get the RealmBrowser for default Realm 
-public static func realmBrowser()
+realmBrowser()
 
 // get the RealmBrowser for Realm 
 realmBrowserForRealm(realm:Realm)
