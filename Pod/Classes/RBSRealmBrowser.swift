@@ -28,6 +28,7 @@ public class RBSRealmBrowser: UITableViewController {
         self.title = "Realm Browser"
         self.tableView.delegate = self
         self.tableView.dataSource = self
+        tableView.tableFooterView = UIView()
         self.tableView.registerClass(RBSRealmObjectBrowserCell.self, forCellReuseIdentifier: cellIdentifier)
         for object in try! Realm().schema.objectSchema {
             objectsSchema.append(object)
@@ -38,6 +39,11 @@ public class RBSRealmBrowser: UITableViewController {
     
     /**
         required initializer
+     Returns an object initialized from data in a given unarchiver.
+     self, initialized using the data in decoder.
+     
+        - parameter coder:NSCoder
+        - returns self, initialized using the data in decoder.
      */
     
     required public init?(coder aDecoder: NSCoder) {
@@ -93,6 +99,7 @@ public class RBSRealmBrowser: UITableViewController {
     
     /**
      TableView DataSource method
+     Asks the data source for a cell to insert in a particular location of the table view.
      
      - parameter tableView: UITableView
      - parameter indexPath: NSIndexPath
@@ -113,6 +120,7 @@ public class RBSRealmBrowser: UITableViewController {
     
     /**
      TableView DataSource method
+     Tells the data source to return the number of rows in a given section of a table view.
      
      - parameter tableView: UITableView
      - parameter section: Int
@@ -126,6 +134,9 @@ public class RBSRealmBrowser: UITableViewController {
     
     /**
      TableView Delegate method
+     
+     Asks the delegate for the height to use for a row in a specified location.
+     A nonnegative floating-point value that specifies the height (in points) that row should be.
      
      - parameter tableView: UITableView
      - parameter indexPath: NSIndexPath

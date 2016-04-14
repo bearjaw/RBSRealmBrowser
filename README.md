@@ -1,6 +1,15 @@
 # RBSRealmBrowser
 
-RBSRealmBrowser is based on NBNRealmBrowser by  [Nerdish by Nature](https://github.com/nerdishbynature/NBNRealmBrowser). Easily inspect what objects are currently your realm database on your iOS device or simulator. 
+RBSRealmBrowser is based on NBNRealmBrowser by  [Nerdish by Nature](https://github.com/nerdishbynature/NBNRealmBrowser). It's a simple lightweight browser that let's you inspect which objects currently are in your realm database on your iOS device or simulator.
+Simply edit your existing object's properties' values by switching into edit mode.
+
+Currently the following types are supported:
+
+- Bool
+- String
+- Int
+- Float
+- Double
 
 [![CI Status](http://img.shields.io/travis/bearjaw/RBSRealmBrowser.svg?style=flat)](https://travis-ci.org/bearjaw/RBSRealmBrowser)
 [![Version](https://img.shields.io/cocoapods/v/RBSRealmBrowser.svg?style=flat)](http://cocoapods.org/pods/RBSRealmBrowser)

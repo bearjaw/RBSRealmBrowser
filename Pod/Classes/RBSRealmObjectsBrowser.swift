@@ -28,6 +28,7 @@ class RBSRealmObjectsBrowser: UITableViewController {
         
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.tableFooterView = UIView()
         tableView.registerClass(RBSRealmObjectBrowserCell.self, forCellReuseIdentifier: cellIdentifier)
     }
     
@@ -57,7 +58,7 @@ class RBSRealmObjectsBrowser: UITableViewController {
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
-        let vc = RBSRealmBrowserObjectViewController(object:self.objects[indexPath.row] as! Object)
+        let vc = RBSRealmPropertyBrowser(object:self.objects[indexPath.row] as! Object)
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -66,8 +67,15 @@ class RBSRealmObjectsBrowser: UITableViewController {
     private func stringForProperty(property:Property, object:Object) -> String{
         var propertyValue = ""
         switch property.type {
+        case PropertyType.Bool:
             
-        case PropertyType.Int,PropertyType.Bool,PropertyType.Float,PropertyType.Double:
+            if object[property.name] as! Int == 0 {
+                propertyValue = "false"
+            }else{
+                propertyValue = "true"
+            }
+            break
+        case PropertyType.Int,PropertyType.Float,PropertyType.Double:
             propertyValue = String(object[property.name])
             break
         case PropertyType.String:
@@ -82,7 +90,5 @@ class RBSRealmObjectsBrowser: UITableViewController {
             return ""
         }
         return propertyValue
-        
-        
     }
 }

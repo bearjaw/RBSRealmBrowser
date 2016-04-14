@@ -30,10 +30,10 @@ class RBSRealmObjectBrowserCell: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        let borderOffset:CGFloat = 10
+        let borderOffset:CGFloat = 20.0
         let labelOffset: CGFloat = 5
         
-        labelTitle.frame = (CGRect(x: borderOffset, y: borderOffset, width: self.bounds.size.width-2*borderOffset, height: 2000))
+        labelTitle.frame = (CGRect(x: borderOffset, y: 10.0, width: self.bounds.size.width-2*borderOffset, height: 2000))
         labelTitle.sizeToFit()
         labelDetailText.frame = (CGRect(x: borderOffset, y: labelTitle.frame.origin.y+labelTitle.bounds.size.height+labelOffset, width: self.bounds.size.width, height: 2000))
         labelDetailText.sizeToFit()
