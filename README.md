@@ -28,6 +28,16 @@ func openBrowser(id:AnyObject) {
     }
 }
 ```
+```swift
+// get the RealmBrowser for default Realm 
+public static func realmBrowser()
+
+// get the RealmBrowser for Realm 
+realmBrowserForRealm(realm:Realm)
+
+// get the RealmBrowser for Realm at a specific path
+realmBroswerForRealmAtPath(path:String)
+```
 
 ## Try
 
