@@ -81,10 +81,10 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
         let letters = NSCharacterSet.letterCharacterSet()
         switch property.type {
         case PropertyType.Bool:
-            if object[property.name] as! Int == 0 {
-                propertyValue = "false"
-            }else{
-                propertyValue = "true"
+            propertyValue = Int(newValue)!
+            let realm = try! Realm()
+            try! realm.write{
+                object.setValue(propertyValue, forKey: property.name)
             }
             break
         case PropertyType.Int:

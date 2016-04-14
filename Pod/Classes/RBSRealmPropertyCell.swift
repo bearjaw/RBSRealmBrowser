@@ -118,7 +118,10 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
     func textFieldDidEndEditing(textField: UITextField) {
         textField.resignFirstResponder()
         propertyValue.userInteractionEnabled = false
-        self.delegate.textFieldDidFinishEdit(textField.text!, property: self.property)
+        if  property.type != PropertyType.Bool {
+            self.delegate.textFieldDidFinishEdit(textField.text!, property: self.property)    
+        }
+        
     }
 }
 
