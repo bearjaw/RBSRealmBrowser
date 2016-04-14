@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		482EB7F11CC0144A000C7343 /* CHANGELOG.md in Sources */ = {isa = PBXBuildFile; fileRef = 482EB7F01CC0144A000C7343 /* CHANGELOG.md */; };
 		485A22B71CB3B807005D1A31 /* RealmObject2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 485A22B61CB3B807005D1A31 /* RealmObject2.swift */; };
 		48B4BE871CAFC59800A813BA /* RBSRealmBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48B4BE831CAFC31E00A813BA /* RBSRealmBrowser.framework */; };
 		48B4BE8A1CAFC7DA00A813BA /* RealmObject1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B4BE891CAFC7DA00A813BA /* RealmObject1.swift */; };
@@ -381,7 +380,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				48C3EA2B1CBF89FC00E6D79D /* SampleView.swift in Sources */,
-				482EB7F11CC0144A000C7343 /* CHANGELOG.md in Sources */,
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
 				48B4BE8A1CAFC7DA00A813BA /* RealmObject1.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
