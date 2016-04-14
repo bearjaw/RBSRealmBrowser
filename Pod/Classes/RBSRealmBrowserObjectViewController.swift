@@ -16,7 +16,7 @@ class RBSRealmBrowserObjectViewController: UITableViewController {
     private var properties:Array <AnyObject>
     private var cellIdentifier = "objectCell"
     
-    public init(object:Object){
+    init(object:Object){
         self.object = object
         schema = object.objectSchema
         properties = schema.properties
@@ -40,7 +40,7 @@ class RBSRealmBrowserObjectViewController: UITableViewController {
     
     override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         let property = properties[indexPath.row] as! Property
-        let stringvalue = self.stringForProperty(property, object: object as! Object)
+        let stringvalue = self.stringForProperty(property, object: object)
         (cell as! RBSRealmPropertyCell).cellWithAttributes(property.name, propertyValue: stringvalue)
     }
     
@@ -82,7 +82,6 @@ class RBSRealmBrowserObjectViewController: UITableViewController {
             break
         default:
             return ""
-            break
         }
         return propertyValue
         

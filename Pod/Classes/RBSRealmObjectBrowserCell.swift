@@ -27,7 +27,7 @@ class RBSRealmObjectBrowserCell: UITableViewCell {
         labelDetailText = UILabel()
     }
     
-    override public func layoutSubviews() {
+    override func layoutSubviews() {
         super.layoutSubviews()
         
         let borderOffset:CGFloat = 10

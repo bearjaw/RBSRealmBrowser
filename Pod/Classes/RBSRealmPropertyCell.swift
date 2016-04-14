@@ -14,7 +14,6 @@ class RBSRealmPropertyCell: UITableViewCell {
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.selectionStyle = UITableViewCellSelectionStyle.None
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -51,7 +50,7 @@ class RBSRealmPropertyCell: UITableViewCell {
     //MARK: private method
     
     private func labelWithAttributes(fontSize:CGFloat, weight:CGFloat ,text:String) -> UILabel {
-        var label = UILabel()
+        let label = UILabel()
         if #available(iOS 8.2, *) {
             label.font = UIFont.systemFontOfSize(fontSize, weight: weight)
         } else {

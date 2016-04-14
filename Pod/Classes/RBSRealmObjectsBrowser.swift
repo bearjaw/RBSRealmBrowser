@@ -17,15 +17,14 @@ class RBSRealmObjectsBrowser: UITableViewController {
     private var properties:Array <AnyObject>
     private var cellIdentifier = "objectCell"
     
-    public init(objects:Array<Object>){
+     init(objects:Array<Object>){
         self.objects = objects
-        let realm = try! Realm()
         schema = objects[0].objectSchema
         properties = schema.properties
         super.init(nibName: nil, bundle: nil)
         
         
-        self.title = "Objects Browser"
+        self.title = "Objects"
         
         tableView.delegate = self
         tableView.dataSource = self
@@ -44,20 +43,20 @@ class RBSRealmObjectsBrowser: UITableViewController {
         (cell as! RBSRealmObjectBrowserCell).realmBrowserObjectAttributes(schema.className, objectsCount:String(format:"%@: %@",property.name, stringvalue ))
     }
     
-    override public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier) as! RBSRealmObjectBrowserCell
         return cell
     }
-    override public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override  func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return objects.count
     }
     
-    override public func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    override  func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         return 60;
     }
     
-    public override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        tableView.deselectRowAtIndexPath(indexPath, animated: true)
         let vc = RBSRealmBrowserObjectViewController(object:self.objects[indexPath.row] as! Object)
         self.navigationController?.pushViewController(vc, animated: true)
     }
@@ -81,7 +80,6 @@ class RBSRealmObjectsBrowser: UITableViewController {
             
         default:
             return ""
-            break
         }
         return propertyValue
         
