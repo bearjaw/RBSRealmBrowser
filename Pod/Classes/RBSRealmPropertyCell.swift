@@ -8,12 +8,13 @@
 
 import UIKit
 
-class RBSRealmObjectCell: UITableViewCell {
+class RBSRealmPropertyCell: UITableViewCell {
         private var propertyTitle = UILabel()
         private var propertyValue = UILabel()
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = UITableViewCellSelectionStyle.None
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -28,9 +29,9 @@ class RBSRealmObjectCell: UITableViewCell {
     
     func cellWithAttributes(propertyTitle:String,propertyValue:String) {
         
-        self.propertyTitle = self.labelWithAttributes(14, text: propertyTitle)
+        self.propertyTitle = self.labelWithAttributes(14,weight:1 ,text: propertyTitle)
         self.addSubview(self.propertyTitle)
-        self.propertyValue = self.labelWithAttributes(14, text: propertyValue)
+        self.propertyValue = self.labelWithAttributes(14,weight:0, text: propertyValue)
         self.addSubview(self.propertyValue)
     }
     
@@ -49,9 +50,13 @@ class RBSRealmObjectCell: UITableViewCell {
     
     //MARK: private method
     
-    private func labelWithAttributes(fontSize:CGFloat,text:String) -> UILabel {
+    private func labelWithAttributes(fontSize:CGFloat, weight:CGFloat ,text:String) -> UILabel {
         var label = UILabel()
-        label.font = UIFont.systemFontOfSize(fontSize)
+        if #available(iOS 8.2, *) {
+            label.font = UIFont.systemFontOfSize(fontSize, weight: weight)
+        } else {
+            label.font = UIFont.systemFontOfSize(fontSize)
+        }
         label.text = text
         return label
     }

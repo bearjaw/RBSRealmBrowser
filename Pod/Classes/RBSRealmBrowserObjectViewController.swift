@@ -28,7 +28,8 @@ class RBSRealmBrowserObjectViewController: UITableViewController {
         
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.registerClass(RBSRealmObjectCell.self, forCellReuseIdentifier: cellIdentifier)
+        tableView.separatorStyle = UITableViewCellSeparatorStyle.None
+        tableView.registerClass(RBSRealmPropertyCell.self, forCellReuseIdentifier: cellIdentifier)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -37,23 +38,30 @@ class RBSRealmBrowserObjectViewController: UITableViewController {
     
     //MARK: TableView Datasource & Delegate
     
-    override public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier) as! RBSRealmObjectCell
+    override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         let property = properties[indexPath.row] as! Property
         let stringvalue = self.stringForProperty(property, object: object as! Object)
-        cell.cellWithAttributes(property.name, propertyValue: stringvalue)
+        (cell as! RBSRealmPropertyCell).cellWithAttributes(property.name, propertyValue: stringvalue)
+    }
+    
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier) as! RBSRealmPropertyCell
         return cell
     }
-    override public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return properties.count
     }
     
-    override public func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         return 60;
     }
     
-    public override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        let property = properties[indexPath.row] as! Property
+        if property.type == PropertyType.Array {
+            // TODO: implement: show itrems in an array
+            
+        }
     }
     
     //MARK: private Methods
@@ -70,7 +78,7 @@ class RBSRealmBrowserObjectViewController: UITableViewController {
             break
         case PropertyType.Any,PropertyType.Array,PropertyType.Object:
             let data =  object[property.name]
-            propertyValue = data!.description
+            propertyValue = String(data)
             break
         default:
             return ""

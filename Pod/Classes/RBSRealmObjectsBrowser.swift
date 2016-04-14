@@ -37,13 +37,15 @@ class RBSRealmObjectsBrowser: UITableViewController {
     }
     
     //MARK: TableView Datasource & Delegate
-    
-    override public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier) as! RBSRealmObjectBrowserCell
+    override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         let object = objects[indexPath.row]
         let property = properties.first as! Property
         let stringvalue = self.stringForProperty(property, object: object as! Object)
-        cell.realmBrowserObjectAttributes(schema.className, objectsCount:String(format:"%@: %@",property.name, stringvalue ))
+        (cell as! RBSRealmObjectBrowserCell).realmBrowserObjectAttributes(schema.className, objectsCount:String(format:"%@: %@",property.name, stringvalue ))
+    }
+    
+    override public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier) as! RBSRealmObjectBrowserCell
         return cell
     }
     override public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
