@@ -16,10 +16,14 @@ public class RBSRealmBrowser: UITableViewController {
     private let cellIdentifier = "RBSREALMBROWSERCELL"
     private var objectsSchema:Array<AnyObject> = []
     
+    /**
+     Initialises the UITableViewController, sets title, registers datasource & delegates & cells
+     
+     -parameter realm: Realm
+     */
     
     private init(realm:Realm){
         super.init(nibName: nil, bundle: nil)
-        
         
         self.title = "Realm Browser"
         self.tableView.delegate = self
@@ -38,28 +42,43 @@ public class RBSRealmBrowser: UITableViewController {
     }
     
     
-    //MARK: returns an instance of RBSRealmBrowser
+    //MARK: Realm browser convenience method(s)
     
+    /**
+     Instantiate the browser using default Realm.
+     - return an instance of realmBrowser
+     */
     public static func realmBrowser()-> AnyObject{
         let realm = try! Realm()
         return self.realmBrowserForRealm(realm)
     }
     
+    /**
+     Instantiate the browser using a specific version of Realm.
+     
+     - parameter realm: Realm
+     - return an instance of realmBrowser
+     */
     public static func realmBrowserForRealm(realm:Realm) -> AnyObject {
         let rbsRealmBrowser = RBSRealmBrowser(realm:realm)
         let navigationController = UINavigationController(rootViewController: rbsRealmBrowser)
         return navigationController
     }
     
+    /**
+     Instantiate the browser using a specific version of Realm at a specific path.
+     
+     - parameter path: String
+     - return an instance of realmBrowser
+     */
      public static func realmBroswerForRealmAtPath(path:String)-> AnyObject {
         let realm = try! Realm(path: path)
         return self.realmBrowserForRealm(realm)
     }
     
-    override public func viewDidLoad() {
-        super.viewDidLoad()
-    }
-    
+    /**
+        Dismisses the browser
+     */
     func dismissBrowser(id:AnyObject) {
             self.dismissViewControllerAnimated(true) { 
                 
@@ -67,7 +86,6 @@ public class RBSRealmBrowser: UITableViewController {
     }
     
     //MARK: TableView Datasource & Delegate
-    
     
     override public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier) as! RBSRealmObjectBrowserCell
@@ -96,7 +114,13 @@ public class RBSRealmBrowser: UITableViewController {
     
     //MARK: private Methods
     
-    func resultsForObjectSChemaAtIndex(index:Int)-> Array<Object>{
+    /**
+        Used to get all objects for a specific object type in Realm
+     
+     - parameter index: Int
+     - return all objects for a an Realm object at an index
+     */
+   private func resultsForObjectSChemaAtIndex(index:Int)-> Array<Object>{
         let objectSchema = self.objectsSchema[index] as! ObjectSchema
         let results = try! Realm().dynamicObjects(objectSchema.className)
         return Array(results)

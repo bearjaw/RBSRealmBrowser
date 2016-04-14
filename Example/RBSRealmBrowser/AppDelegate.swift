@@ -27,8 +27,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         self.window!.rootViewController = self.navigationController;
         
-        // self.window!.rootViewController = navController
-        // self.window!.rootViewController!.navigationController!.navigationBar.hidden = true;
         self.window!.tintColor = UIColor(colorLiteralRed: 0.714, green: 0.039, blue: 0.204, alpha: 1)
         self.window!.makeKeyAndVisible()
         return true
