@@ -11,5 +11,5 @@ before_install:
 - gem install cocoapods # Since Travis is not always on latest version
 - pod install --project-directory=Example
 script:
-- set -o pipefail && xcodebuild -workspace Example/RBSRealmBrowser.xcworkspace -scheme RBSRealmBrowser-Example | xcpretty
+- set -o pipefail && xcodebuild -workspace Example/RBSRealmBrowser.xcworkspace -scheme RBSRealmBrowser
 - pod lib lint --quick
