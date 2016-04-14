@@ -36,6 +36,10 @@ class RBSRealmObjectsBrowser: UITableViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func viewWillAppear(animated: Bool) {
+        tableView.reloadData()
+    }
+    
     //MARK: TableView Datasource & Delegate
     override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         let object = objects[indexPath.row]

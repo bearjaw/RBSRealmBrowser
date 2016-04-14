@@ -25,9 +25,9 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        propertyValue = UITextField()
+        propertyValue.text = ""
         propertyValue.removeFromSuperview()
-        propertyTitle = UILabel()
+        propertyTitle.text = ""
         propertyTitle.removeFromSuperview()
     }
     

@@ -23,8 +23,10 @@ class RBSRealmObjectBrowserCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        labelTitle = UILabel()
-        labelDetailText = UILabel()
+        labelTitle.text = ""
+        labelTitle.removeFromSuperview()
+        labelDetailText.text = ""
+        labelDetailText.removeFromSuperview()
     }
     
     override func layoutSubviews() {

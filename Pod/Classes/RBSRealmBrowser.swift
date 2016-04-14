@@ -9,7 +9,29 @@
 import UIKit
 import RealmSwift
 
-
+/**
+ 
+ RBSRealmBrowser is a lightweight database browser for RealmSwift based on 
+ NBNRealmBrowser by Nerdish by Nature.
+ Use one of the three methods below to get an instance of RBSRealmBrowser and
+ use it for debug pruposes. 
+ 
+ RBSRealmBrowser displays objects and their properties as well as their properties' 
+ values.
+ 
+ Easily modify properties by switching into 'Edit' mode. Your changes will be commited
+ as soon as you finish editing.
+ Currently only Bool, Int, Float, Double and String are editable with an option to expand.
+ 
+ - warning: Realm instancesx are not thread safe and can not be shared across
+ threads or dispatch queues. You must construct a new instance on each thread you want
+ to interact with the realm on. For dispatch queues, this means that you must
+ call it in each block which is dispatched, as a queue is not guaranteed to run
+ on a consistent thread.
+ 
+ - warning: RBSRealmBrowser only works for swift only projects as Realm does not support
+ mixed Objective-C and Swift projects.
+ */
 
 public class RBSRealmBrowser: UITableViewController {
     
