@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Rbsrealmbrowser by bearjaw</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Rbsrealmbrowser</h1>
+      <h2 class="project-tagline">A lightweight RealmSwift database browser written in Swift based on NBNRealmBrowser</h2>
+      <a href="https://github.com/bearjaw/RBSRealmBrowser" class="btn">View on GitHub</a>
+      <a href="https://github.com/bearjaw/RBSRealmBrowser/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/bearjaw/RBSRealmBrowser/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="rbsrealmbrowser" class="anchor" href="#rbsrealmbrowser" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>RBSRealmBrowser</h1>
+
+<p>RBSRealmBrowser is based on NBNRealmBrowser by  <a href="https://github.com/nerdishbynature/NBNRealmBrowser">Nerdish by Nature</a>. It's a simple lightweight RealmSwift browser that let's you inspect which objects currently are in your realm database on your iOS device or simulator.
+Simply edit your existing object's properties' values by switching into edit mode.</p>
+
+<p>Currently the following types are supported:</p>
+
+<ul>
+<li>Bool</li>
+<li>String</li>
+<li>Int</li>
+<li>Float</li>
+<li>Double</li>
+</ul>
+
+<p><a href="https://travis-ci.org/bearjaw/RBSRealmBrowser"><img src="http://img.shields.io/travis/bearjaw/RBSRealmBrowser.svg?style=flat" alt="CI Status"></a>
+<a href="http://cocoapods.org/pods/RBSRealmBrowser"><img src="https://img.shields.io/cocoapods/v/RBSRealmBrowser.svg?style=flat" alt="Version"></a>
+<a href="http://cocoapods.org/pods/RBSRealmBrowser"><img src="https://img.shields.io/cocoapods/l/RBSRealmBrowser.svg?style=flat" alt="License"></a>
+<a href="http://cocoapods.org/pods/RBSRealmBrowser"><img src="https://img.shields.io/cocoapods/p/RBSRealmBrowser.svg?style=flat" alt="Platform"></a></p>
+
+<p><img src="./screenflow/RBSRealmBrowser.gif" alt=""></p>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>To run the example project, clone the repo, and run <code>pod install</code> from the Example directory first.</p>
+
+<p>This browser only works with Swift-only projects since Realm does not support mixed Objective-C and Swift projects.  </p>
+
+<div class="highlight highlight-source-swift"><pre><span class="pl-k">override</span> <span class="pl-k">func</span> <span class="pl-en">viewDidLoad</span>() {
+
+<span class="pl-k">super</span><span class="pl-k">.</span>viewDidLoad()
+    <span class="pl-c">// add a UIBarButtonItem </span>
+
+<span class="pl-k">let</span> bbi <span class="pl-k">=</span> UIBarButtonItem(title: <span class="pl-s"><span class="pl-pds">"</span>Open<span class="pl-pds">"</span></span>, style: UIBarButtonItemStyle<span class="pl-k">.</span>Plain, target: <span class="pl-k">self</span>, action: #selector(ViewController<span class="pl-k">.</span>openBrowser))
+    <span class="pl-k">self</span><span class="pl-k">.</span>navigationItem<span class="pl-k">.</span>rightBarButtonItem <span class="pl-k">=</span> bbi
+}
+
+<span class="pl-k">func</span> <span class="pl-en">openBrowser</span>(id:<span class="pl-c1">AnyObject</span>) {
+
+    <span class="pl-c">// get an instance of RBSRealmBrowser</span>
+    <span class="pl-k">let</span> rb <span class="pl-k">=</span> RBSRealmBrowser<span class="pl-k">.</span>realmBrowser()
+    <span class="pl-k">self</span><span class="pl-k">.</span>presentViewController(rb <span class="pl-k">as!</span> UIViewController, animated: <span class="pl-c1">true</span>) { 
+
+    }
+}</pre></div>
+
+<p>Use one of the three methods to browse your Realm database</p>
+
+<div class="highlight highlight-source-swift"><pre><span class="pl-c">// get the RealmBrowser for default Realm </span>
+realmBrowser()
+
+<span class="pl-c">// get the RealmBrowser for Realm </span>
+realmBrowserForRealm(realm:Realm)
+
+<span class="pl-c">// get the RealmBrowser for Realm at a specific path</span>
+realmBroswerForRealmAtPath(path:<span class="pl-c1">String</span>)</pre></div>
+
+<h2>
+<a id="try" class="anchor" href="#try" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Try</h2>
+
+<p>To try the example project, clone the repo, and run <code>pod try</code> from the Example directory first.</p>
+
+<h2>
+<a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h2>
+
+<ul>
+<li>RealmSwift</li>
+<li>Xcode 7</li>
+<li>iOS 8.0</li>
+</ul>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>RBSRealmBrowser is available through <a href="http://cocoapods.org">CocoaPods</a>. To install
+it, simply add the following line to your Podfile:</p>
+
+<div class="highlight highlight-source-ruby"><pre>pod <span class="pl-s"><span class="pl-pds">"</span>RBSRealmBrowser<span class="pl-pds">"</span></span></pre></div>
+
+<h2>
+<a id="future-features" class="anchor" href="#future-features" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Future features</h2>
+
+<p>Implementing search for objects.
+Layout improvements.</p>
+
+<h2>
+<a id="documentation" class="anchor" href="#documentation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Documentation</h2>
+
+<p>Available method documentation <a href="http://cocoadocs.org/docsets/RBSRealmBrowser/0.1.1/">here</a></p>
+
+<h2>
+<a id="author" class="anchor" href="#author" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Author</h2>
+
+<p>Max Baumbach, <a href="mailto:bearjaw@users.noreply.github.com">bearjaw@users.noreply.github.com</a></p>
+
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h2>
+
+<p>RBSRealmBrowser is available under the MIT license. See the LICENSE file for more info.</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/bearjaw/RBSRealmBrowser">Rbsrealmbrowser</a> is maintained by <a href="https://github.com/bearjaw">bearjaw</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
