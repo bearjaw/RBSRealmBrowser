@@ -22,7 +22,7 @@ Currently the following types are supported:
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
-This browser only works with Swift-only projects since Realm does not support mixed Objective-C and Swift projects.  
+This browser only works with RealmSwift because Realm (Objective-C) and RealmSwift 'are not interoperable and using them together is not supported.'
 
 ```swift
 override func viewDidLoad() {
