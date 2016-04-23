@@ -99,12 +99,15 @@ public class RBSRealmBrowser: UITableViewController {
     
     /**
      Instantiate the browser using a specific version of Realm at a specific path.
+     init(path: String) is deprecated.
+     
+     realmBroswerForRealmAtPath now uses the convenience initialiser init(fileURL: NSURL)
      
      - parameter path: String
      - returns an instance of realmBrowser
      */
      public static func realmBroswerForRealmAtPath(path:String)-> AnyObject {
-        let realm = try! Realm(path: path)
+        let realm = try! Realm(fileURL: NSURL(fileURLWithPath:path))
         return self.realmBrowserForRealm(realm)
     }
     

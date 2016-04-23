@@ -30,7 +30,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
         tableView.delegate = self
         tableView.dataSource = self
         tableView.tableFooterView = UIView()
-        let bbi = UIBarButtonItem(title: "Edit", style: UIBarButtonItemStyle.Plain, target: self, action: "actionToggleEdit:")
+        let bbi = UIBarButtonItem(title: "Edit", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(RBSRealmPropertyBrowser.actionToggleEdit(_:)))
         self.navigationItem.rightBarButtonItem = bbi
         tableView.registerClass(RBSRealmPropertyCell.self, forCellReuseIdentifier: cellIdentifier)
     }
@@ -64,7 +64,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let property = properties[indexPath.row] as! Property
+        tableView.deselectRowAtIndexPath(indexPath, animated: true)
         
         
     }
