@@ -20,9 +20,7 @@ class RBSRealmObjectsBrowser: UITableViewController {
      init(objects:Array<Object>){
         
         
-        for list in objects {
-            self.objects = objects
-        }
+
         
         self.objects = objects
         schema = objects[0].objectSchema
