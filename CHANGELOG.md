@@ -1,3 +1,8 @@
+## RBSRealmBrowser v 0.1.4
+- Added possibilty to inspect elements contained in your objects' lists. 
+- minor fixes
+- Improved documentation
+
 ## RBSRealmBrowser v 0.1.3
 - Added edit functionality to the browser because sometimes you want to change a value right in your debug session
 - edit support for major property types
