@@ -12,6 +12,7 @@ import RealmSwift
 class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
     private var propertyTitle = UILabel()
     private var propertyValue = UITextField()
+    private var propertyValueLabel = UILabel()
     private var property:Property! = nil
     var delegate:RBSRealmPropertyCellDelegate! = nil
     
@@ -32,9 +33,13 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
     }
     
     func cellWithAttributes(propertyTitle:String,propertyValue:String, editMode:Bool, property:Property) {
-        
         self.propertyTitle = self.labelWithAttributes(14,weight:0.3 ,text: propertyTitle)
         self.contentView.addSubview(self.propertyTitle)
+        
+        if property.type == PropertyType.Array {
+            propertyValueLabel = self.labelWithAttributes(14,weight:0.3 ,text: propertyValue)
+            self.addSubview(propertyValueLabel)
+        }else {
         
         self.propertyValue = UITextField()
         self.propertyValue.userInteractionEnabled = editMode
@@ -47,6 +52,7 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         }else if property.type == PropertyType.Int{
             self.propertyValue.keyboardType = UIKeyboardType.NumberPad
         }
+        
         self.propertyValue.delegate = self
         self.propertyValue.returnKeyType = UIReturnKeyType.Done
         self.propertyValue.backgroundColor = UIColor.whiteColor()
@@ -55,6 +61,7 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         self.propertyValue.text = propertyValue
         
         self.contentView.addSubview(self.propertyValue)
+        }
         self.property = property
     }
     
@@ -66,10 +73,17 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         propertyTitle.sizeToFit()
         propertyTitle.frame = (CGRect(x: borderOffset, y: (self.bounds.size.height-propertyTitle.bounds.size.height)/2, width: self.propertyTitle.bounds.size.width, height: propertyTitle.bounds.size.height))
         
+        let posX = propertyTitle.frame.origin.x + propertyTitle.bounds.size.width
+        if propertyValueLabel.text?.characters.count > 0 {
+            propertyValueLabel.frame = (CGRect(x: borderOffset   , y: borderOffset, width: self.bounds.size.width-2*borderOffset, height: 2000))
+            propertyValueLabel.sizeToFit()
+            propertyValueLabel.frame = (CGRect(x: posX + 50, y: (self.bounds.size.height-propertyValueLabel.bounds.size.height)/2, width: self.propertyValueLabel.bounds.size.width, height: propertyValueLabel.bounds.size.height))
+        }else{
         
         let textFieldWidth = self.bounds.size.width-4*borderOffset-propertyTitle.bounds.size.width
-        let posX = propertyTitle.frame.origin.x + propertyTitle.bounds.size.width
         propertyValue.frame = (CGRect(x:posX+50, y: (self.bounds.size.height-40)/2, width:textFieldWidth , height: 40))
+            
+        }
         
     }
     

@@ -18,6 +18,12 @@ class RBSRealmObjectsBrowser: UITableViewController {
     private var cellIdentifier = "objectCell"
     
      init(objects:Array<Object>){
+        
+        
+        for list in objects {
+            self.objects = objects
+        }
+        
         self.objects = objects
         schema = objects[0].objectSchema
         properties = schema.properties

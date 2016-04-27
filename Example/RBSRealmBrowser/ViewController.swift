@@ -29,6 +29,9 @@ class ViewController: UIViewController {
             object.aProperty = "YOYO"
             realm.add(object)
             let object2 = RealmObject2()
+            object2.objects.append(object)
+            object2.objects.append(object)
+            object2.objects.append(object)
             realm.add(object2)
         }
         

@@ -8,6 +8,7 @@
 
 import UIKit
 import RealmSwift
+import Realm
 
 class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelegate {
     
@@ -65,13 +66,23 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
-        
+        let property = properties[indexPath.row] as! Property
+        if property.type == PropertyType.Array {
+            let results = object.dynamicList(property.name)
+            var objects:Array<Object> = []
+            for obj in results {
+                objects.append(obj)
+            }
+            
+            let objectsViewController = RBSRealmObjectsBrowser(objects: objects)
+            self.navigationController?.pushViewController(objectsViewController, animated: true)
+        }
         
     }
     
     func textFieldDidFinishEdit(input: String, property:Property) {
         self.savePropertyChangesInRealm(input, property: property)
-//        self.actionToggleEdit((self.navigationItem.rightBarButtonItem)!)
+        //        self.actionToggleEdit((self.navigationItem.rightBarButtonItem)!)
     }
     
     //MARK: private Methods
@@ -80,14 +91,14 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
         var propertyValue:AnyObject
         let letters = NSCharacterSet.letterCharacterSet()
         switch property.type {
-        case PropertyType.Bool:
+        case .Bool:
             propertyValue = Int(newValue)!
             let realm = try! Realm()
             try! realm.write{
                 object.setValue(propertyValue, forKey: property.name)
             }
             break
-        case PropertyType.Int:
+        case .Int:
             let range = newValue.rangeOfCharacterFromSet(letters)
             if  range == nil {
                 propertyValue = Int(newValue)!
@@ -98,7 +109,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
             }
             
             break
-        case PropertyType.Float:
+        case .Float:
             propertyValue = Float(newValue)!
             
             let realm = try! Realm()
@@ -106,7 +117,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
                 object.setValue(propertyValue, forKey: property.name)
             }
             break
-        case PropertyType.Double:
+        case .Double:
             propertyValue = Double(newValue)!
             
             let realm = try! Realm()
@@ -133,7 +144,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
     private func stringForProperty(property:Property, object:Object) -> String{
         var propertyValue = ""
         switch property.type {
-        case PropertyType.Bool:
+        case .Bool:
             
             if object[property.name] as! Int == 0 {
                 propertyValue = "false"
@@ -141,13 +152,13 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
                 propertyValue = "true"
             }
             break
-        case PropertyType.Int,PropertyType.Float,PropertyType.Double:
+        case .Int,.Float,.Double:
             propertyValue = String(object[property.name] as! NSNumber)
             break
-        case PropertyType.String:
+        case .String:
             propertyValue = object[property.name] as! String
             break
-        case PropertyType.Any,PropertyType.Array,PropertyType.Object:
+        case .Any,.Array,.Object:
             let data =  object[property.name]
             propertyValue = String(data?.description)
             break
