@@ -1,3 +1,7 @@
+## RBSRealmBrowser v 0.1.5
+- Added possibilty to delete one or multiple objects. 
+- minor fixes
+
 ## RBSRealmBrowser v 0.1.4
 - Added possibilty to inspect elements contained in your objects' lists. 
 - minor fixes
