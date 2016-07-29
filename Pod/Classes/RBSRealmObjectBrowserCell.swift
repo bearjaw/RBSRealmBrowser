@@ -11,7 +11,15 @@ import UIKit
 class RBSRealmObjectBrowserCell: UITableViewCell {
         private var labelTitle = UILabel()
         private var labelDetailText = UILabel()
-
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     func realmBrowserObjectAttributes(_ objectTitle: String, objectsCount: String) {
         labelTitle.text = objectTitle
@@ -34,10 +42,11 @@ class RBSRealmObjectBrowserCell: UITableViewCell {
 
         let borderOffset: CGFloat = 20.0
         let labelOffset: CGFloat = 5
-
+        
         labelTitle.frame = (CGRect(x: borderOffset, y: 10.0, width: self.bounds.size.width-2*borderOffset, height: 2000))
         labelTitle.sizeToFit()
         labelDetailText.frame = (CGRect(x: borderOffset, y: labelTitle.frame.origin.y+labelTitle.bounds.size.height+labelOffset, width: self.bounds.size.width, height: 2000))
         labelDetailText.sizeToFit()
+
     }
 }

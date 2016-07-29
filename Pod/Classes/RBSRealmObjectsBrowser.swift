@@ -54,11 +54,11 @@ class RBSRealmObjectsBrowser: UITableViewController {
         let object = objects[indexPath.row]
         let property = properties.first as! Property
         if !object.isInvalidated {
-            let stringvalue = self.stringForProperty(property, object: object )
+            let stringvalue = self.stringForProperty(property, object: object)
             if selectAll {
                 cell.accessoryType = .checkmark
                 tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
-                selectedObjects.append(objects[indexPath.row] )
+                selectedObjects.append(objects[indexPath.row])
             } else {
                 cell.isSelected = false
                 cell.accessoryType = .none
@@ -82,7 +82,7 @@ class RBSRealmObjectsBrowser: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if isEditing && !selectAll {
+        if isEditMode && !selectAll {
             tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
             selectedObjects.append(objects[indexPath.row])
         } else {
@@ -95,7 +95,7 @@ class RBSRealmObjectsBrowser: UITableViewController {
 
 
     override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        if isEditing {
+        if isEditMode {
             tableView.cellForRow(at: indexPath)?.accessoryType = .none
             var index = 0
             for object in selectedObjects {
@@ -146,13 +146,13 @@ class RBSRealmObjectsBrowser: UITableViewController {
     func actionToggleEdit(_ id: AnyObject) {
         tableView.allowsMultipleSelection = true
         tableView.allowsMultipleSelectionDuringEditing = true
-        isEditing = !isEditing
-        if !isEditing {
+        isEditMode = !isEditMode
+        if !isEditMode {
             self.deleteObjects()
             self.navigationItem.leftBarButtonItem = nil
             self.navigationItem.rightBarButtonItem?.title = "Select"
         } else {
-            self.navigationItem.rightBarButtonItem?.title = "Delete"
+            self.navigationItem.rightBarButtonItem?.title = "Done"
             let bbi = UIBarButtonItem(title: "Select All", style: UIBarButtonItemStyle.plain, target: self, action: #selector(RBSRealmObjectsBrowser.actionSelectAll(_:)))
             self.navigationItem.leftBarButtonItem = bbi
         }
