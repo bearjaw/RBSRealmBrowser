@@ -54,9 +54,9 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         }
 
         self.propertyValue.delegate = self
-        self.propertyValue.returnKeyType = UIReturnKeyType.done
-        self.propertyValue.backgroundColor = UIColor.white()
-        self.propertyValue.textAlignment = NSTextAlignment.right
+        self.propertyValue.returnKeyType = .done
+        self.propertyValue.backgroundColor = .white()
+        self.propertyValue.textAlignment = .right
 
         self.propertyValue.text = propertyValue
 

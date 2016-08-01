@@ -37,6 +37,8 @@ class RBSRealmObjectsBrowser: UITableViewController {
 
         let bbi = UIBarButtonItem(title: "Select", style: .plain, target: self, action: #selector(RBSRealmObjectsBrowser.actionToggleEdit(_:)))
         self.navigationItem.rightBarButtonItem = bbi
+        let bbiPreview = UIBarButtonItem(barButtonSystemItem: .action, target: self, action:#selector(RBSRealmObjectsBrowser.actionTogglePreview(_:)) )
+        self.navigationItem.rightBarButtonItems = [bbi, bbiPreview]
 
     }
 
@@ -166,6 +168,10 @@ class RBSRealmObjectsBrowser: UITableViewController {
             self.navigationItem.leftBarButtonItem?.title = "Select all"
         }
         self.tableView.reloadData()
+    }
+    
+    func actionTogglePreview(_ id: AnyObject) {
+        
     }
 
     private func deleteObjects() {

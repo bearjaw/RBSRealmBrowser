@@ -45,7 +45,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let property = properties[indexPath.row] as! Property
         let stringvalue = self.stringForProperty(property, object: object)
-        (cell as! RBSRealmPropertyCell).cellWithAttributes(property.name, propertyValue: stringvalue, editMode:isEditing, property:property)
+        (cell as! RBSRealmPropertyCell).cellWithAttributes(property.name, propertyValue: stringvalue, editMode:isEditMode, property:property)
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -173,8 +173,8 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
     }
 
     func actionToggleEdit(_ id: AnyObject) {
-        isEditing = !isEditing
-        if isEditing {
+        isEditMode = !isEditMode
+        if isEditMode {
             (id as! UIBarButtonItem).title = "Finish"
         } else {
             (id as! UIBarButtonItem).title = "Edit"

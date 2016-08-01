@@ -25,7 +25,7 @@ class RBSRealmObjectBrowserCell: UITableViewCell {
         labelTitle.text = objectTitle
         self.addSubview(labelTitle)
         labelDetailText.text = objectsCount
-        labelDetailText.font = UIFont.systemFont(ofSize: 11)
+        labelDetailText.font = .systemFont(ofSize: 11)
         self.addSubview(labelDetailText)
     }
 
