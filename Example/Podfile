@@ -2,18 +2,8 @@ source 'https://github.com/CocoaPods/Specs.git'
 use_frameworks!
 platform :ios, '8.0'
 
-target 'RBSRealmBrowser_Example', :exclusive => true do
+target 'RBSRealmBrowser_Example' do
   pod 'RBSRealmBrowser', :path => '../'
+
 end
 
-target 'RBSRealmBrowser_Tests', :exclusive => true do
-  pod 'RBSRealmBrowser', :path => '../'
-  
-end
-post_install do |installer|
-    installer.pods_project.targets.each do |target|
-        target.build_configurations.each do |config|
-            config.build_settings['SWIFT_VERSION'] = '3.0'
-        end
-    end
-end
