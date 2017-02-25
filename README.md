@@ -85,7 +85,7 @@ Available method documentation [here](http://cocoadocs.org/docsets/RBSRealmBrows
 
 ## Author
 
-Max Baumbach, bearjaw@users.noreply.github.com
+Max Baumbach, bearjaw.dev@gmail.com
 
 ## License
 
