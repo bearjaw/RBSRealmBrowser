@@ -23,10 +23,10 @@ class RBSRealmObjectBrowserCell: UITableViewCell {
 
     func realmBrowserObjectAttributes(_ objectTitle: String, objectsCount: String) {
         labelTitle.text = objectTitle
-        self.addSubview(labelTitle)
+        self.contentView.addSubview(labelTitle)
         labelDetailText.text = objectsCount
         labelDetailText.font = .systemFont(ofSize: 11)
-        self.addSubview(labelDetailText)
+        self.contentView.addSubview(labelDetailText)
     }
 
     override func prepareForReuse() {
