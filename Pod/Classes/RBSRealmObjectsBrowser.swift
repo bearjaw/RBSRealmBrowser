@@ -129,7 +129,7 @@ class RBSRealmObjectsBrowser: UITableViewController {
             }
             break
         case .int, .float, .double:
-            propertyValue = String(object[property.name])
+            propertyValue = String(describing: object[property.name])
             break
         case .string:
             propertyValue = object[property.name] as! String

@@ -94,7 +94,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
         let letters = CharacterSet.letters
         switch property.type {
         case .bool:
-            propertyValue = Int(newValue)!
+            let propertyValue = Bool(newValue)
             let realm = try! Realm()
             try! realm.write {
                 object.setValue(propertyValue, forKey: property.name)
@@ -103,7 +103,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
         case .int:
             let range = newValue.rangeOfCharacter(from: letters)
             if  range == nil {
-                propertyValue = Int(newValue)!
+              let propertyValue = Int(newValue)!
                 let realm = try! Realm()
                 try! realm.write {
                     object.setValue(propertyValue, forKey: property.name)
@@ -112,7 +112,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
 
             break
         case .float:
-            propertyValue = Float(newValue)!
+            propertyValue = Float(newValue)! as AnyObject
 
             let realm = try! Realm()
             try! realm.write {
@@ -120,7 +120,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
             }
             break
         case .double:
-            propertyValue = Double(newValue)!
+            propertyValue = Double(newValue)! as AnyObject
 
             let realm = try! Realm()
             try! realm.write {
@@ -128,7 +128,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
             }
             break
         case .string:
-            propertyValue = newValue
+            propertyValue = newValue as AnyObject
 
             let realm = try! Realm()
             try! realm.write {
@@ -155,14 +155,14 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
             }
             break
         case .int, .float, .double:
-            propertyValue = String(object[property.name] as! NSNumber)
+            propertyValue = String(describing: object[property.name] as! NSNumber)
             break
         case .string:
             propertyValue = object[property.name] as! String
             break
         case .any, .array, .object:
             let data =  object[property.name]
-            propertyValue = String(data?.description)
+            propertyValue = String((data as AnyObject).description)
             break
         default:
             return ""

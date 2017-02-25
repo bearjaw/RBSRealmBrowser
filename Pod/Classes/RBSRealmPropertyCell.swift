@@ -55,7 +55,7 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
 
         self.propertyValue.delegate = self
         self.propertyValue.returnKeyType = .done
-        self.propertyValue.backgroundColor = .white()
+        self.propertyValue.backgroundColor = .white
         self.propertyValue.textAlignment = .right
 
         self.propertyValue.text = propertyValue
@@ -74,7 +74,7 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         propertyTitle.frame = (CGRect(x: borderOffset, y: (self.bounds.size.height-propertyTitle.bounds.size.height)/2, width: self.propertyTitle.bounds.size.width, height: propertyTitle.bounds.size.height))
 
         let posX = propertyTitle.frame.origin.x + propertyTitle.bounds.size.width
-        if propertyValueLabel.text?.characters.count > 0 {
+        if (propertyValueLabel.text?.characters.count)! > 0 {
             propertyValueLabel.frame = (CGRect(x: borderOffset, y: borderOffset, width: self.bounds.size.width-2*borderOffset, height: 2000))
             propertyValueLabel.sizeToFit()
             propertyValueLabel.frame = (CGRect(x: posX + 50, y: (self.bounds.size.height-propertyValueLabel.bounds.size.height)/2, width: self.propertyValueLabel.bounds.size.width, height: propertyValueLabel.bounds.size.height))

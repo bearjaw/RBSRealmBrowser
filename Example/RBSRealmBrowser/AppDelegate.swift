@@ -15,15 +15,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private var navigationController: UINavigationController?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        self.window = UIWindow(frame: UIScreen.main().bounds)
-        self.window?.backgroundColor = UIColor.white()
+        self.window = UIWindow(frame: UIScreen.main.bounds)
+        self.window?.backgroundColor = UIColor.white
         let initialViewController = ViewController()
 
         self.navigationController = UINavigationController(rootViewController: initialViewController)
-        self.navigationController?.navigationBar.tintColor = UIColor.black()
-        self.navigationController?.navigationBar.barTintColor = UIColor.white()
+        self.navigationController?.navigationBar.tintColor = .black
+        self.navigationController?.navigationBar.barTintColor = .white
         self.navigationController?.navigationBar.isTranslucent = false
-        self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.black()]
+        self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.black]
 
         self.window!.rootViewController = self.navigationController
 
