@@ -43,10 +43,11 @@ class RBSRealmObjectBrowserCell: UITableViewCell {
         let borderOffset: CGFloat = 20.0
         let labelOffset: CGFloat = 5
         
-        labelTitle.frame = (CGRect(x: borderOffset, y: 10.0, width: self.bounds.size.width-2*borderOffset, height: 2000))
-        labelTitle.sizeToFit()
-        labelDetailText.frame = (CGRect(x: borderOffset, y: labelTitle.frame.origin.y+labelTitle.bounds.size.height+labelOffset, width: self.bounds.size.width, height: 2000))
-        labelDetailText.sizeToFit()
+        var labelSize = labelTitle.sizeThatFits(CGSize(width: self.bounds.size.width-2*borderOffset, height: 2000.0))
+        labelTitle.frame = (CGRect(x: borderOffset, y: 10.0, width: labelSize.width, height: labelSize.height))
+        
+        labelSize = labelDetailText.sizeThatFits(CGSize(width: self.bounds.size.width-2*borderOffset-labelTitle.bounds.size.width, height: 2000.0))
+        labelDetailText.frame = (CGRect(x: borderOffset, y: labelTitle.frame.origin.y+labelTitle.bounds.size.height+labelOffset, width: labelSize.width, height: labelSize.height))
 
     }
 }
