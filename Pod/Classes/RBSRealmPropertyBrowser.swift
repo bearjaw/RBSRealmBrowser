@@ -15,7 +15,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
     private var object: Object
     private var schema: ObjectSchema
     private var properties: Array <AnyObject>
-    private var cellIdentifier = "objectCell"
+    private let cellIdentifier = "objectCell"
     private var isEditMode = false
     
     init(object: Object) {
