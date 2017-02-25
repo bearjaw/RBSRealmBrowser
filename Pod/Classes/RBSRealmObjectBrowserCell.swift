@@ -15,6 +15,8 @@ class RBSRealmObjectBrowserCell: UITableViewCell {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
+        self.contentView.addSubview(labelTitle)
+        self.contentView.addSubview(labelDetailText)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -23,25 +25,24 @@ class RBSRealmObjectBrowserCell: UITableViewCell {
 
     func realmBrowserObjectAttributes(_ objectTitle: String, objectsCount: String) {
         labelTitle.text = objectTitle
-        self.contentView.addSubview(labelTitle)
+        
         labelDetailText.text = objectsCount
         labelDetailText.font = .systemFont(ofSize: 11)
-        self.contentView.addSubview(labelDetailText)
+        
     }
 
     override func prepareForReuse() {
         super.prepareForReuse()
         labelTitle.text = ""
-        labelTitle.removeFromSuperview()
         labelDetailText.text = ""
-        labelDetailText.removeFromSuperview()
+        
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
 
         let borderOffset: CGFloat = 20.0
-        let labelOffset: CGFloat = 5
+        let labelOffset: CGFloat = 5.0
         
         var labelSize = labelTitle.sizeThatFits(CGSize(width: self.bounds.size.width-2*borderOffset, height: 2000.0))
         labelTitle.frame = (CGRect(x: borderOffset, y: 10.0, width: labelSize.width, height: labelSize.height))

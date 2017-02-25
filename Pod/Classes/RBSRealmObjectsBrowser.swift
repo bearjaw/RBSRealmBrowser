@@ -15,7 +15,7 @@ class RBSRealmObjectsBrowser: UITableViewController {
     private var objects: Array <Object>
     private var schema: ObjectSchema
     private var properties: Array <AnyObject>
-    private var cellIdentifier = "objectCell"
+    private let cellIdentifier = "objectCell"
     private var isEditMode: Bool = false
     private var selectAll: Bool = false
     private var selectedObjects: Array<Object> = []
