@@ -95,13 +95,15 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
         let realm = try! Realm()
         switch property.type {
         case .bool:
-            if newValue != nil {
-                let propertyValue = Bool(newValue)
-                if propertyValue != nil {
+            if (newValue as String != nil) && (String(describing: object[property.name]) != nil){
                     try! realm.write {
-                        object.setValue(propertyValue, forKey: property.name)
+                        if newValue.compare("0").rawValue == 0 {
+                            object.setValue(Bool(0), forKey: property.name)
+                        }else {
+                            object.setValue(Bool(1), forKey: property.name)
+                        }
+                        
                     }
-                }
             }
             break
         case .int:

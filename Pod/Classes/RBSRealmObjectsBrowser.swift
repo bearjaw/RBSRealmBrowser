@@ -80,7 +80,7 @@ class RBSRealmObjectsBrowser: UITableViewController {
     }
 
     override  func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
+        return 60.0
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -121,8 +121,7 @@ class RBSRealmObjectsBrowser: UITableViewController {
         var propertyValue = ""
         switch property.type {
         case .bool:
-
-            if object[property.name] as! Int == 0 {
+            if Bool(object[property.name] as! String) == false {
                 propertyValue = "false"
             } else {
                 propertyValue = "true"
