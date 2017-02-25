@@ -27,21 +27,19 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
     override func prepareForReuse() {
         super.prepareForReuse()
         propertyValue.text = ""
-        propertyValue.removeFromSuperview()
         propertyTitle.text = ""
         propertyTitle.removeFromSuperview()
     }
     
-    func cellWithAttributes(_ propertyTitle: String, propertyValue: String, editMode: Bool, property: Property) {
+    func cellWithAttributes(_ propertyTitle: String, propertyValue: String, editMode: Bool, property: Property, isArray:Bool) {
         self.propertyTitle = self.labelWithAttributes(14, weight:0.3, text: propertyTitle)
         self.contentView.addSubview(self.propertyTitle)
         
-        if property.type == .array {
+        
+        if isArray {
             propertyValueLabel = self.labelWithAttributes(14, weight:0.3, text: propertyValue)
             self.contentView.addSubview(propertyValueLabel)
         } else {
-            
-            self.propertyValue = UITextField()
             self.propertyValue.isUserInteractionEnabled = editMode
             self.isUserInteractionEnabled = editMode
             if property.type == .bool {
@@ -78,8 +76,15 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         let posX = propertyTitle.frame.origin.x + propertyTitle.bounds.size.width
         let textFieldWidth = self.bounds.size.width-4*borderOffset-labelSize.width
         
-        labelSize = propertyValue.sizeThatFits(CGSize(width: textFieldWidth, height: 2000.0))
-        propertyValue.frame = (CGRect(x:self.bounds.size.width-labelSize.width-borderOffset, y: (self.bounds.size.height-labelSize.height)/2, width:labelSize.width, height: labelSize.height))
+        
+        if let text = propertyValueLabel.text {
+            labelSize = propertyValueLabel.sizeThatFits(CGSize(width: textFieldWidth, height: 2000.0))
+            propertyValueLabel.frame = (CGRect(x:self.bounds.size.width-labelSize.width-borderOffset, y: (self.bounds.size.height-labelSize.height)/2, width:labelSize.width, height: labelSize.height))
+            
+        }else {
+            labelSize = propertyValue.sizeThatFits(CGSize(width: textFieldWidth, height: 2000.0))
+            propertyValue.frame = (CGRect(x:self.bounds.size.width-labelSize.width-borderOffset, y: (self.bounds.size.height-labelSize.height)/2, width:labelSize.width, height: labelSize.height))
+        }
     }
     
     //MARK: private method

@@ -80,10 +80,6 @@ public class RBSRealmBrowser: UITableViewController {
         return self.realmBrowserForRealm(realm)
     }
 
-    public override func viewWillAppear(_ animated: Bool) {
-        tableView.reloadData()
-    }
-
     /**
      Instantiate the browser using a specific version of Realm.
 
@@ -181,7 +177,7 @@ public class RBSRealmBrowser: UITableViewController {
      */
 
     public override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-
+        tableView .deselectRow(at: indexPath, animated: true)
         let results = self.resultsForObjectSChemaAtIndex(indexPath.row)
         if results.count > 0 {
             let vc = RBSRealmObjectsBrowser(objects: results)
