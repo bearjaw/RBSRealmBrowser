@@ -1,6 +1,8 @@
 ## RBSRealmBrowser v 0.1.5
 - Added possibilty to delete one or multiple objects. 
-- minor fixes
+- minor layout and logic fixes
+- compatible with Swift 3.0
+- updated to the latest realm version
 
 ## RBSRealmBrowser v 0.1.4
 - Added possibilty to inspect elements contained in your objects' lists. 
