@@ -1,0 +1,24 @@
+PODS:
+  - RBSRealmBrowser (0.1.5):
+    - RealmSwift
+  - Realm (2.4.3):
+    - Realm/Headers (= 2.4.3)
+  - Realm/Headers (2.4.3)
+  - RealmSwift (2.4.3):
+    - Realm (= 2.4.3)
+
+DEPENDENCIES:
+  - RBSRealmBrowser (from `../`)
+
+EXTERNAL SOURCES:
+  RBSRealmBrowser:
+    :path: ../
+
+SPEC CHECKSUMS:
+  RBSRealmBrowser: 766ea385298c2f89361e678abbe2c78f3fbbd0ab
+  Realm: e08d60b0048ccccd3949c8c28a92c4db5712d7e9
+  RealmSwift: 30d49739ccb3385d201242736ca4dda56aec9dfc
+
+PODFILE CHECKSUM: 539553cc152962885af210eecb39a9d901675895
+
+COCOAPODS: 1.2.0

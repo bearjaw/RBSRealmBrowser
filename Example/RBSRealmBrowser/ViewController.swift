@@ -12,39 +12,43 @@ import RealmSwift
 
 
 class ViewController: UIViewController {
-    
+
     private var sampleView = SampleView()
-    
+
     override func loadView() {
         self.view = sampleView
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         let realm = try! Realm()
-        
-        try! realm.write(){
-            let object = RealmObject1()
-            object.aProperty = "YOYO"
-            realm.add(object)
-            let object2 = RealmObject2()
-            object2.objects.append(object)
-            object2.objects.append(object)
-            object2.objects.append(object)
-            realm.add(object2)
+        var i = 0
+        while i < 5 {
+            try! realm.write() {
+                let object = RealmObject1()
+                object.aProperty = String(format:"Number %i", i)
+                realm.add(object)
+                let object2 = RealmObject2()
+                object2.aProperty = String(format:"Number %i", i)
+                object2.objects.append(object)
+                object2.objects.append(object)
+                object2.objects.append(object)
+                realm.add(object2)
+            }
+            i += 1
         }
-        
-        let bbi = UIBarButtonItem(title: "Open", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(ViewController.openBrowser))
+
+
+        let bbi = UIBarButtonItem(title: "Open", style: UIBarButtonItemStyle.plain, target: self, action: #selector(ViewController.openBrowser))
         self.navigationItem.rightBarButtonItem = bbi
     }
-    
-    func openBrowser(id:AnyObject) {
+
+    func openBrowser(_ id: AnyObject) {
         let rb = RBSRealmBrowser.realmBrowser()
-        self.presentViewController(rb as! UIViewController, animated: true) { 
-            
+        self.present(rb as! UIViewController, animated: true) {
+
         }
     }
 
 }
-

@@ -14,11 +14,11 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
     
     private var object: Object
     private var schema: ObjectSchema
-    private var properties:Array <AnyObject>
+    private var properties: Array <AnyObject>
     private var cellIdentifier = "objectCell"
-    private var isEditing = false
+    private var isEditMode = false
     
-    init(object:Object){
+    init(object: Object) {
         self.object = object
         schema = object.objectSchema
         properties = schema.properties
@@ -31,9 +31,9 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
         tableView.delegate = self
         tableView.dataSource = self
         tableView.tableFooterView = UIView()
-        let bbi = UIBarButtonItem(title: "Edit", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(RBSRealmPropertyBrowser.actionToggleEdit(_:)))
+        let bbi = UIBarButtonItem(title: "Edit", style: .plain, target: self, action: #selector(RBSRealmPropertyBrowser.actionToggleEdit(_:)))
         self.navigationItem.rightBarButtonItem = bbi
-        tableView.registerClass(RBSRealmPropertyCell.self, forCellReuseIdentifier: cellIdentifier)
+        tableView.register(RBSRealmPropertyCell.self, forCellReuseIdentifier: cellIdentifier)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -42,98 +42,100 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
     
     //MARK: TableView Datasource & Delegate
     
-    override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let property = properties[indexPath.row] as! Property
         let stringvalue = self.stringForProperty(property, object: object)
-        (cell as! RBSRealmPropertyCell).cellWithAttributes(property.name, propertyValue: stringvalue, editMode:isEditing, property:property)
+        (cell as! RBSRealmPropertyCell).cellWithAttributes(property.name, propertyValue: stringvalue, editMode:isEditMode, property:property)
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier)
-        if cell == nil{
-            cell = UITableViewCell(style: UITableViewCellStyle.Value1, reuseIdentifier: cellIdentifier) as! RBSRealmPropertyCell
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        var cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier)
+        if cell == nil {
+            cell = UITableViewCell(style: UITableViewCellStyle.value1, reuseIdentifier: cellIdentifier) as! RBSRealmPropertyCell
         }
         (cell as! RBSRealmPropertyCell).delegate = self
         return cell!
     }
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return properties.count
     }
     
-    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return 60;
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 60
     }
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        tableView.deselectRowAtIndexPath(indexPath, animated: true)
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
         let property = properties[indexPath.row] as! Property
-        if property.type == PropertyType.Array {
+        if property.type == .array {
             let results = object.dynamicList(property.name)
-            var objects:Array<Object> = []
+            var objects: Array<Object> = []
             for obj in results {
                 objects.append(obj)
             }
+            if objects.count > 0 {
+                let objectsViewController = RBSRealmObjectsBrowser(objects: objects)
+                self.navigationController?.pushViewController(objectsViewController, animated: true)
+            }
             
-            let objectsViewController = RBSRealmObjectsBrowser(objects: objects)
-            self.navigationController?.pushViewController(objectsViewController, animated: true)
         }
         
     }
     
-    func textFieldDidFinishEdit(input: String, property:Property) {
+    func textFieldDidFinishEdit(_ input: String, property: Property) {
         self.savePropertyChangesInRealm(input, property: property)
         //        self.actionToggleEdit((self.navigationItem.rightBarButtonItem)!)
     }
     
     //MARK: private Methods
     
-    private func savePropertyChangesInRealm(newValue:String, property:Property){
-        var propertyValue:AnyObject
-        let letters = NSCharacterSet.letterCharacterSet()
+    private func savePropertyChangesInRealm(_ newValue: String, property: Property) {
+        var propertyValue: AnyObject
+        let letters = CharacterSet.letters
         switch property.type {
-        case .Bool:
-            propertyValue = Int(newValue)!
+        case .bool:
+            let propertyValue = Bool(newValue)
             let realm = try! Realm()
-            try! realm.write{
+            try! realm.write {
                 object.setValue(propertyValue, forKey: property.name)
             }
             break
-        case .Int:
-            let range = newValue.rangeOfCharacterFromSet(letters)
+        case .int:
+            let range = newValue.rangeOfCharacter(from: letters)
             if  range == nil {
-                propertyValue = Int(newValue)!
+                let propertyValue = Int(newValue)!
                 let realm = try! Realm()
-                try! realm.write{
+                try! realm.write {
                     object.setValue(propertyValue, forKey: property.name)
                 }
             }
             
             break
-        case .Float:
-            propertyValue = Float(newValue)!
+        case .float:
+            propertyValue = Float(newValue)! as AnyObject
             
             let realm = try! Realm()
-            try! realm.write{
+            try! realm.write {
                 object.setValue(propertyValue, forKey: property.name)
             }
             break
-        case .Double:
-            propertyValue = Double(newValue)!
+        case .double:
+            propertyValue = Double(newValue)! as AnyObject
             
             let realm = try! Realm()
-            try! realm.write{
+            try! realm.write {
                 object.setValue(propertyValue, forKey: property.name)
             }
             break
-        case PropertyType.String:
-            propertyValue = newValue
+        case .string:
+            propertyValue = newValue as AnyObject
             
             let realm = try! Realm()
-            try! realm.write{
+            try! realm.write {
                 object.setValue(propertyValue, forKey: property.name)
             }
             break
-        case PropertyType.Any,PropertyType.Array,PropertyType.Object:
+        case .any, .array, .object:
             break
         default:
             break
@@ -141,26 +143,26 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
         
     }
     
-    private func stringForProperty(property:Property, object:Object) -> String{
+    private func stringForProperty(_ property: Property, object: Object) -> String {
         var propertyValue = ""
         switch property.type {
-        case .Bool:
-            
-            if object[property.name] as! Int == 0 {
+        case .bool:
+            if object[property.name] as! Bool == false {
                 propertyValue = "false"
-            }else{
+            } else {
                 propertyValue = "true"
             }
+            
             break
-        case .Int,.Float,.Double:
-            propertyValue = String(object[property.name] as! NSNumber)
+        case .int, .float, .double:
+            propertyValue = String(describing: object[property.name] as! NSNumber)
             break
-        case .String:
+        case .string:
             propertyValue = object[property.name] as! String
             break
-        case .Any,.Array,.Object:
+        case .any, .array, .object:
             let data =  object[property.name]
-            propertyValue = String(data?.description)
+            propertyValue = String((data as AnyObject).description)
             break
         default:
             return ""
@@ -170,11 +172,11 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
         
     }
     
-    func actionToggleEdit(id:AnyObject){
-        isEditing = !isEditing
-        if isEditing{
+    func actionToggleEdit(_ id: AnyObject) {
+        isEditMode = !isEditMode
+        if isEditMode {
             (id as! UIBarButtonItem).title = "Finish"
-        }else{
+        } else {
             (id as! UIBarButtonItem).title = "Edit"
         }
         tableView.reloadData()
