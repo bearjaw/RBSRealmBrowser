@@ -63,6 +63,7 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         }
         self.property = property
         self.setNeedsLayout()
+        self.isUserInteractionEnabled = true
     }
     
     override func layoutSubviews() {
