@@ -194,7 +194,7 @@ public class RBSRealmBrowser: UITableViewController {
      - return all objects for a an Realm object at an index
      */
     private func resultsForObjectSChemaAtIndex(_ index: Int)-> Array<Object> {
-        let objectSchema = self.objectsSchema[index] as! ObjectSchema
+        let objectSchema = objectsSchema[index] as! ObjectSchema
         let results = try! Realm().dynamicObjects(objectSchema.className)
         return Array(results)
     }

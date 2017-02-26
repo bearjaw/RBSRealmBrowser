@@ -15,7 +15,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
     private var object: Object
     private var schema: ObjectSchema
     private var properties: Array <AnyObject>
-    private var cellIdentifier = "objectCell"
+    private let cellIdentifier = "objectCell"
     private var isEditMode = false
     
     init(object: Object) {
@@ -47,8 +47,6 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
         var stringvalue = self.stringForProperty(property, object: object)
         var isArray = false
         if property.type == .array {
-            let array = object.dynamicList(property.name)
-            stringvalue = String.localizedStringWithFormat("%li objects", array.count)
             var isArray = true
         }
         (cell as! RBSRealmPropertyCell).cellWithAttributes(property.name, propertyValue: stringvalue, editMode:isEditMode, property:property, isArray:isArray)
@@ -60,6 +58,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
             cell = UITableViewCell(style: UITableViewCellStyle.value1, reuseIdentifier: cellIdentifier) as! RBSRealmPropertyCell
         }
         (cell as! RBSRealmPropertyCell).delegate = self
+        cell?.isUserInteractionEnabled = true
         return cell!
     }
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -71,7 +70,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+//        tableView.deselectRow(at: indexPath, animated: true)
         let property = properties[indexPath.row] as! Property
         if property.type == .array {
             let results = object.dynamicList(property.name)
@@ -161,7 +160,11 @@ private func stringForProperty(_ property: Property, object: Object) -> String {
     case .string:
         propertyValue = object[property.name] as! String
         break
-    case .any, .array, .object:
+    case .array:
+        let array = object.dynamicList(property.name)
+        propertyValue = String.localizedStringWithFormat("%li objects", array.count)
+        break
+    case .any, .object:
         let data =  object[property.name]
         propertyValue = String((data as AnyObject).description)
         break
