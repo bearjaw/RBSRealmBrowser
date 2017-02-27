@@ -76,15 +76,20 @@ it, simply add the following line to your Podfile:
 pod "RBSRealmBrowser"
 ```
 ## Future features
-Implementing search for objects.
-Layout improvements.
+What's on the roadmap... 🚀
+- [ ] Tests
+- [ ] Be able to edit/create objects
+- [ ] Clean up
+- [ ] Live reload the browser if updates happen in the background
+- [ ] Layout improvements
+- [ ] Search 
 
 ## Documentation
 Available method documentation [here](http://cocoadocs.org/docsets/RBSRealmBrowser/0.1.5/)
 
 ## RealmBrowser for Android
 
-Realm browser by Jonas Rottmann for your Android projects available [here](https://github.com/jonasrottmann/realm-browser)
+Realm browser by Jonas Rottmann for your Android projects available [jonasrottmann/realm-browser](https://github.com/jonasrottmann/realm-browser)
 
 ## Author
 
