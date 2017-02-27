@@ -63,7 +63,7 @@ To try the example project, clone the repo, and run `pod try` from the Example d
 
 ## Requirements
 
-- Xcode 7
+- Xcode 8
 - iOS 8.0
 
 
@@ -80,8 +80,11 @@ Implementing search for objects.
 Layout improvements.
 
 ## Documentation
-Available method documentation [here](http://cocoadocs.org/docsets/RBSRealmBrowser/0.1.1/)
+Available method documentation [here](http://cocoadocs.org/docsets/RBSRealmBrowser/0.1.5/)
 
+## RealmBrowser for Android
+
+Realm browser by Jonas Rottmann for your Android projects available [here](https://github.com/jonasrottmann/realm-browser)
 
 ## Author
 
