@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import RBSRealmBrowser
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -28,6 +29,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window!.rootViewController = self.navigationController
 
         self.window!.tintColor = UIColor(colorLiteralRed: 0.714, green: 0.039, blue: 0.204, alpha: 1)
+        
+        
+        // add the realmbrowser quick action to your shortcut items array
+        if #available(iOS 9.0, *) {
+            application.shortcutItems = [RBSRealmBrowser.addBrowserQuickAction()]
+        } else {
+            // Fallback on earlier versions
+        }
+    
         self.window!.makeKeyAndVisible()
     }
 
@@ -52,6 +62,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-
+    
+    @available(iOS 9.0, *)
+    func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
+        
+        // handle the quick action
+        let rb = RBSRealmBrowser.realmBrowser()
+        let vc = (window?.rootViewController)! as UIViewController
+        vc.present(rb as! UIViewController, animated: true)
+        
+    }
+    
 
 }

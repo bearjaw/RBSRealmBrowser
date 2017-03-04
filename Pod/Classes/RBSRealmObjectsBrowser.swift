@@ -149,7 +149,12 @@ class RBSRealmObjectsBrowser: UITableViewController {
         tableView.allowsMultipleSelectionDuringEditing = true
         isEditMode = !isEditMode
         if !isEditMode {
-            self.deleteObjects()
+            if selectAll {
+                deleteAllObjects()
+            }else {
+                deleteObjects()
+            }
+            
             self.navigationItem.leftBarButtonItem = nil
             self.navigationItem.rightBarButtonItem?.title = "Select"
         } else {
@@ -173,21 +178,30 @@ class RBSRealmObjectsBrowser: UITableViewController {
         
     }
     
+    private func deleteAllObjects() {
+        let realm = try! Realm()
+        try! realm.write {
+            realm.delete(objects)
+        }
+        objects = []
+        tableView.reloadData()
+        
+    }
+    
     private func deleteObjects() {
         let realm = try! Realm()
         if selectedObjects.count > 0 {
             try! realm.write {
                 realm.delete(selectedObjects)
                 selectedObjects = []
-                var newObjects:Array<DynamicObject> = []
-                var result:Results<DynamicObject>
-                for currentRealmObjects in objects {
-                    result = realm.dynamicObjects(currentRealmObjects.objectSchema.className)
-                    newObjects.append(contentsOf:Array(result))
-                }
-                objects = newObjects
-                tableView.reloadData()
             }
+            var newObjects:Array<DynamicObject> = []
+            for currentRealmObjects in objects {
+                let result:Results<DynamicObject> = realm.dynamicObjects(currentRealmObjects.objectSchema.className)
+                newObjects.append(contentsOf:Array(result))
+            }
+            objects = newObjects
+            tableView.reloadData()
         }
     }
 }

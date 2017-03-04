@@ -44,10 +44,10 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let property = properties[indexPath.row] as! Property
-        var stringvalue = self.stringForProperty(property, object: object)
+        let stringvalue = self.stringForProperty(property, object: object)
         var isArray = false
         if property.type == .array {
-            var isArray = true
+             isArray = true
         }
         (cell as! RBSRealmPropertyCell).cellWithAttributes(property.name, propertyValue: stringvalue, editMode:isEditMode, property:property, isArray:isArray)
     }
@@ -70,7 +70,9 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        tableView.deselectRow(at: indexPath, animated: true)
+        if !isEditMode {
+            tableView.deselectRow(at: indexPath, animated: true)
+        }        
         let property = properties[indexPath.row] as! Property
         if property.type == .array {
             let results = object.dynamicList(property.name)
