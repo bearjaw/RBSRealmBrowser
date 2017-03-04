@@ -1,3 +1,8 @@
+## RBSRealmBrowser v 0.1.6
+- Improved delete functionality 
+- minor layout and logic fixes
+- added quick actions
+
 ## RBSRealmBrowser v 0.1.5
 - Added possibilty to delete one or multiple objects. 
 - minor layout and logic fixes
