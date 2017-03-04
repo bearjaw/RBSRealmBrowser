@@ -44,10 +44,10 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let property = properties[indexPath.row] as! Property
-        var stringvalue = self.stringForProperty(property, object: object)
+        let stringvalue = self.stringForProperty(property, object: object)
         var isArray = false
         if property.type == .array {
-            var isArray = true
+             isArray = true
         }
         (cell as! RBSRealmPropertyCell).cellWithAttributes(property.name, propertyValue: stringvalue, editMode:isEditMode, property:property, isArray:isArray)
     }

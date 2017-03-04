@@ -14,6 +14,7 @@ class SampleView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         label.text = "Tap open to preview some preset objects"
+        label.numberOfLines = 0
         self.addSubview(label)
     }
 
@@ -25,9 +26,7 @@ class SampleView: UIView {
         super.layoutSubviews()
 
         let borderOffset: CGFloat = 10.0
-
-        label.frame = (CGRect(x: 0, y: 0, width: self.bounds.size.width-2*borderOffset, height: 2000))
-            label.sizeToFit()
-        label.frame = (CGRect(x: (self.bounds.size.width-label.bounds.size.width)/2, y:(self.bounds.size.height-label.bounds.size.height)/2, width: label.bounds.size.width, height:label.bounds.size.height ))
+        let labelSize = label.sizeThatFits(CGSize(width: self.bounds.size.width - 2*borderOffset, height: 2000.0))
+        label.frame = (CGRect(x: (self.bounds.size.width-labelSize.width)/2, y:(self.bounds.size.height-label.bounds.size.height)/2, width: labelSize.width, height:labelSize.height))
     }
 }

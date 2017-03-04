@@ -74,14 +74,12 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         var labelSize = propertyTitle.sizeThatFits(CGSize(width: self.bounds.size.width - 2*borderOffset, height: 2000.0))
         propertyTitle.frame = (CGRect(x: borderOffset, y: (self.bounds.size.height-labelSize.height)/2.0, width: labelSize.width, height: labelSize.height))
         
-        let posX = propertyTitle.frame.origin.x + propertyTitle.bounds.size.width
         let textFieldWidth = self.bounds.size.width-4*borderOffset-labelSize.width
         
         
-        if let text = propertyValueLabel.text {
+        if  (propertyValueLabel.text?.characters.count)! > 0 {
             labelSize = propertyValueLabel.sizeThatFits(CGSize(width: textFieldWidth, height: 2000.0))
             propertyValueLabel.frame = (CGRect(x:self.bounds.size.width-labelSize.width-borderOffset, y: (self.bounds.size.height-labelSize.height)/2, width:labelSize.width, height: labelSize.height))
-            
         }else {
             let labelWidth = self.bounds.size.width-propertyTitle.bounds.size.width-2*borderOffset
             labelSize = propertyValue.sizeThatFits(CGSize(width: labelWidth, height: 2000.0))
