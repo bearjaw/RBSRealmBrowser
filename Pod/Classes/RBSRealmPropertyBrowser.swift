@@ -70,7 +70,9 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        tableView.deselectRow(at: indexPath, animated: true)
+        if !isEditMode {
+            tableView.deselectRow(at: indexPath, animated: true)
+        }        
         let property = properties[indexPath.row] as! Property
         if property.type == .array {
             let results = object.dynamicList(property.name)

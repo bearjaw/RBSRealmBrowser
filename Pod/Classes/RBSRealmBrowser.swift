@@ -118,7 +118,7 @@ public class RBSRealmBrowser: UITableViewController {
     @available(iOS 9.0, *)
     public static func addBrowserQuickAction() -> UIApplicationShortcutItem {
         let browserShortcut = UIMutableApplicationShortcutItem(type: "org.cocoapods.bearjaw.RBSRealmBrowser.open",
-                                                         localizedTitle: "Open Realm browser",
+                                                         localizedTitle: "Realm browser",
                                                          localizedSubtitle: "",
                                                          icon: UIApplicationShortcutIcon(type: .search),
                                                          userInfo: nil
@@ -129,6 +129,8 @@ public class RBSRealmBrowser: UITableViewController {
 
     /**
      Dismisses the browser
+     
+     - parameter id: a sender
      */
     func dismissBrowser(_ id: AnyObject) {
         self.dismiss(animated: true) {
