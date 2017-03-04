@@ -98,12 +98,33 @@ public class RBSRealmBrowser: UITableViewController {
 
      realmBroswerForRealmAtPath now uses the convenience initialiser init(fileURL: NSURL)
 
-     - parameter path: String
+     - parameter url: URL
      - returns an instance of realmBrowser
      */
-    public static func realmBroswerForRealmAtPath(_ path: String) -> AnyObject {
-        let realm = try! Realm(fileURL: URL(fileURLWithPath:path))
-        return self.realmBrowserForRealm(realm)
+    public static func realmBroswerForRealmURL(_ url: URL) -> AnyObject {
+        let realm = try! Realm(fileURL: url)
+        return self.realmBrowserForRealm(realm) as! RBSRealmBrowser
+    }
+
+    
+    /**
+     Use this function to add the browser quick action to your shortcut
+     items array. This is a dynamic shortcut and can be added at runtime.
+     Use in AppDelegate
+     
+     - Availability: iOS 9.0
+     - Returns: UIApplicationShortcutItem to open the realmBrowser from your homescreen
+     */
+    @available(iOS 9.0, *)
+    public static func addBrowserQuickAction() -> UIApplicationShortcutItem {
+        let browserShortcut = UIMutableApplicationShortcutItem(type: "org.cocoapods.bearjaw.RBSRealmBrowser.open",
+                                                         localizedTitle: "Open Realm browser",
+                                                         localizedSubtitle: "",
+                                                         icon: UIApplicationShortcutIcon(type: .search),
+                                                         userInfo: nil
+        )
+        
+        return browserShortcut
     }
 
     /**

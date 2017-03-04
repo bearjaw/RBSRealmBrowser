@@ -15,7 +15,7 @@ EXTERNAL SOURCES:
     :path: ../
 
 SPEC CHECKSUMS:
-  RBSRealmBrowser: 766ea385298c2f89361e678abbe2c78f3fbbd0ab
+  RBSRealmBrowser: ef97c1dda2ee37f9804990ab4c199558deff2951
   Realm: e08d60b0048ccccd3949c8c28a92c4db5712d7e9
   RealmSwift: 30d49739ccb3385d201242736ca4dda56aec9dfc
 
