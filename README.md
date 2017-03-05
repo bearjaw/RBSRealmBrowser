@@ -115,14 +115,14 @@ pod "RBSRealmBrowser"
 ## Future features
 What's on the roadmap... 🚀
 - [ ] Tests
-- [ ] Be able to edit/create objects
+- [ ] Be able to create objects
 - [ ] Clean up
 - [ ] Live reload the browser if updates happen in the background
 - [ ] Layout improvements
 - [ ] Search 
 
 ## Documentation
-Available method documentation [here](http://cocoadocs.org/docsets/RBSRealmBrowser/0.1.5/)
+Available method documentation [here](http://cocoadocs.org/docsets/RBSRealmBrowser/0.1.6/)
 
 ## RealmBrowser for Android
 
