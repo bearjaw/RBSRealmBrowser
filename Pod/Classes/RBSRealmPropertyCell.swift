@@ -18,6 +18,10 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .none
+        propertyValueTextField.delegate = self
+        propertyValueTextField.returnKeyType = .done
+        propertyValueTextField.backgroundColor = .white
+        propertyValueTextField.textAlignment = .right
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -45,11 +49,6 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
             propertyValueTextField.keyboardType = UIKeyboardType.numberPad
         }
         
-        propertyValueTextField.delegate = self
-        propertyValueTextField.backgroundColor = .black
-        propertyValueTextField.returnKeyType = .done
-        propertyValueTextField.backgroundColor = .white
-        propertyValueTextField.textAlignment = .right
         propertyValueTextField.text = propertyValue
         
         contentView.addSubview(self.propertyValueTextField)
@@ -62,13 +61,12 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         super.layoutSubviews()
         let borderOffset: CGFloat = 20.0
         
+        var labelSize = propertyTitle.sizeThatFits(CGSize(width: contentView.bounds.size.width - 2*borderOffset, height: 2000.0))
+        propertyTitle.frame = (CGRect(x: borderOffset, y: (contentView.bounds.size.height-labelSize.height)/2.0, width: labelSize.width, height: labelSize.height))
         
-        var labelSize = propertyTitle.sizeThatFits(CGSize(width: self.bounds.size.width - 2*borderOffset, height: 2000.0))
-        propertyTitle.frame = (CGRect(x: borderOffset, y: (self.bounds.size.height-labelSize.height)/2.0, width: labelSize.width, height: labelSize.height))
-        
-        let labelWidth = self.bounds.size.width-propertyTitle.bounds.size.width-2*borderOffset
+        let labelWidth = contentView.bounds.size.width-propertyTitle.bounds.size.width-2*borderOffset
         labelSize = propertyValueTextField.sizeThatFits(CGSize(width: labelWidth, height: 2000.0))
-        propertyValueTextField.frame = (CGRect(x:self.bounds.size.width-labelWidth-borderOffset, y: (self.bounds.size.height-labelSize.height)/2, width:labelWidth, height: labelSize.height))
+        propertyValueTextField.frame = (CGRect(x:contentView.bounds.size.width-labelWidth-borderOffset, y: (contentView.bounds.size.height-labelSize.height)/2, width:labelWidth, height: labelSize.height))
     }
     
     //MARK: private method
@@ -119,7 +117,6 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         if  property.type != .bool {
             self.delegate.textFieldDidFinishEdit(textField.text!, property: self.property)
         }
-        
     }
 }
 
