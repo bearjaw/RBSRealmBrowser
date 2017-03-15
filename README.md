@@ -1,20 +1,28 @@
 # RBSRealmBrowser
 
+[![CI Status](http://img.shields.io/travis/bearjaw/RBSRealmBrowser.svg?style=flat)](https://travis-ci.org/bearjaw/RBSRealmBrowser)
+[![Version](https://img.shields.io/cocoapods/v/RBSRealmBrowser.svg?style=flat)](http://cocoapods.org/pods/RBSRealmBrowser)
+[![License](https://img.shields.io/cocoapods/l/RBSRealmBrowser.svg?style=flat)](http://cocoapods.org/pods/RBSRealmBrowser)
+[![Platform](https://img.shields.io/cocoapods/p/RBSRealmBrowser.svg?style=flat)](http://cocoapods.org/pods/RBSRealmBrowser)
+
 RBSRealmBrowser is based on NBNRealmBrowser by  [Nerdish by Nature](https://github.com/nerdishbynature/NBNRealmBrowser). It's a simple lightweight browser that let's you inspect which objects currently are in your realm database on your iOS device or simulator.
 Simply edit your existing object's properties' values by switching into edit mode.
 
-Currently the following types are supported:
+
+## Features
+
+- quickly browse realm objects
+- edit realm objects
+- delete realm objects
+- quick actions(start the browser from the homescreen)
+
+For editing objects these types are currently supported:
 
 - Bool
 - String
 - Int
 - Float
 - Double
-
-[![CI Status](http://img.shields.io/travis/bearjaw/RBSRealmBrowser.svg?style=flat)](https://travis-ci.org/bearjaw/RBSRealmBrowser)
-[![Version](https://img.shields.io/cocoapods/v/RBSRealmBrowser.svg?style=flat)](http://cocoapods.org/pods/RBSRealmBrowser)
-[![License](https://img.shields.io/cocoapods/l/RBSRealmBrowser.svg?style=flat)](http://cocoapods.org/pods/RBSRealmBrowser)
-[![Platform](https://img.shields.io/cocoapods/p/RBSRealmBrowser.svg?style=flat)](http://cocoapods.org/pods/RBSRealmBrowser)
 
 ![](./screenflow/RBSRealmBrowser.gif)
 
@@ -53,9 +61,38 @@ realmBrowser()
 // get the RealmBrowser for Realm 
 realmBrowserForRealm(realm:Realm)
 
-// get the RealmBrowser for Realm at a specific path
-realmBroswerForRealmAtPath(path:String)
+// get the RealmBrowser for Realm at a specific url
+realmBroswerForRealmAtURL(path:String)
 ```
+
+## Quick actions
+
+This latest version supports dynamic quick actions on iOS 9.0 and above.
+To use the quick action add this code to your AppDelegate applicationDidFinishLaunching(:) method.
+
+```swift
+// add the realmbrowser quick action to your shortcut items array
+   if #available(iOS 9.0, *) {
+       application.shortcutItems = [RBSRealmBrowser.addBrowserQuickAction()]
+   } else {
+       // Fallback on earlier versions
+   }
+```
+
+Now handle the action: 
+
+```swift
+    func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
+        
+        // handle the quick action
+        let rb = RBSRealmBrowser.realmBrowser()
+        let vc = (window?.rootViewController)! as UIViewController
+        vc.present(rb as! UIViewController, animated: true)
+        
+    }
+```
+
+
 
 ## Try
 
@@ -78,14 +115,14 @@ pod "RBSRealmBrowser"
 ## Future features
 What's on the roadmap... 🚀
 - [ ] Tests
-- [ ] Be able to edit/create objects
+- [ ] Be able to create objects
 - [ ] Clean up
 - [ ] Live reload the browser if updates happen in the background
 - [ ] Layout improvements
 - [ ] Search 
 
 ## Documentation
-Available method documentation [here](http://cocoadocs.org/docsets/RBSRealmBrowser/0.1.5/)
+Available method documentation [here](http://cocoadocs.org/docsets/RBSRealmBrowser/0.1.6/)
 
 ## RealmBrowser for Android
 
