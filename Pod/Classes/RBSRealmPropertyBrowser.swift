@@ -84,9 +84,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
                 let objectsViewController = RBSRealmObjectsBrowser(objects: objects)
                 self.navigationController?.pushViewController(objectsViewController, animated: true)
             }
-            
         }
-        
     }
     
     func textFieldDidFinishEdit(_ input: String, property: Property) {
@@ -154,7 +152,6 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
             } else {
                 propertyValue = "true"
             }
-            
             break
         case .int, .float, .double:
             propertyValue = String(describing: object[property.name] as! NSNumber)
@@ -164,7 +161,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
             break
         case .array:
             let array = object.dynamicList(property.name)
-            propertyValue = String.localizedStringWithFormat("%li objects", array.count)
+            propertyValue = String.localizedStringWithFormat("%li objects  ->", array.count)
             break
         case .any, .object:
             let data =  object[property.name]

@@ -34,6 +34,7 @@ class ViewController: UIViewController {
                 realm.add(person)
                 let cat = Cat()
                 cat.catName = catNames[i]
+                cat.isTired = true
                 cat.toys.append(person)
                 cat.toys.append(person)
                 cat.toys.append(person)
