@@ -102,6 +102,7 @@ To try the example project, clone the repo, and run `pod try` from the Example d
 
 - Xcode 8
 - iOS 8.0
+- Swift 3.0 for any release after 0.1.4
 
 
 ## Installation
@@ -122,7 +123,7 @@ What's on the roadmap... 🚀
 - [ ] Search 
 
 ## Documentation
-Available method documentation [here](http://cocoadocs.org/docsets/RBSRealmBrowser/0.1.6/)
+Available method documentation [here](http://cocoadocs.org/docsets/RBSRealmBrowser/0.1.7/)
 
 ## RealmBrowser for Android
 
