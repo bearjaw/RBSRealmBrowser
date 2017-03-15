@@ -10,7 +10,7 @@ import UIKit
 import RealmSwift
 
 
-class RBSRealmObjectsBrowser: UITableViewController {
+class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingDelegate {
     
     private var objects: Array <Object>
     private var schema: ObjectSchema
@@ -48,7 +48,24 @@ class RBSRealmObjectsBrowser: UITableViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         tableView.reloadData()
+    }
+    
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        if #available(iOS 9.0, *) {
+            switch traitCollection.forceTouchCapability {
+            case .available:
+                registerForPreviewing(with: self, sourceView: tableView)
+                break
+            case .unavailable:
+                break
+            case .unknown:
+                break
+            }
+        }
     }
     
     //MARK: TableView Datasource & Delegate
@@ -204,4 +221,28 @@ class RBSRealmObjectsBrowser: UITableViewController {
             tableView.reloadData()
         }
     }
+    
+    //MARK: UIViewControllerPreviewingDelegate
+    
+    @available(iOS 9.0, *)
+    public func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+        guard let indexPath = tableView?.indexPathForRow(at:location) else { return nil }
+        
+        guard let cell = tableView?.cellForRow(at:indexPath) else { return nil }
+        
+        let detailVC =  RBSRealmPropertyBrowser(object:self.objects[indexPath.row])
+        
+        
+        detailVC.preferredContentSize = CGSize(width: 0.0, height: 300)
+        
+        previewingContext.sourceRect = cell.frame
+        
+        return detailVC;
+    }
+    
+    @available(iOS 9.0, *)
+    public func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+        navigationController?.pushViewController(viewControllerToCommit, animated: true)
+    }
+    
 }
