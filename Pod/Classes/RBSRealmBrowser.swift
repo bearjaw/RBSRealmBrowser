@@ -179,7 +179,7 @@ public class RBSRealmBrowser: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier) as! RBSRealmObjectBrowserCell
 
         let objectSchema = objectPonsos[indexPath.row]
-        let results = self.resultsForObjectSChemaAtIndex(indexPath.row)
+        let results = self.resultsForObjectSchemaAtIndex(indexPath.row)
 
         cell.realmBrowserObjectAttributes(objectSchema.objectClassName!, objectsCount: String(format: "Objects in Realm = %ld", results.count))
 
@@ -224,8 +224,8 @@ public class RBSRealmBrowser: UITableViewController {
 
      */
     public override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView .deselectRow(at: indexPath, animated: true)
-        let results = self.resultsForObjectSChemaAtIndex(indexPath.row)
+        tableView.deselectRow(at: indexPath, animated: true)
+        let results = self.resultsForObjectSchemaAtIndex(indexPath.row)
         if results.count > 0 {
             let vc = RBSRealmObjectsBrowser(objects: results)
             self.navigationController?.pushViewController(vc, animated: true)
@@ -240,9 +240,9 @@ public class RBSRealmBrowser: UITableViewController {
      - parameter index: Int
      - return all objects for a an Realm object at an index
      */
-    private func resultsForObjectSChemaAtIndex(_ index: Int)-> Array<Object> {
-        let objectSchema = objectsSchema[index]
-        let results = try! Realm().dynamicObjects(objectSchema.className)
+    private func resultsForObjectSchemaAtIndex(_ index: Int)-> Array<Object> {
+        let ponso = objectPonsos[index]
+        let results = try! Realm().dynamicObjects(ponso.objectClassName!)
         return Array(results)
     }
 }
