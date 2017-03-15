@@ -22,6 +22,13 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         propertyValueTextField.returnKeyType = .done
         propertyValueTextField.backgroundColor = .white
         propertyValueTextField.textAlignment = .right
+        
+        let spacing = UIView(frame:CGRect(x:0.0, y:0.0, width:10.0, height:0.0))
+        propertyValueTextField.leftViewMode = .always
+        propertyValueTextField.leftView = spacing
+        propertyValueTextField.rightViewMode = .always
+        propertyValueTextField.rightView = spacing
+        UITextField.appearance().tintColor = UIColor(red:0.35, green:0.34, blue:0.62, alpha:1.0)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -50,6 +57,12 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         }
         
         propertyValueTextField.text = propertyValue
+        if editMode {
+            propertyValueTextField.layer.borderColor = UIColor(red:0.35, green:0.34, blue:0.62, alpha:1.0).cgColor
+            propertyValueTextField.layer.borderWidth = 1.0
+        }else {
+            propertyValueTextField.layer.borderWidth = 0.0
+        }
         
         contentView.addSubview(self.propertyValueTextField)
         self.property = property
@@ -64,9 +77,9 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         var labelSize = propertyTitle.sizeThatFits(CGSize(width: contentView.bounds.size.width - 2*borderOffset, height: 2000.0))
         propertyTitle.frame = (CGRect(x: borderOffset, y: (contentView.bounds.size.height-labelSize.height)/2.0, width: labelSize.width, height: labelSize.height))
         
-        let labelWidth = contentView.bounds.size.width-propertyTitle.bounds.size.width-2*borderOffset
+        let labelWidth = contentView.bounds.size.width-propertyTitle.bounds.size.width-4*borderOffset
         labelSize = propertyValueTextField.sizeThatFits(CGSize(width: labelWidth, height: 2000.0))
-        propertyValueTextField.frame = (CGRect(x:contentView.bounds.size.width-labelWidth-borderOffset, y: (contentView.bounds.size.height-labelSize.height)/2, width:labelWidth, height: labelSize.height))
+        propertyValueTextField.frame = (CGRect(x:contentView.bounds.size.width-labelWidth-borderOffset, y: (contentView.bounds.size.height-labelSize.height - borderOffset)/2, width:labelWidth, height: labelSize.height + borderOffset))
     }
     
     //MARK: private method

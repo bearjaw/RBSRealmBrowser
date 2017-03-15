@@ -195,7 +195,6 @@ public class RBSRealmBrowser: UITableViewController {
 
      - return number of cells per section
      */
-
     override public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return objectPonsos.count
     }
@@ -211,7 +210,6 @@ public class RBSRealmBrowser: UITableViewController {
 
      - return height of a single tableView row
      */
-
     override public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
     }
