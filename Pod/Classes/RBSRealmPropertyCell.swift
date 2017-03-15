@@ -11,13 +11,24 @@ import RealmSwift
 
 class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
     private var propertyTitle = UILabel()
-    private var propertyValue = UITextField()
-    private var propertyValueLabel = UILabel()
+    private var propertyValueTextField = UITextField()
     private var property: Property! = nil
     var delegate: RBSRealmPropertyCellDelegate! = nil
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        selectionStyle = .none
+        propertyValueTextField.delegate = self
+        propertyValueTextField.returnKeyType = .done
+        propertyValueTextField.backgroundColor = .white
+        propertyValueTextField.textAlignment = .right
+        
+        let spacing = UIView(frame:CGRect(x:0.0, y:0.0, width:10.0, height:0.0))
+        propertyValueTextField.leftViewMode = .always
+        propertyValueTextField.leftView = spacing
+        propertyValueTextField.rightViewMode = .always
+        propertyValueTextField.rightView = spacing
+        UITextField.appearance().tintColor = UIColor(red:0.35, green:0.34, blue:0.62, alpha:1.0)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -26,65 +37,49 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        propertyValue.text = ""
+        propertyValueTextField.text = ""
         propertyTitle.text = ""
-        propertyTitle.removeFromSuperview()
     }
     
     func cellWithAttributes(_ propertyTitle: String, propertyValue: String, editMode: Bool, property: Property, isArray:Bool) {
         self.propertyTitle = self.labelWithAttributes(14, weight:0.3, text: propertyTitle)
-        self.contentView.addSubview(self.propertyTitle)
-        
+        contentView.addSubview(self.propertyTitle)
         
         if isArray {
-            propertyValueLabel = self.labelWithAttributes(14, weight:0.3, text: propertyValue)
-            self.contentView.addSubview(propertyValueLabel)
-        } else {
-            self.propertyValue.isUserInteractionEnabled = editMode
-            self.isUserInteractionEnabled = editMode
-            if property.type == .bool {
-                //            self.propertyValue.userInteractionEnabled = false
-            }
-            if property.type == .float || property.type == .double {
-                self.propertyValue.keyboardType = UIKeyboardType.decimalPad
-            } else if property.type == .int {
-                self.propertyValue.keyboardType = UIKeyboardType.numberPad
-            }
-            
-            self.propertyValue.delegate = self
-            self.propertyValue.backgroundColor = .black
-            self.propertyValue.returnKeyType = .done
-            self.propertyValue.backgroundColor = .white
-            self.propertyValue.textAlignment = .right
-            
-            self.propertyValue.text = propertyValue
-            
-            self.contentView.addSubview(self.propertyValue)
+            propertyValueTextField.isUserInteractionEnabled = false
         }
+        self.propertyValueTextField.isUserInteractionEnabled = editMode
+        
+        if property.type == .float || property.type == .double {
+            propertyValueTextField.keyboardType = UIKeyboardType.decimalPad
+        } else if property.type == .int {
+            propertyValueTextField.keyboardType = UIKeyboardType.numberPad
+        }
+        
+        propertyValueTextField.text = propertyValue
+        if editMode {
+            propertyValueTextField.layer.borderColor = UIColor(red:0.35, green:0.34, blue:0.62, alpha:1.0).cgColor
+            propertyValueTextField.layer.borderWidth = 1.0
+        }else {
+            propertyValueTextField.layer.borderWidth = 0.0
+        }
+        
+        contentView.addSubview(self.propertyValueTextField)
         self.property = property
-        self.setNeedsLayout()
-        self.isUserInteractionEnabled = true
+        setNeedsLayout()
+        isUserInteractionEnabled = true
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
         let borderOffset: CGFloat = 20.0
         
+        var labelSize = propertyTitle.sizeThatFits(CGSize(width: contentView.bounds.size.width - 2*borderOffset, height: 2000.0))
+        propertyTitle.frame = (CGRect(x: borderOffset, y: (contentView.bounds.size.height-labelSize.height)/2.0, width: labelSize.width, height: labelSize.height))
         
-        var labelSize = propertyTitle.sizeThatFits(CGSize(width: self.bounds.size.width - 2*borderOffset, height: 2000.0))
-        propertyTitle.frame = (CGRect(x: borderOffset, y: (self.bounds.size.height-labelSize.height)/2.0, width: labelSize.width, height: labelSize.height))
-        
-        let textFieldWidth = self.bounds.size.width-4*borderOffset-labelSize.width
-        
-        
-        if  let text = propertyValueLabel.text {
-            labelSize = propertyValueLabel.sizeThatFits(CGSize(width: textFieldWidth, height: 2000.0))
-            propertyValueLabel.frame = (CGRect(x:self.bounds.size.width-labelSize.width-borderOffset, y: (self.bounds.size.height-labelSize.height)/2, width:labelSize.width, height: labelSize.height))
-        }else {
-            let labelWidth = self.bounds.size.width-propertyTitle.bounds.size.width-2*borderOffset
-            labelSize = propertyValue.sizeThatFits(CGSize(width: labelWidth, height: 2000.0))
-            propertyValue.frame = (CGRect(x:self.bounds.size.width-labelWidth-borderOffset, y: (self.bounds.size.height-labelSize.height)/2, width:labelWidth, height: labelSize.height))
-        }
+        let labelWidth = contentView.bounds.size.width-propertyTitle.bounds.size.width-4*borderOffset
+        labelSize = propertyValueTextField.sizeThatFits(CGSize(width: labelWidth, height: 2000.0))
+        propertyValueTextField.frame = (CGRect(x:contentView.bounds.size.width-labelWidth-borderOffset, y: (contentView.bounds.size.height-labelSize.height - borderOffset)/2, width:labelWidth, height: labelSize.height + borderOffset))
     }
     
     //MARK: private method
@@ -106,37 +101,35 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         if  property != nil {
             if property.type == .bool {
                 
-                let isEqual = (propertyValue.text! as String == "false")
+                let isEqual = (propertyValueTextField.text! as String == "false")
                 var newValue = "0"
                 if isEqual {
                     newValue = "1"
-                    propertyValue.text = "true"
+                    propertyValueTextField.text = "true"
                 } else {
-                    propertyValue.text = "false"
+                    propertyValueTextField.text = "false"
                 }
                 
                 self.delegate.textFieldDidFinishEdit(newValue, property: self.property)
-                propertyValue.resignFirstResponder()
+                propertyValueTextField.resignFirstResponder()
                 self.setNeedsLayout()
             }
         }
     }
     
-    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
-        propertyValue.isUserInteractionEnabled = false
+        propertyValueTextField.isUserInteractionEnabled = false
         self.delegate.textFieldDidFinishEdit(textField.text!, property: self.property)
         return true
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         textField.resignFirstResponder()
-        propertyValue.isUserInteractionEnabled = false
+        propertyValueTextField.isUserInteractionEnabled = false
         if  property.type != .bool {
             self.delegate.textFieldDidFinishEdit(textField.text!, property: self.property)
         }
-        
     }
 }
 

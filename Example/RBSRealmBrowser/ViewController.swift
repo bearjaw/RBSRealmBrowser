@@ -23,18 +23,22 @@ class ViewController: UIViewController {
         super.viewDidLoad()
 
         let realm = try! Realm()
+        let catNames = ["Garfield", "Lutz", "Squanch"]
+        let humanNames = ["Morty", "Rick", "Birdperson"]
+        
         var i = 0
-        while i < 5 {
+        while i < 3 {
             try! realm.write() {
-                let object = RealmObject1()
-                object.aProperty = String(format:"Number %i", i)
-                realm.add(object)
-                let object2 = RealmObject2()
-                object2.aProperty = String(format:"Number %i", i)
-                object2.objects.append(object)
-                object2.objects.append(object)
-                object2.objects.append(object)
-                realm.add(object2)
+                let person = Person()
+                person.personName = humanNames[i]
+                realm.add(person)
+                let cat = Cat()
+                cat.catName = catNames[i]
+                cat.isTired = true
+                cat.toys.append(person)
+                cat.toys.append(person)
+                cat.toys.append(person)
+                realm.add(cat)
             }
             i += 1
         }

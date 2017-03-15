@@ -47,7 +47,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
         let stringvalue = self.stringForProperty(property, object: object)
         var isArray = false
         if property.type == .array {
-             isArray = true
+            isArray = true
         }
         (cell as! RBSRealmPropertyCell).cellWithAttributes(property.name, propertyValue: stringvalue, editMode:isEditMode, property:property, isArray:isArray)
     }
@@ -72,7 +72,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if !isEditMode {
             tableView.deselectRow(at: indexPath, animated: true)
-        }        
+        }
         let property = properties[indexPath.row] as! Property
         if property.type == .array {
             let results = object.dynamicList(property.name)
@@ -84,9 +84,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
                 let objectsViewController = RBSRealmObjectsBrowser(objects: objects)
                 self.navigationController?.pushViewController(objectsViewController, animated: true)
             }
-            
         }
-        
     }
     
     func textFieldDidFinishEdit(_ input: String, property: Property) {
@@ -106,85 +104,85 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
             try! realm.write {
                 object.setValue(propertyValue, forKey: property.name)
             }
-        break
+            break
         case .int:
-        let range = newValue.rangeOfCharacter(from: letters)
-        if  range == nil {
-            let propertyValue = Int(newValue)!
+            let range = newValue.rangeOfCharacter(from: letters)
+            if  range == nil {
+                let propertyValue = Int(newValue)!
+                try! realm.write {
+                    object.setValue(propertyValue, forKey: property.name)
+                }
+            }
+            break
+        case .float:
+            let propertyValue = Float(newValue)!
             try! realm.write {
                 object.setValue(propertyValue, forKey: property.name)
             }
-        }
-        break
-        case .float:
-        let propertyValue = Float(newValue)!
-        try! realm.write {
-            object.setValue(propertyValue, forKey: property.name)
-        }
-        break
+            break
         case .double:
-        let propertyValue:Double = Double(newValue)!
-        try! realm.write {
-            object.setValue(propertyValue, forKey: property.name)
-        }
-        break
+            let propertyValue:Double = Double(newValue)!
+            try! realm.write {
+                object.setValue(propertyValue, forKey: property.name)
+            }
+            break
         case .string:
-        let propertyValue:String = newValue as String
-        try! realm.write {
-            object.setValue(propertyValue, forKey: property.name)
-        }
-        break
+            let propertyValue:String = newValue as String
+            try! realm.write {
+                object.setValue(propertyValue, forKey: property.name)
+            }
+            break
         case .array:
-        
-        break
+            
+            break
         case .any, .object:
-        break
+            break
         default:
-        break
-    }
-    
-}
-
-private func stringForProperty(_ property: Property, object: Object) -> String {
-    var propertyValue = ""
-    switch property.type {
-    case .bool:
-        if object[property.name] as! Bool == false {
-            propertyValue = "false"
-        } else {
-            propertyValue = "true"
+            break
         }
         
-        break
-    case .int, .float, .double:
-        propertyValue = String(describing: object[property.name] as! NSNumber)
-        break
-    case .string:
-        propertyValue = object[property.name] as! String
-        break
-    case .array:
-        let array = object.dynamicList(property.name)
-        propertyValue = String.localizedStringWithFormat("%li objects", array.count)
-        break
-    case .any, .object:
-        let data =  object[property.name]
-        propertyValue = String((data as AnyObject).description)
-        break
-    default:
-        return ""
     }
-    return propertyValue
     
-    
-}
-
-func actionToggleEdit(_ id: AnyObject) {
-    isEditMode = !isEditMode
-    if isEditMode {
-        (id as! UIBarButtonItem).title = "Finish"
-    } else {
-        (id as! UIBarButtonItem).title = "Edit"
+    private func stringForProperty(_ property: Property, object: Object) -> String {
+        var propertyValue = ""
+        switch property.type {
+        case .bool:
+            if object[property.name] as! Bool == false {
+                propertyValue = "false"
+            } else {
+                propertyValue = "true"
+            }
+            break
+        case .int, .float, .double:
+            propertyValue = String(describing: object[property.name] as! NSNumber)
+            break
+        case .string:
+            propertyValue = object[property.name] as! String
+            break
+        case .array:
+            let array = object.dynamicList(property.name)
+            propertyValue = String.localizedStringWithFormat("%li objects  ->", array.count)
+            break
+        case .any, .object:
+            let data =  object[property.name]
+            propertyValue = String((data as AnyObject).description)
+            break
+        default:
+            return ""
+        }
+        return propertyValue
+        
+        
     }
-    tableView.reloadData()
-}
+    
+    func actionToggleEdit(_ id: AnyObject) {
+        isEditMode = !isEditMode
+        if isEditMode {
+            (id as! UIBarButtonItem).title = "Finish"
+        } else {
+            (id as! UIBarButtonItem).title = "Edit"
+        }
+        tableView.reloadData()
+    }
+    
 }

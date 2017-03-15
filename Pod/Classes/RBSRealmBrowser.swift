@@ -31,7 +31,9 @@ import RealmSwift
 public class RBSRealmBrowser: UITableViewController {
 
     private let cellIdentifier = "RBSREALMBROWSERCELL"
-    private var objectsSchema: Array<AnyObject> = []
+    private var objectsSchema: Array<ObjectSchema> = []
+    private var objectPonsos: Array<RBSObjectPonso> = []
+    private var ascending = false
 
     /**
      Initialises the UITableViewController, sets title, registers datasource & delegates & cells
@@ -47,11 +49,19 @@ public class RBSRealmBrowser: UITableViewController {
         self.tableView.dataSource = self
         tableView.tableFooterView = UIView()
         self.tableView.register(RBSRealmObjectBrowserCell.self, forCellReuseIdentifier: cellIdentifier)
+        
+        var mutableObjectPonsos:[RBSObjectPonso] = []
         for object in try! Realm().schema.objectSchema {
+            let objectPonso = RBSObjectPonso()
+            objectPonso.objectClassName = object.className
             objectsSchema.append(object)
+            mutableObjectPonsos.append(objectPonso)
         }
-        let bbi = UIBarButtonItem(title: "Dismiss", style: .plain, target: self, action: #selector(RBSRealmBrowser.dismissBrowser))
-        self.navigationItem.rightBarButtonItem = bbi
+        objectPonsos = mutableObjectPonsos
+        
+        let bbiDismiss = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(RBSRealmBrowser.dismissBrowser))
+        let bbiSort = UIBarButtonItem(title: "Sort A-Z", style: .plain, target: self, action: #selector(RBSRealmBrowser.sortObjects))
+        self.navigationItem.rightBarButtonItems = [bbiDismiss, bbiSort]
     }
 
     /**
@@ -134,12 +144,24 @@ public class RBSRealmBrowser: UITableViewController {
     /**
      Dismisses the browser
      
-     - parameter id: a sender
+     - parameter id: a UIBarButtonItem
      */
-    func dismissBrowser(_ id: AnyObject) {
-        self.dismiss(animated: true) {
-
-        }
+    func dismissBrowser(_ id:UIBarButtonItem) {
+        self.dismiss(animated: true)
+    }
+    
+    /**
+     Sorts the objects classes by name
+     
+     - parameter id: a UIBarButtonItem
+     */
+    func sortObjects(_ id:UIBarButtonItem) {
+        id.title = ascending == false ?"Sort Z-A": "Sort A-Z"
+        ascending = !ascending
+        let sortDescriptor = NSSortDescriptor(key:"objectClassName", ascending: ascending)
+        let array = NSArray(array: objectPonsos)
+        objectPonsos = array.sortedArray(using: [sortDescriptor]) as! [RBSObjectPonso]
+        tableView.reloadData()
     }
 
     //MARK: TableView Datasource & Delegate
@@ -153,14 +175,13 @@ public class RBSRealmBrowser: UITableViewController {
 
      - returns a UITableViewCell
      */
-
     override public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier) as! RBSRealmObjectBrowserCell
 
-        let objectSchema = self.objectsSchema[indexPath.row] as! ObjectSchema
-        let results = self.resultsForObjectSChemaAtIndex(indexPath.row)
+        let objectSchema = objectPonsos[indexPath.row]
+        let results = self.resultsForObjectSchemaAtIndex(indexPath.row)
 
-        cell.realmBrowserObjectAttributes(objectSchema.className, objectsCount: String(format: "Objects in Realm = %ld", results.count))
+        cell.realmBrowserObjectAttributes(objectSchema.objectClassName!, objectsCount: String(format: "Objects in Realm = %ld", results.count))
 
         return cell
     }
@@ -174,9 +195,8 @@ public class RBSRealmBrowser: UITableViewController {
 
      - return number of cells per section
      */
-
     override public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.objectsSchema.count
+        return objectPonsos.count
     }
 
     /**
@@ -190,7 +210,6 @@ public class RBSRealmBrowser: UITableViewController {
 
      - return height of a single tableView row
      */
-
     override public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
     }
@@ -202,10 +221,9 @@ public class RBSRealmBrowser: UITableViewController {
      - parameter indexPath: NSIndexPath
 
      */
-
     public override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView .deselectRow(at: indexPath, animated: true)
-        let results = self.resultsForObjectSChemaAtIndex(indexPath.row)
+        tableView.deselectRow(at: indexPath, animated: true)
+        let results = self.resultsForObjectSchemaAtIndex(indexPath.row)
         if results.count > 0 {
             let vc = RBSRealmObjectsBrowser(objects: results)
             self.navigationController?.pushViewController(vc, animated: true)
@@ -220,9 +238,9 @@ public class RBSRealmBrowser: UITableViewController {
      - parameter index: Int
      - return all objects for a an Realm object at an index
      */
-    private func resultsForObjectSChemaAtIndex(_ index: Int)-> Array<Object> {
-        let objectSchema = objectsSchema[index] as! ObjectSchema
-        let results = try! Realm().dynamicObjects(objectSchema.className)
+    private func resultsForObjectSchemaAtIndex(_ index: Int)-> Array<Object> {
+        let ponso = objectPonsos[index]
+        let results = try! Realm().dynamicObjects(ponso.objectClassName!)
         return Array(results)
     }
 }
