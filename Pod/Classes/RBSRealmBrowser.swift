@@ -60,7 +60,6 @@ public class RBSRealmBrowser: UITableViewController {
         objectPonsos = mutableObjectPonsos
         
         let bbiDismiss = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(RBSRealmBrowser.dismissBrowser))
-//        let bbiDismiss = UIBarButtonItem(title: "Dismiss", style: .plain, target: self, action:#selector(RBSRealmBrowser.dismissBrowser))
         let bbiSort = UIBarButtonItem(title: "Sort A-Z", style: .plain, target: self, action: #selector(RBSRealmBrowser.sortObjects))
         self.navigationItem.rightBarButtonItems = [bbiDismiss, bbiSort]
     }
@@ -157,8 +156,8 @@ public class RBSRealmBrowser: UITableViewController {
      - parameter id: a UIBarButtonItem
      */
     func sortObjects(_ id:UIBarButtonItem) {
+        id.title = ascending == false ?"Sort Z-A": "Sort A-Z"
         ascending = !ascending
-        id.title = "Sort Z-A"
         let sortDescriptor = NSSortDescriptor(key:"objectClassName", ascending: ascending)
         let array = NSArray(array: objectPonsos)
         objectPonsos = array.sortedArray(using: [sortDescriptor]) as! [RBSObjectPonso]
@@ -176,7 +175,6 @@ public class RBSRealmBrowser: UITableViewController {
 
      - returns a UITableViewCell
      */
-
     override public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier) as! RBSRealmObjectBrowserCell
 
@@ -225,7 +223,6 @@ public class RBSRealmBrowser: UITableViewController {
      - parameter indexPath: NSIndexPath
 
      */
-
     public override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView .deselectRow(at: indexPath, animated: true)
         let results = self.resultsForObjectSChemaAtIndex(indexPath.row)
