@@ -10,7 +10,6 @@ import UIKit
 import RBSRealmBrowser
 import RealmSwift
 
-
 class ViewController: UIViewController {
 
     private var sampleView = SampleView()
@@ -25,7 +24,6 @@ class ViewController: UIViewController {
         let realm = try! Realm()
         let catNames = ["Garfield", "Lutz", "Squanch"]
         let humanNames = ["Morty", "Rick", "Birdperson"]
-        
         var i = 0
         while i < 3 {
             try! realm.write() {
@@ -43,14 +41,13 @@ class ViewController: UIViewController {
             i += 1
         }
 
-
         let bbi = UIBarButtonItem(title: "Open", style: UIBarButtonItemStyle.plain, target: self, action: #selector(ViewController.openBrowser))
         self.navigationItem.rightBarButtonItem = bbi
     }
 
     func openBrowser(_ id: AnyObject) {
-        let rb = RBSRealmBrowser.realmBrowser()
-        self.present(rb as! UIViewController, animated: true) {
+        let rb:UIViewController = RBSRealmBrowser.realmBrowser()
+        self.present(rb, animated: true) {
 
         }
     }
