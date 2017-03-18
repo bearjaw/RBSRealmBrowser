@@ -1,3 +1,19 @@
+## RBSRealmBrowser v 0.1.7
+- Bug fixes
+    - fixed delete
+
+- Layout improvements
+    - added realm colors (whoop)
+    - show textField borders when in edit mode
+    - minor other layout improvements (like propertyValues not being displayed)
+
+- New Features
+    - added peek & pop (for properties) for supported devices
+    - sort your object classes by class name
+
+- General
+    - using real world objects for pod try
+
 ## RBSRealmBrowser v 0.1.6
 - Improved delete functionality 
 - minor layout and logic fixes

@@ -57,7 +57,7 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         }
         
         propertyValueTextField.text = propertyValue
-        if editMode {
+        if editMode && !isArray {
             propertyValueTextField.layer.borderColor = UIColor(red:0.35, green:0.34, blue:0.62, alpha:1.0).cgColor
             propertyValueTextField.layer.borderWidth = 1.0
         }else {

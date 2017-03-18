@@ -96,6 +96,10 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
         return objects.count
     }
     
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    
     override  func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60.0
     }
@@ -170,6 +174,11 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
                 deleteAllObjects()
             }else {
                 deleteObjects()
+                let realm = try! Realm()
+                let result:Results<DynamicObject> =  realm.dynamicObjects(schema.className)
+                objects = Array(result)
+                let indexSet = IndexSet(integer: 0)
+                tableView.reloadSections(indexSet, with: .top)
             }
             
             self.navigationItem.leftBarButtonItem = nil
@@ -212,13 +221,6 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
                 realm.delete(selectedObjects)
                 selectedObjects = []
             }
-            var newObjects:Array<DynamicObject> = []
-            for currentRealmObjects in objects {
-                let result:Results<DynamicObject> = realm.dynamicObjects(currentRealmObjects.objectSchema.className)
-                newObjects.append(contentsOf:Array(result))
-            }
-            objects = newObjects
-            tableView.reloadData()
         }
     }
     
