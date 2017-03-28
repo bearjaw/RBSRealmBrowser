@@ -10,8 +10,9 @@ import UIKit
 import RealmSwift
 
 class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
-    private var propertyTitle = UILabel()
+    private var labelPropertyTitle = UILabel()
     private var propertyValueTextField = UITextField()
+    private var labelPropertyType = UILabel()
     private var property: Property! = nil
     var delegate: RBSRealmPropertyCellDelegate! = nil
     
@@ -29,6 +30,11 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         propertyValueTextField.rightViewMode = .always
         propertyValueTextField.rightView = spacing
         UITextField.appearance().tintColor = UIColor(red:0.35, green:0.34, blue:0.62, alpha:1.0)
+        labelPropertyTitle = labelWithAttributes(14, weight:0.3, text: "")
+        contentView.addSubview(self.labelPropertyTitle)
+        labelPropertyType.font = UIFont.systemFont(ofSize: 12.0)
+        labelPropertyType.textColor = .lightGray
+        contentView.addSubview(labelPropertyType)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -38,12 +44,13 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
     override func prepareForReuse() {
         super.prepareForReuse()
         propertyValueTextField.text = ""
-        propertyTitle.text = ""
+        labelPropertyTitle.text = ""
+        labelPropertyType.text = ""
     }
     
     func cellWithAttributes(_ propertyTitle: String, propertyValue: String, editMode: Bool, property: Property, isArray:Bool) {
-        self.propertyTitle = self.labelWithAttributes(14, weight:0.3, text: propertyTitle)
-        contentView.addSubview(self.propertyTitle)
+        labelPropertyTitle.text = propertyTitle
+        labelPropertyType.text = stringForType(type: property.type)
         
         if isArray {
             propertyValueTextField.isUserInteractionEnabled = false
@@ -74,10 +81,12 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         super.layoutSubviews()
         let borderOffset: CGFloat = 20.0
         
-        var labelSize = propertyTitle.sizeThatFits(CGSize(width: contentView.bounds.size.width - 2*borderOffset, height: 2000.0))
-        propertyTitle.frame = (CGRect(x: borderOffset, y: (contentView.bounds.size.height-labelSize.height)/2.0, width: labelSize.width, height: labelSize.height))
+        var labelSize = labelPropertyTitle.sizeThatFits(CGSize(width: contentView.bounds.size.width - 2*borderOffset, height: 2000.0))
+        let labelPropertyTypeSize = labelPropertyType.sizeThatFits(CGSize(width: contentView.bounds.size.width - 2*borderOffset, height: 2000.0))
+        labelPropertyTitle.frame = (CGRect(x: borderOffset, y: (contentView.bounds.size.height - labelSize.height - labelPropertyTypeSize.height - 10.0)/2.0, width: labelSize.width, height: labelSize.height))
+        labelPropertyType.frame = (CGRect(x: borderOffset, y: labelPropertyTitle.frame.origin.y + labelSize.height + 10.0, width: labelPropertyTypeSize.width, height: labelPropertyTypeSize.height))
         
-        let labelWidth = contentView.bounds.size.width-propertyTitle.bounds.size.width-4*borderOffset
+        let labelWidth = contentView.bounds.size.width-labelPropertyTitle.bounds.size.width-4*borderOffset
         labelSize = propertyValueTextField.sizeThatFits(CGSize(width: labelWidth, height: 2000.0))
         propertyValueTextField.frame = (CGRect(x:contentView.bounds.size.width-labelWidth-borderOffset, y: (contentView.bounds.size.height-labelSize.height - borderOffset)/2, width:labelWidth, height: labelSize.height + borderOffset))
     }
@@ -93,6 +102,33 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         }
         label.text = text
         return label
+    }
+    
+    private func stringForType(type:PropertyType) -> String {
+        switch type {
+        case .array:
+            return "Array"
+        case .bool:
+            return "Boolean"
+        case .float:
+            return "Float"
+        case .double:
+            return "Double"
+        case .string:
+            return "String"
+        case .int:
+            return "Int"
+        case .data:
+            return "Data"
+        case .date:
+            return "Date"
+        case .linkingObjects:
+            return "Linking objects"
+        case .object:
+            return "Object"
+        case .any:
+            return "Any"
+        }
     }
     
     //MARK: UITextFieldDelegate
@@ -131,6 +167,7 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
             self.delegate.textFieldDidFinishEdit(textField.text!, property: self.property)
         }
     }
+    
 }
 
 protocol RBSRealmPropertyCellDelegate {
