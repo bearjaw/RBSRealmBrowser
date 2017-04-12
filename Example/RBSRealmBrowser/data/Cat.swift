@@ -9,7 +9,7 @@
 import RealmSwift
 
 class Cat: Object {
-    dynamic var catName:String = ""
+    dynamic var catName = ""
     dynamic var age = 0
     dynamic var isTired = true
     let toys = List<Person>()

@@ -10,7 +10,7 @@ import RealmSwift
 
 class Person: Object {
 
-    dynamic var personName:String = ""
+    dynamic var personName = ""
     dynamic var hungry = false
 
 }

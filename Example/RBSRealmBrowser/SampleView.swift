@@ -27,6 +27,8 @@ class SampleView: UIView {
 
         let borderOffset: CGFloat = 10.0
         let labelSize = label.sizeThatFits(CGSize(width: self.bounds.size.width - 2*borderOffset, height: 2000.0))
-        label.frame = (CGRect(x: (self.bounds.size.width-labelSize.width)/2, y:(self.bounds.size.height-label.bounds.size.height)/2, width: labelSize.width, height:labelSize.height))
+        label.frame = (CGRect(x: (self.bounds.size.width-labelSize.width)/2,
+                              y:(self.bounds.size.height-label.bounds.size.height)/2,
+                              width: labelSize.width, height:labelSize.height))
     }
 }

@@ -89,7 +89,7 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier) as! RBSRealmObjectBrowserCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
         return cell
     }
     override  func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -174,11 +174,15 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
                 deleteAllObjects()
             }else {
                 deleteObjects()
-                let realm = try! Realm()
-                let result:Results<DynamicObject> =  realm.dynamicObjects(schema.className)
-                objects = Array(result)
-                let indexSet = IndexSet(integer: 0)
-                tableView.reloadSections(indexSet, with: .top)
+                do {
+                    let realm = try Realm()
+                    let result:Results<DynamicObject> =  realm.dynamicObjects(schema.className)
+                    objects = Array(result)
+                    let indexSet = IndexSet(integer: 0)
+                    tableView.reloadSections(indexSet, with: .top)
+                }catch {
+                    print("realm could not be instantiated")
+                }
             }
             
             self.navigationItem.leftBarButtonItem = nil
