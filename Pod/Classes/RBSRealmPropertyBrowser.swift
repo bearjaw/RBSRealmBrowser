@@ -95,42 +95,31 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
     //MARK: private Methods
     
     private func savePropertyChangesInRealm(_ newValue: String, property: Property) {
-        
         let letters = CharacterSet.letters
-        let realm = try! Realm()
+
         switch property.type {
         case .bool:
-            let propertyValue:Int = Int(newValue)!
-            try! realm.write {
-                object.setValue(propertyValue, forKey: property.name)
-            }
+            let propertyValue = Int(newValue)!
+            saveValueForProperty(value: propertyValue, propertyName: property.name)
             break
         case .int:
             let range = newValue.rangeOfCharacter(from: letters)
             if  range == nil {
                 let propertyValue = Int(newValue)!
-                try! realm.write {
-                    object.setValue(propertyValue, forKey: property.name)
-                }
+                saveValueForProperty(value: propertyValue, propertyName: property.name)
             }
             break
         case .float:
             let propertyValue = Float(newValue)!
-            try! realm.write {
-                object.setValue(propertyValue, forKey: property.name)
-            }
+            saveValueForProperty(value: propertyValue, propertyName: property.name)
             break
         case .double:
             let propertyValue:Double = Double(newValue)!
-            try! realm.write {
-                object.setValue(propertyValue, forKey: property.name)
-            }
+            saveValueForProperty(value: propertyValue, propertyName: property.name)
             break
         case .string:
             let propertyValue:String = newValue as String
-            try! realm.write {
-                object.setValue(propertyValue, forKey: property.name)
-            }
+            saveValueForProperty(value: propertyValue, propertyName: property.name)
             break
         case .array:
             
@@ -173,6 +162,17 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
         return propertyValue
         
         
+    }
+    
+    private func saveValueForProperty(value:Any, propertyName:String) {
+        do {
+            let realm = try Realm()
+            try realm.write {
+            object.setValue(value, forKey: propertyName)
+            }
+        }catch {
+            
+        }
     }
     
     func actionToggleEdit(_ id: AnyObject) {

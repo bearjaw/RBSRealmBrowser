@@ -64,7 +64,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
         
         // handle the quick action
-        let rb:UIViewController = RBSRealmBrowser.realmBrowser()
+        let rb:UIViewController = RBSRealmBrowser.realmBrowser()!
         let vc = (window?.rootViewController)! as UIViewController
         vc.present(rb, animated: true)
         

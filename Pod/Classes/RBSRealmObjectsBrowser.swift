@@ -174,11 +174,15 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
                 deleteAllObjects()
             }else {
                 deleteObjects()
-                let realm = try! Realm()
-                let result:Results<DynamicObject> =  realm.dynamicObjects(schema.className)
-                objects = Array(result)
-                let indexSet = IndexSet(integer: 0)
-                tableView.reloadSections(indexSet, with: .top)
+                do {
+                    let realm = try Realm()
+                    let result:Results<DynamicObject> =  realm.dynamicObjects(schema.className)
+                    objects = Array(result)
+                    let indexSet = IndexSet(integer: 0)
+                    tableView.reloadSections(indexSet, with: .top)
+                }catch {
+                    print("realm could not be instantiated")
+                }
             }
             
             self.navigationItem.leftBarButtonItem = nil

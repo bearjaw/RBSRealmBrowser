@@ -77,7 +77,6 @@ public class RBSRealmBrowser: UITableViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-
     //MARK: Realm browser convenience method(s)
 
     /**
@@ -85,9 +84,14 @@ public class RBSRealmBrowser: UITableViewController {
 
      - return an instance of realmBrowser
      */
-    public static func realmBrowser() -> UINavigationController {
-        let realm = try! Realm()
-        return self.realmBrowserForRealm(realm)
+    public static func realmBrowser() -> UINavigationController? {
+        do {
+            let realm = try Realm()
+            return self.realmBrowserForRealm(realm)
+        }catch {
+            print("realm init failed")
+            return nil
+        }
     }
 
     /**
@@ -96,7 +100,7 @@ public class RBSRealmBrowser: UITableViewController {
      - parameter realm: Realm
      - returns an instance of realmBrowser
      */
-    public static func realmBrowserForRealm(_ realm: Realm) -> UINavigationController {
+    public static func realmBrowserForRealm(_ realm: Realm) -> UINavigationController? {
         let rbsRealmBrowser = RBSRealmBrowser(realm:realm)
         let navigationController = UINavigationController(rootViewController: rbsRealmBrowser)
         navigationController.navigationBar.barTintColor = UIColor(red:0.35, green:0.34, blue:0.62, alpha:1.0)
@@ -115,9 +119,14 @@ public class RBSRealmBrowser: UITableViewController {
      - parameter url: URL
      - returns an instance of realmBrowser
      */
-    public static func realmBroswerForRealmURL(_ url: URL) -> UINavigationController {
-        let realm = try! Realm(fileURL: url)
-        return self.realmBrowserForRealm(realm)
+    public static func realmBroswerForRealmURL(_ url: URL) -> UINavigationController? {
+        do {
+            let realm = try Realm(fileURL: url)
+            return self.realmBrowserForRealm(realm)
+        }catch {
+            print("realm instacne at url not found.")
+            return nil
+        }
     }
 
     
