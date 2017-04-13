@@ -119,7 +119,7 @@ What's on the roadmap... 🚀
 - [ ] Be able to create objects
 - [ ] Clean up
 - [ ] Live reload the browser if updates happen in the background
-- [ ] Layout improvements
+- [x] Layout improvements
 - [ ] Search 
 
 ## Documentation
