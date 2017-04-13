@@ -89,6 +89,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
     
     func textFieldDidFinishEdit(_ input: String, property: Property) {
         self.savePropertyChangesInRealm(input, property: property)
+        
         //        self.actionToggleEdit((self.navigationItem.rightBarButtonItem)!)
     }
     

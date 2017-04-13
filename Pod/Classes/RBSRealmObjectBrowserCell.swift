@@ -15,8 +15,8 @@ class RBSRealmObjectBrowserCell: UITableViewCell {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        self.contentView.addSubview(labelTitle)
-        self.contentView.addSubview(labelDetailText)
+        contentView.addSubview(labelTitle)
+        contentView.addSubview(labelDetailText)
     }
     
     required init?(coder aDecoder: NSCoder) {
