@@ -139,6 +139,10 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
     
     //MARK: UITextFieldDelegate
     
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        return true
+    }
+    
     func textFieldDidBeginEditing(_ textField: UITextField) {
         if  (property != nil) && (property.type == .bool) {
             textField.resignFirstResponder()
@@ -146,9 +150,9 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
             var newValue = "0"
             if isEqual {
                 newValue = "1"
-                textFieldPropValue.text = "true"
+                textField.text = "true"
             } else {
-                textFieldPropValue.text = "false"
+                textField.text = "false"
             }
             
             guard let del = delegate else {
@@ -162,7 +166,7 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textFieldPropValue.isUserInteractionEnabled = false
+        textField.isUserInteractionEnabled = false
                 return true
     }
     
@@ -175,7 +179,7 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
             }
             del.textFieldDidFinishEdit(textField.text!, property: self.property)
         }
-        textFieldPropValue.resignFirstResponder()
+        textField.resignFirstResponder()
     }
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if textField.text == "\n" {
