@@ -1,3 +1,10 @@
+## RBSRealmBrowser v 0.1.9
+- fixed crash when attempting to view object with referenced object
+
+## RBSRealmBrowser v 0.1.8
+- Bug fixes
+- Clean up
+
 ## RBSRealmBrowser v 0.1.7
 - Bug fixes
     - fixed delete
