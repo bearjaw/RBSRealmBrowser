@@ -94,7 +94,7 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         
         let labelWidth = contentView.bounds.size.width-labelPropertyTitle.bounds.size.width-4*borderOffset
         labelSize = textFieldPropValue.sizeThatFits(CGSize(width: labelWidth, height: 2000.0))
-        textFieldPropValue.frame = (CGRect(x:contentView.bounds.size.width-labelWidth-borderOffset, y: (contentView.bounds.size.height-labelSize.height - borderOffset)/2, width:labelWidth, height: labelSize.height + borderOffset))
+        textFieldPropValue.frame = (CGRect(x:contentView.bounds.size.width-min(labelSize.width,labelWidth)-borderOffset, y: (contentView.bounds.size.height-labelSize.height - borderOffset)/2, width:min(labelSize.width,labelWidth), height: labelSize.height + borderOffset))
     }
     
     //MARK: private method
@@ -186,6 +186,7 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
             textField.resignFirstResponder()
             return false
         }
+        self.setNeedsLayout()
         return true
     }
 }
