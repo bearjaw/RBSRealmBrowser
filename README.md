@@ -85,9 +85,12 @@ Now handle the action:
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
         
         // handle the quick action
-        let rb = RBSRealmBrowser.realmBrowser()
+        guard let rb = RBSRealmBrowser.realmBrowser() else {
+            print("realm browser is nil!")
+            return
+        }
         let vc = (window?.rootViewController)! as UIViewController
-        vc.present(rb as! UIViewController, animated: true)
+        vc.present(rb, animated: true)
         
     }
 ```
