@@ -84,6 +84,13 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
                 let objectsViewController = RBSRealmObjectsBrowser(objects: objects)
                 self.navigationController?.pushViewController(objectsViewController, animated: true)
             }
+        }else if property.type == .object {
+            guard let obj = object[property.name] else {
+                print("failed getting object for property")
+                return
+            }
+            let objectsViewController = RBSRealmObjectsBrowser(objects:[obj as! Object])
+            self.navigationController?.pushViewController(objectsViewController, animated: true)
         }
     }
     
@@ -125,7 +132,8 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
         case .array:
             
             break
-        case .any, .object:
+        case .object:
+            
             break
         default:
             break
@@ -153,7 +161,23 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
             let array = object.dynamicList(property.name)
             propertyValue = String.localizedStringWithFormat("%li objects  ->", array.count)
             break
-        case .any, .object:
+        case .object:
+            guard let objAsProperty = object[property.name] else {
+                return ""
+            }
+            let obj = objAsProperty as! Object
+            let schema = obj.objectSchema
+            for prop in schema.properties {
+                if prop.type == .string {
+                    propertyValue = obj[prop.name] as! String
+                }
+                break
+            }
+            if propertyValue.characters.count == 0 {
+                propertyValue = obj.className
+            }
+            break
+        case .any:
             let data =  object[property.name]
             propertyValue = String((data as AnyObject).description)
             break
@@ -161,8 +185,6 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
             return ""
         }
         return propertyValue
-        
-        
     }
     
     private func saveValueForProperty(value:Any, propertyName:String) {
@@ -172,16 +194,16 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
             object.setValue(value, forKey: propertyName)
             }
         }catch {
-            
+            print("saving failed")
         }
     }
     
-    func actionToggleEdit(_ id: AnyObject) {
+    func actionToggleEdit(_ id: UIBarButtonItem) {
         isEditMode = !isEditMode
         if isEditMode {
-            (id as! UIBarButtonItem).title = "Finish"
+            id.title = "Finish"
         } else {
-            (id as! UIBarButtonItem).title = "Edit"
+            id.title = "Edit"
         }
         tableView.reloadData()
     }

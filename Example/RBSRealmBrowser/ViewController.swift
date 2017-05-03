@@ -21,23 +21,32 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let realm = try! Realm()
+        
         let catNames = ["Garfield", "Lutz", "Squanch"]
         let humanNames = ["Morty", "Rick", "Birdperson"]
         var i = 0
         while i < 3 {
-            try! realm.write() {
-                let person = Person()
-                person.personName = humanNames[i]
-                realm.add(person)
-                let cat = Cat()
-                cat.catName = catNames[i]
-                cat.isTired = true
-                cat.toys.append(person)
-                cat.toys.append(person)
-                cat.toys.append(person)
-                realm.add(cat)
+            do {
+                let realm = try Realm()
+                try realm.write() {
+                    let person = Person()
+                    person.personName = humanNames[i]
+                    realm.add(person)
+                    let cat = Cat()
+                    person.cat = cat;
+                    cat.catName = catNames[i]
+                    cat.isTired = true
+                    cat.toys.append(person)
+                    cat.toys.append(person)
+                    cat.toys.append(person)
+                    person.cat = cat;
+                    realm.add(cat)
+                }
+
+            }catch {
+                print("failed creatimg objects")
             }
+            
             i += 1
         }
         
