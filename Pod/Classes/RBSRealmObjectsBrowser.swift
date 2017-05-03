@@ -154,9 +154,19 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
         case .string:
             propertyValue = object[property.name] as! String
             break
-        case .any, .array, .object:
-            let data = object[property.name] as! NSData
-            propertyValue = data.description
+        case .object:
+            guard let value = object[property.name] else {
+                print("failed getting property name")
+                return ""
+            }
+            propertyValue = value as! String
+            break
+        case .array:
+            let array = object.dynamicList(property.name)
+            propertyValue = String.localizedStringWithFormat("%li objects  ->", array.count)
+            break
+        case .any:
+            propertyValue = "property type any not supported yet"
             break
             
         default:
@@ -181,7 +191,7 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
                     let indexSet = IndexSet(integer: 0)
                     tableView.reloadSections(indexSet, with: .top)
                 }catch {
-                    print("realm could not be instantiated")
+                    print("error deleting objects")
                 }
             }
             
@@ -237,10 +247,7 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
         guard let cell = tableView?.cellForRow(at:indexPath) else { return nil }
         
         let detailVC =  RBSRealmPropertyBrowser(object:self.objects[indexPath.row])
-        
-        
         detailVC.preferredContentSize = CGSize(width: 0.0, height: 300)
-        
         previewingContext.sourceRect = cell.frame
         
         return detailVC;
