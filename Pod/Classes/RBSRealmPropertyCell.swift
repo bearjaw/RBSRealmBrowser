@@ -59,11 +59,11 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         if editMode {
             textFieldPropValue.resignFirstResponder()
         }
+        self.textFieldPropValue.isUserInteractionEnabled = editMode
         
-        if isArray {
+        if isArray || property.type == .object{
             textFieldPropValue.isUserInteractionEnabled = false
         }
-        self.textFieldPropValue.isUserInteractionEnabled = editMode
         
         if property.type == .float || property.type == .double {
             textFieldPropValue.keyboardType = .decimalPad
@@ -72,7 +72,7 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         }
         
         textFieldPropValue.text = propertyValue
-        if editMode && !isArray {
+        if editMode && !isArray && property.type != .object {
             textFieldPropValue.layer.borderColor = UIColor(red:0.35, green:0.34, blue:0.62, alpha:1.0).cgColor
             textFieldPropValue.layer.borderWidth = 1.0
         }else {

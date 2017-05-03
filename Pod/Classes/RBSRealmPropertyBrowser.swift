@@ -32,7 +32,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
         tableView.dataSource = self
         tableView.tableFooterView = UIView()
         let bbi = UIBarButtonItem(title: "Edit", style: .plain, target: self, action: #selector(RBSRealmPropertyBrowser.actionToggleEdit(_:)))
-        self.navigationItem.rightBarButtonItem = bbi
+        navigationItem.rightBarButtonItem = bbi
         tableView.register(RBSRealmPropertyCell.self, forCellReuseIdentifier: cellIdentifier)
     }
     
@@ -44,7 +44,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let property = properties[indexPath.row] as! Property
-        let stringvalue = self.stringForProperty(property, object: object)
+        let stringvalue = RBSTools.stringForProperty(property, object: object)
         var isArray = false
         if property.type == .array {
             isArray = true
@@ -72,26 +72,27 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if !isEditMode {
             tableView.deselectRow(at: indexPath, animated: true)
+            let property = properties[indexPath.row] as! Property
+            if property.type == .array {
+                let results = object.dynamicList(property.name)
+                var objects: Array<Object> = []
+                for obj in results {
+                    objects.append(obj)
+                }
+                if objects.count > 0 {
+                    let objectsViewController = RBSRealmObjectsBrowser(objects: objects)
+                    navigationController?.pushViewController(objectsViewController, animated: true)
+                }
+            }else if property.type == .object {
+                guard let obj = object[property.name] else {
+                    print("failed getting object for property")
+                    return
+                }
+                let objectsViewController = RBSRealmPropertyBrowser(object: obj as! Object)
+                navigationController?.pushViewController(objectsViewController, animated: true)
+            }
         }
-        let property = properties[indexPath.row] as! Property
-        if property.type == .array {
-            let results = object.dynamicList(property.name)
-            var objects: Array<Object> = []
-            for obj in results {
-                objects.append(obj)
-            }
-            if objects.count > 0 {
-                let objectsViewController = RBSRealmObjectsBrowser(objects: objects)
-                self.navigationController?.pushViewController(objectsViewController, animated: true)
-            }
-        }else if property.type == .object {
-            guard let obj = object[property.name] else {
-                print("failed getting object for property")
-                return
-            }
-            let objectsViewController = RBSRealmObjectsBrowser(objects:[obj as! Object])
-            self.navigationController?.pushViewController(objectsViewController, animated: true)
-        }
+        
     }
     
     func textFieldDidFinishEdit(_ input: String, property: Property) {
@@ -139,52 +140,6 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
             break
         }
         
-    }
-    
-    private func stringForProperty(_ property: Property, object: Object) -> String {
-        var propertyValue = ""
-        switch property.type {
-        case .bool:
-            if object[property.name] as! Bool == false {
-                propertyValue = "false"
-            } else {
-                propertyValue = "true"
-            }
-            break
-        case .int, .float, .double:
-            propertyValue = String(describing: object[property.name] as! NSNumber)
-            break
-        case .string:
-            propertyValue = object[property.name] as! String
-            break
-        case .array:
-            let array = object.dynamicList(property.name)
-            propertyValue = String.localizedStringWithFormat("%li objects  ->", array.count)
-            break
-        case .object:
-            guard let objAsProperty = object[property.name] else {
-                return ""
-            }
-            let obj = objAsProperty as! Object
-            let schema = obj.objectSchema
-            for prop in schema.properties {
-                if prop.type == .string {
-                    propertyValue = obj[prop.name] as! String
-                }
-                break
-            }
-            if propertyValue.characters.count == 0 {
-                propertyValue = obj.className
-            }
-            break
-        case .any:
-            let data =  object[property.name]
-            propertyValue = String((data as AnyObject).description)
-            break
-        default:
-            return ""
-        }
-        return propertyValue
     }
     
     private func saveValueForProperty(value:Any, propertyName:String) {
