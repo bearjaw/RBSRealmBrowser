@@ -73,7 +73,7 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
         let object = objects[indexPath.row]
         let property = properties.first as! Property
         if !object.isInvalidated {
-            let stringvalue = self.stringForProperty(property, object: object)
+            let stringvalue = RBSTools.stringForProperty(property, object: object)
             if selectAll {
                 cell.accessoryType = .checkmark
                 tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
@@ -116,7 +116,6 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
         
     }
     
-    
     override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         if isEditMode {
             tableView.cellForRow(at: indexPath)?.accessoryType = .none
@@ -137,43 +136,6 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
     }
     
     //MARK: private Methods
-    
-    private func stringForProperty(_ property: Property, object: Object) -> String {
-        var propertyValue = ""
-        switch property.type {
-        case .bool:
-            if Bool(object[property.name] as! String) == false {
-                propertyValue = "false"
-            } else {
-                propertyValue = "true"
-            }
-            break
-        case .int, .float, .double:
-            propertyValue = String(describing: object[property.name])
-            break
-        case .string:
-            propertyValue = object[property.name] as! String
-            break
-        case .object:
-            guard let value = object[property.name] else {
-                print("failed getting property name")
-                return ""
-            }
-            propertyValue = value as! String
-            break
-        case .array:
-            let array = object.dynamicList(property.name)
-            propertyValue = String.localizedStringWithFormat("%li objects  ->", array.count)
-            break
-        case .any:
-            propertyValue = "property type any not supported yet"
-            break
-            
-        default:
-            return ""
-        }
-        return propertyValue
-    }
     
     func actionToggleEdit(_ id: AnyObject) {
         tableView.allowsMultipleSelection = true
