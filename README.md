@@ -6,7 +6,7 @@
 [![Platform](https://img.shields.io/cocoapods/p/RBSRealmBrowser.svg?style=flat)](http://cocoapods.org/pods/RBSRealmBrowser)
 
 RBSRealmBrowser is based on NBNRealmBrowser by  [Nerdish by Nature](https://github.com/nerdishbynature/NBNRealmBrowser). It's a simple lightweight browser that let's you inspect which objects currently are in your realm database on your iOS device or simulator.
-Simply edit your existing object's properties' values by switching into edit mode.
+Simply edit your existing object's property values by switching into edit mode.
 
 
 ## Features
@@ -114,7 +114,7 @@ RBSRealmBrowser is available through [CocoaPods](http://cocoapods.org). To insta
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod "RBSRealmBrowser"
+pod 'RBSRealmBrowser'
 ```
 ## Future features
 What's on the roadmap... 🚀
