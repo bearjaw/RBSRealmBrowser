@@ -59,6 +59,8 @@ public class RBSRealmBrowser: UITableViewController {
         }
         objectPonsos = mutableObjectPonsos
         
+        RBSTools.checkForUpdates()
+        
         let bbiDismiss = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(RBSRealmBrowser.dismissBrowser))
         let bbiSort = UIBarButtonItem(title: "Sort A-Z", style: .plain, target: self, action: #selector(RBSRealmBrowser.sortObjects))
         self.navigationItem.rightBarButtonItems = [bbiDismiss, bbiSort]
