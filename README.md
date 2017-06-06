@@ -1,6 +1,6 @@
 # RBSRealmBrowser
 
-[![CI Status](https://travis-ci.org/bearjaw/RBSRealmBrowser.svg?branch=master)](https://travis-ci.org/bearjaw/RBSRealmBrowser)
+[![CI Status](https://travis-ci.org/bearjaw/RBSRealmBrowser.svg?branch=0.1.9)](https://travis-ci.org/bearjaw/RBSRealmBrowser)
 [![Version](https://img.shields.io/cocoapods/v/RBSRealmBrowser.svg?style=flat)](http://cocoapods.org/pods/RBSRealmBrowser)
 [![License](https://img.shields.io/cocoapods/l/RBSRealmBrowser.svg?style=flat)](http://cocoapods.org/pods/RBSRealmBrowser)
 [![Platform](https://img.shields.io/cocoapods/p/RBSRealmBrowser.svg?style=flat)](http://cocoapods.org/pods/RBSRealmBrowser)
