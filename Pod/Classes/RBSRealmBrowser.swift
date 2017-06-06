@@ -61,8 +61,8 @@ public class RBSRealmBrowser: UITableViewController {
         
         RBSTools.checkForUpdates()
         
-        let bbiDismiss = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(RBSRealmBrowser.dismissBrowser))
-        let bbiSort = UIBarButtonItem(title: "Sort A-Z", style: .plain, target: self, action: #selector(RBSRealmBrowser.sortObjects))
+        let bbiDismiss = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: .dismissBrowser)
+        let bbiSort = UIBarButtonItem(title: "Sort A-Z", style: .plain, target: self, action: .sortObjects)
         self.navigationItem.rightBarButtonItems = [bbiDismiss, bbiSort]
     }
 
@@ -157,7 +157,7 @@ public class RBSRealmBrowser: UITableViewController {
      
      - parameter id: a UIBarButtonItem
      */
-    func dismissBrowser(_ id:UIBarButtonItem) {
+    @objc func dismissBrowser(_ id:UIBarButtonItem) {
         self.dismiss(animated: true)
     }
     
@@ -166,7 +166,7 @@ public class RBSRealmBrowser: UITableViewController {
      
      - parameter id: a UIBarButtonItem
      */
-    func sortObjects(_ id:UIBarButtonItem) {
+    @objc func sortObjects(_ id:UIBarButtonItem) {
         id.title = ascending == false ?"Sort Z-A": "Sort A-Z"
         ascending = !ascending
         let sortDescriptor = NSSortDescriptor(key:"objectClassName", ascending: ascending)
@@ -254,4 +254,9 @@ public class RBSRealmBrowser: UITableViewController {
         let results = try! Realm().dynamicObjects(ponso.objectClassName!)
         return Array(results)
     }
+}
+
+fileprivate extension Selector {
+    static let dismissBrowser = #selector(RBSRealmBrowser.dismissBrowser(_:))
+    static let sortObjects = #selector(RBSRealmBrowser.sortObjects(_:))
 }
