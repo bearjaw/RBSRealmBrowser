@@ -137,7 +137,7 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
     
     //MARK: private Methods
     
-    func actionToggleEdit(_ id: AnyObject) {
+    @objc func actionToggleEdit(_ id: AnyObject) {
         tableView.allowsMultipleSelection = true
         tableView.allowsMultipleSelectionDuringEditing = true
         isEditMode = !isEditMode
@@ -165,7 +165,7 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
             self.navigationItem.leftBarButtonItem = bbi
         }
     }
-    func actionSelectAll(_ id: AnyObject) {
+     @objc func actionSelectAll(_ id: AnyObject) {
         selectAll = !selectAll
         if selectAll {
             self.navigationItem.leftBarButtonItem?.title = "Unselect all"
@@ -176,7 +176,7 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
         self.tableView.reloadData()
     }
     
-    func actionTogglePreview(_ id: AnyObject) {
+    @objc func actionTogglePreview(_ id: AnyObject) {
         
     }
     

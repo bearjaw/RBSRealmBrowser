@@ -153,7 +153,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
         }
     }
     
-    func actionToggleEdit(_ id: UIBarButtonItem) {
+    @objc func actionToggleEdit(_ id: UIBarButtonItem) {
         isEditMode = !isEditMode
         if isEditMode {
             id.title = "Finish"
