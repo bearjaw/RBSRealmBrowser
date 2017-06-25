@@ -8,6 +8,8 @@
 RBSRealmBrowser is based on NBNRealmBrowser by  [Nerdish by Nature](https://github.com/nerdishbynature/NBNRealmBrowser). It's a simple lightweight browser that let's you inspect which objects currently are in your realm database on your iOS device or simulator.
 Simply edit your existing object's property values by switching into edit mode.
 
+## Swift 4.0 Support
+If you want to use the latest version of Swift make sure you check out the ```swift-4``` branch in your pod file.
 
 ## Features
 
