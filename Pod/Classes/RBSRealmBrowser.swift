@@ -34,6 +34,7 @@ public class RBSRealmBrowser: UITableViewController {
     private var objectsSchema: Array<ObjectSchema> = []
     private var objectPonsos: Array<RBSObjectPonso> = []
     private var ascending = false
+    private var realm:Realm
 
     /**
      Initialises the UITableViewController, sets title, registers datasource & delegates & cells
@@ -42,8 +43,8 @@ public class RBSRealmBrowser: UITableViewController {
      */
 
     private init(realm: Realm) {
+        self.realm = realm
         super.init(nibName: nil, bundle: nil)
-
         self.title = "Realm Browser"
         self.tableView.delegate = self
         self.tableView.dataSource = self
@@ -124,7 +125,7 @@ public class RBSRealmBrowser: UITableViewController {
             let realm = try Realm(fileURL: url)
             return self.realmBrowserForRealm(realm)
         }catch {
-            print("realm instacne at url not found.")
+            print("realm instance at url not found.")
             return nil
         }
     }
@@ -234,7 +235,7 @@ public class RBSRealmBrowser: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         let results = self.resultsForObjectSchemaAtIndex(indexPath.row)
         if results.count > 0 {
-            let vc = RBSRealmObjectsBrowser(objects: results)
+            let vc = RBSRealmObjectsBrowser(objects: results, realm: realm)
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }
@@ -249,7 +250,7 @@ public class RBSRealmBrowser: UITableViewController {
      */
     private func resultsForObjectSchemaAtIndex(_ index: Int)-> Array<Object> {
         let ponso = objectPonsos[index]
-        let results = try! Realm().dynamicObjects(ponso.objectClassName!)
+        let results = realm.dynamicObjects(ponso.objectClassName!)
         return Array(results)
     }
 }
