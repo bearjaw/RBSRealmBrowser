@@ -24,7 +24,7 @@ DESC
 s.homepage         = "https://github.com/bearjaw/RBSRealmBrowser"
 # s.screenshots     = "www.example.com/screenshots_1", "www.example.com/screenshots_2"
 s.license          = 'MIT'
-s.author           = { "Max Baumbach" => "bearjaw@users.noreply.github.com" }
+s.author           = { "Max Baumbach" => "bearjaw.dev@gmail.com" }
 s.source           = { :git => "https://github.com/bearjaw/RBSRealmBrowser.git", :tag => s.version.to_s }
 
 s.platform     = :ios, '8.0'

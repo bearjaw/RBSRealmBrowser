@@ -1,13 +1,16 @@
 # RBSRealmBrowser
 
-[![CI Status](http://img.shields.io/travis/bearjaw/RBSRealmBrowser.svg?style=flat)](https://travis-ci.org/bearjaw/RBSRealmBrowser)
+[![CI Status](https://travis-ci.org/bearjaw/RBSRealmBrowser.svg?branch=0.1.9)](https://travis-ci.org/bearjaw/RBSRealmBrowser)
 [![Version](https://img.shields.io/cocoapods/v/RBSRealmBrowser.svg?style=flat)](http://cocoapods.org/pods/RBSRealmBrowser)
 [![License](https://img.shields.io/cocoapods/l/RBSRealmBrowser.svg?style=flat)](http://cocoapods.org/pods/RBSRealmBrowser)
 [![Platform](https://img.shields.io/cocoapods/p/RBSRealmBrowser.svg?style=flat)](http://cocoapods.org/pods/RBSRealmBrowser)
 
-RBSRealmBrowser is based on NBNRealmBrowser by  [Nerdish by Nature](https://github.com/nerdishbynature/NBNRealmBrowser). It's a simple lightweight browser that lets you inspect which objects currently are in your realm database on your iOS device or simulator.
-Simply edit your existing object's properties' values by switching into edit mode.
 
+RBSRealmBrowser is based on NBNRealmBrowser by  [Nerdish by Nature](https://github.com/nerdishbynature/NBNRealmBrowser). It's a simple lightweight browser that lets you inspect which objects are currently in your realm database on your iOS device or simulator.
+Simply edit your existing object's property values by switching into edit mode.
+
+## Swift 4.0 Support
+If you want to use the latest version of Swift make sure you check out the ```swift-4``` branch in your pod file.
 
 ## Features
 
@@ -114,7 +117,7 @@ RBSRealmBrowser is available through [CocoaPods](http://cocoapods.org). To insta
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod "RBSRealmBrowser"
+pod 'RBSRealmBrowser'
 ```
 ## Future features
 What's on the roadmap... 🚀

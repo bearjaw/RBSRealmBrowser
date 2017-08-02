@@ -209,7 +209,7 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
         guard let cell = tableView?.cellForRow(at:indexPath) else { return nil }
         
         let detailVC =  RBSRealmPropertyBrowser(object:self.objects[indexPath.row])
-        detailVC.preferredContentSize = CGSize(width: 0.0, height: 300)
+        detailVC.preferredContentSize = CGSize(width: 0.0, height: 300.0)
         previewingContext.sourceRect = cell.frame
         
         return detailVC;
