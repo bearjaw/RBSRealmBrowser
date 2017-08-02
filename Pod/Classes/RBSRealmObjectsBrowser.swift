@@ -148,14 +148,10 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
                 deleteAllObjects()
             }else {
                 deleteObjects()
-                do {
-                    let result:Results<DynamicObject> =  realm.dynamicObjects(schema.className)
-                    objects = Array(result)
-                    let indexSet = IndexSet(integer: 0)
-                    tableView.reloadSections(indexSet, with: .top)
-                }catch {
-                    print("error deleting objects")
-                }
+                let result:Results<DynamicObject> =  realm.dynamicObjects(schema.className)
+                objects = Array(result)
+                let indexSet = IndexSet(integer: 0)
+                tableView.reloadSections(indexSet, with: .top)
             }
             
             self.navigationItem.leftBarButtonItem = nil
