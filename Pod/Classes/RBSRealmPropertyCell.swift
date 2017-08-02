@@ -102,7 +102,7 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
     private func labelWithAttributes(_ fontSize: CGFloat, weight: CGFloat, text: String) -> UILabel {
         let label = UILabel()
         if #available(iOS 8.2, *) {
-            label.font = UIFont.systemFont(ofSize: fontSize, weight: weight)
+            label.font = UIFont.systemFont(ofSize: fontSize, weight: UIFont.Weight(rawValue: weight))
         } else {
             label.font = UIFont.systemFont(ofSize: fontSize)
         }
