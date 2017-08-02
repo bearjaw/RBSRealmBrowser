@@ -148,14 +148,10 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
                 deleteAllObjects()
             }else {
                 deleteObjects()
-                do {
-                    let result:Results<DynamicObject> =  realm.dynamicObjects(schema.className)
-                    objects = Array(result)
-                    let indexSet = IndexSet(integer: 0)
-                    tableView.reloadSections(indexSet, with: .top)
-                }catch {
-                    print("error deleting objects")
-                }
+                let result:Results<DynamicObject> =  realm.dynamicObjects(schema.className)
+                objects = Array(result)
+                let indexSet = IndexSet(integer: 0)
+                tableView.reloadSections(indexSet, with: .top)
             }
             
             self.navigationItem.leftBarButtonItem = nil
@@ -166,7 +162,7 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
             self.navigationItem.leftBarButtonItem = bbi
         }
     }
-     @objc func actionSelectAll(_ id: AnyObject) {
+    @objc func actionSelectAll(_ id: AnyObject) {
         selectAll = !selectAll
         if selectAll {
             self.navigationItem.leftBarButtonItem?.title = "Unselect all"
@@ -207,7 +203,7 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
         
         guard let cell = tableView?.cellForRow(at:indexPath) else { return nil }
         
-
+        
         let detailVC =  RBSRealmPropertyBrowser(object:self.objects[indexPath.row], realm: realm)
         detailVC.preferredContentSize = CGSize(width: 0.0, height: 300.0)
         previewingContext.sourceRect = cell.frame
