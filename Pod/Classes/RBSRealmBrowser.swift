@@ -51,7 +51,7 @@ public class RBSRealmBrowser: UITableViewController {
         self.tableView.register(RBSRealmObjectBrowserCell.self, forCellReuseIdentifier: cellIdentifier)
         
         var mutableObjectPonsos:[RBSObjectPonso] = []
-        for object in try! Realm().schema.objectSchema {
+        for object in realm.schema.objectSchema {
             let objectPonso = RBSObjectPonso()
             objectPonso.objectClassName = object.className
             objectsSchema.append(object)
