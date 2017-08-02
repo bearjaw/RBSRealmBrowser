@@ -17,9 +17,11 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
     private var properties: Array <AnyObject>
     private let cellIdentifier = "objectCell"
     private var isEditMode = false
+    private var realm:Realm
     
-    init(object: Object) {
+    init(object: Object, realm: Realm) {
         self.object = object
+        self.realm = realm
         schema = object.objectSchema
         properties = schema.properties
         
@@ -80,7 +82,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
                     objects.append(obj)
                 }
                 if objects.count > 0 {
-                    let objectsViewController = RBSRealmObjectsBrowser(objects: objects)
+                    let objectsViewController = RBSRealmObjectsBrowser(objects: objects, realm: realm)
                     navigationController?.pushViewController(objectsViewController, animated: true)
                 }
             }else if property.type == .object {
@@ -88,7 +90,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
                     print("failed getting object for property")
                     return
                 }
-                let objectsViewController = RBSRealmPropertyBrowser(object: obj as! Object)
+                let objectsViewController = RBSRealmPropertyBrowser(object: obj as! Object, realm: realm)
                 navigationController?.pushViewController(objectsViewController, animated: true)
             }
         }
@@ -144,7 +146,6 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
     
     private func saveValueForProperty(value:Any, propertyName:String) {
         do {
-            let realm = try Realm()
             try realm.write {
             object.setValue(value, forKey: propertyName)
             }

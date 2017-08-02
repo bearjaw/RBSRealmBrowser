@@ -54,7 +54,7 @@ class ViewController: UIViewController {
         self.navigationItem.rightBarButtonItem = bbi
     }
     
-    @objc func openBrowser(_ id: AnyObject) {
+    @objc func openBrowser() {
         let rb:UIViewController =  RBSRealmBrowser.realmBrowser()!
         self.present(rb, animated: true) {
         }
