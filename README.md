@@ -10,6 +10,7 @@ Simply edit your existing object's property values by switching into edit mode.
 
 ## Swift 4.0 Support
 If you want to use the latest version of Swift make sure you check out the ```swift-4``` branch in your pod file.
+Swift-4 Status: [![Build Status](https://travis-ci.org/bearjaw/RBSRealmBrowser.svg?branch=swift-4)](https://travis-ci.org/bearjaw/RBSRealmBrowser)
 
 ## Features
 
