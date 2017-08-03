@@ -73,7 +73,9 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
     //MARK: TableView Datasource & Delegate
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let object = objects[indexPath.row]
-        let property = properties.first as! Property
+        guard let property = properties.first else {
+            return
+        }
         if !object.isInvalidated {
             let stringvalue = RBSTools.stringForProperty(property, object: object)
             if selectAll {
