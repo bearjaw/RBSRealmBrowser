@@ -24,8 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.navigationController?.navigationBar.tintColor = .black
         self.navigationController?.navigationBar.barTintColor = .white
         self.navigationController?.navigationBar.isTranslucent = false
-        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey(rawValue: NSAttributedStringKey.foregroundColor.rawValue): UIColor.black]
-
+        self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.black]
         self.window!.rootViewController = self.navigationController
 
         self.window!.tintColor = UIColor(red: 0.714, green: 0.039, blue: 0.204, alpha: 1.0)
