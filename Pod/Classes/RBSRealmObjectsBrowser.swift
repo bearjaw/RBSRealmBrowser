@@ -14,7 +14,7 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
     
     private var objects: Array <Object>
     private var schema: ObjectSchema
-    private var properties: Array <AnyObject>
+    private var properties: Array <Property>
     private let cellIdentifier = "objectCell"
     private var isEditMode: Bool = false
     private var selectAll: Bool = false
