@@ -14,8 +14,12 @@ class Tests: XCTestCase {
         super.tearDown()
     }
 
-    func testExample() {
+    func testDefaultRealmBrowser() {
         // This is an example of a functional test case.
+        guard RBSRealmBrowser.realmBrowser() != nil else {
+            XCTAssert(true, "Fail init")
+            return
+        }
         XCTAssert(true, "Pass")
     }
 

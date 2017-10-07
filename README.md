@@ -109,8 +109,9 @@ To try the example project, clone the repo, and run `pod try` from the Example d
 ## Requirements
 
 - Xcode 8
-- iOS 8.0
+- iOS 9.0+
 - Swift 3.0 for any release after 0.1.4
+- Swift 4.0 for any release after 0.1.9
 
 
 ## Installation
