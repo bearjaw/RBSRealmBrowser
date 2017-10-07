@@ -11,7 +11,7 @@ import AVFoundation
 
 class RBSTools {
     
-    static let localVersion = "v0.1.9"
+    static let localVersion = "v0.2.0"
     
     class func stringForProperty(_ property: Property, object: Object) -> String {
         var propertyValue = ""
