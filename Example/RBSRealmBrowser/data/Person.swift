@@ -10,8 +10,8 @@ import RealmSwift
 
 class Person: Object {
 
-    dynamic var personName = ""
-    dynamic var hungry = false
-    dynamic var cat:Cat?
+    @objc dynamic var personName = ""
+    @objc dynamic var hungry = false
+    @objc dynamic var cat:Cat?
 
 }

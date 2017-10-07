@@ -60,8 +60,10 @@ public class RBSRealmBrowser: UITableViewController {
         }
         objectPonsos = mutableObjectPonsos
         
-        let bbiDismiss = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(RBSRealmBrowser.dismissBrowser))
-        let bbiSort = UIBarButtonItem(title: "Sort A-Z", style: .plain, target: self, action: #selector(RBSRealmBrowser.sortObjects))
+        RBSTools.checkForUpdates()
+        
+        let bbiDismiss = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: .dismissBrowser)
+        let bbiSort = UIBarButtonItem(title: "Sort A-Z", style: .plain, target: self, action: .sortObjects)
         self.navigationItem.rightBarButtonItems = [bbiDismiss, bbiSort]
     }
 
@@ -105,7 +107,8 @@ public class RBSRealmBrowser: UITableViewController {
         let rbsRealmBrowser = RBSRealmBrowser(realm:realm)
         let navigationController = UINavigationController(rootViewController: rbsRealmBrowser)
         navigationController.navigationBar.barTintColor = UIColor(red:0.35, green:0.34, blue:0.62, alpha:1.0)
-        navigationController.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
+        navigationController.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
+//        navigationController.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
         navigationController.navigationBar.tintColor = .white
         navigationController.navigationBar.isTranslucent = false
         return navigationController
@@ -156,7 +159,7 @@ public class RBSRealmBrowser: UITableViewController {
      
      - parameter id: a UIBarButtonItem
      */
-    func dismissBrowser(_ id:UIBarButtonItem) {
+    @objc func dismissBrowser(_ id:UIBarButtonItem) {
         self.dismiss(animated: true)
     }
     
@@ -165,7 +168,7 @@ public class RBSRealmBrowser: UITableViewController {
      
      - parameter id: a UIBarButtonItem
      */
-    func sortObjects(_ id:UIBarButtonItem) {
+    @objc func sortObjects(_ id:UIBarButtonItem) {
         id.title = ascending == false ?"Sort Z-A": "Sort A-Z"
         ascending = !ascending
         let sortDescriptor = NSSortDescriptor(key:"objectClassName", ascending: ascending)
@@ -253,4 +256,9 @@ public class RBSRealmBrowser: UITableViewController {
         let results = realm.dynamicObjects(ponso.objectClassName!)
         return Array(results)
     }
+}
+
+fileprivate extension Selector {
+    static let dismissBrowser = #selector(RBSRealmBrowser.dismissBrowser(_:))
+    static let sortObjects = #selector(RBSRealmBrowser.sortObjects(_:))
 }

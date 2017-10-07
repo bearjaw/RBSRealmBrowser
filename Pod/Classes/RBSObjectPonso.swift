@@ -6,7 +6,6 @@
 //
 //
 
-import UIKit
 
 class RBSObjectPonso: NSObject {
     

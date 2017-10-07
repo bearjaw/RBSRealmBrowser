@@ -45,7 +45,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
     //MARK: TableView Datasource & Delegate
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        let property = properties[indexPath.row] as! Property
+        let property = properties[indexPath.row] 
         let stringvalue = RBSTools.stringForProperty(property, object: object)
         var isArray = false
         if property.type == .array {
@@ -74,7 +74,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if !isEditMode {
             tableView.deselectRow(at: indexPath, animated: true)
-            let property = properties[indexPath.row] as! Property
+            let property = properties[indexPath.row] 
             if property.type == .array {
                 let results = object.dynamicList(property.name)
                 var objects: Array<Object> = []
@@ -154,7 +154,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
         }
     }
     
-    func actionToggleEdit(_ id: UIBarButtonItem) {
+    @objc func actionToggleEdit(_ id: UIBarButtonItem) {
         isEditMode = !isEditMode
         if isEditMode {
             id.title = "Finish"

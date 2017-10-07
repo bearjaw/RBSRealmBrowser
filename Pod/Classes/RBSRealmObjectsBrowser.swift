@@ -73,7 +73,9 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
     //MARK: TableView Datasource & Delegate
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let object = objects[indexPath.row]
-        let property = properties.first as! Property
+        guard let property = properties.first else {
+            return
+        }
         if !object.isInvalidated {
             let stringvalue = RBSTools.stringForProperty(property, object: object)
             if selectAll {
@@ -139,7 +141,7 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
     
     //MARK: private Methods
     
-    func actionToggleEdit(_ id: AnyObject) {
+    @objc func actionToggleEdit(_ id: AnyObject) {
         tableView.allowsMultipleSelection = true
         tableView.allowsMultipleSelectionDuringEditing = true
         isEditMode = !isEditMode
@@ -162,7 +164,7 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
             self.navigationItem.leftBarButtonItem = bbi
         }
     }
-    func actionSelectAll(_ id: AnyObject) {
+    @objc func actionSelectAll(_ id: AnyObject) {
         selectAll = !selectAll
         if selectAll {
             self.navigationItem.leftBarButtonItem?.title = "Unselect all"
@@ -173,7 +175,7 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
         self.tableView.reloadData()
     }
     
-    func actionTogglePreview(_ id: AnyObject) {
+    @objc func actionTogglePreview(_ id: AnyObject) {
         
     }
     
@@ -203,8 +205,9 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
         
         guard let cell = tableView?.cellForRow(at:indexPath) else { return nil }
         
+        
         let detailVC =  RBSRealmPropertyBrowser(object:self.objects[indexPath.row], realm: realm)
-        detailVC.preferredContentSize = CGSize(width: 0.0, height: 300)
+        detailVC.preferredContentSize = CGSize(width: 0.0, height: 300.0)
         previewingContext.sourceRect = cell.frame
         
         return detailVC;

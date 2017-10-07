@@ -7,8 +7,11 @@
 //
 
 import RealmSwift
+import AVFoundation
 
-class RBSTools: NSObject {
+class RBSTools {
+    
+    static let localVersion = "v0.1.9"
     
     class func stringForProperty(_ property: Property, object: Object) -> String {
         var propertyValue = ""
@@ -42,7 +45,7 @@ class RBSTools: NSObject {
                 }
                 break
             }
-            if propertyValue.characters.count == 0 {
+            if propertyValue.count == 0 {
                 propertyValue = obj.className
             }
             break
@@ -56,4 +59,34 @@ class RBSTools: NSObject {
         return propertyValue
     }
     
+    static func checkForUpdates() {
+        if isPlayground() {
+            return
+        }
+        let url = "https://img.shields.io/cocoapods/v/RBSRealmBrowser.svg"
+        var request = URLRequest(url: URL(string: url)!)
+        request.httpMethod = "GET"
+        URLSession.shared.dataTask(with: request, completionHandler: { (data:Data?, response:URLResponse?, error:Error?) in
+            guard let callback = response else {
+                print("no response")
+                return
+            }
+            if (callback as! HTTPURLResponse).statusCode != 200 {
+                return
+            }
+            let websiteData = String.init(data: data!, encoding: .utf8)
+            guard let gitVersion = websiteData?.contains(localVersion) else {
+                return
+            }
+            if (!gitVersion) {
+                print("A new version of RBSRealmBrowser is now available: https://github.com/bearjaw/RBSRealmBrowser/blob/master/CHANGELOG.md")
+            }
+        }).resume()
+    }
+    static func isPlayground() -> Bool {
+        guard let isInPlayground = (Bundle.main.bundleIdentifier?.hasPrefix("com.apple.dt.playground")) else {
+            return false
+        }
+        return isInPlayground;
+    }
 }
