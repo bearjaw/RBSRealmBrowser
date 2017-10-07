@@ -1,3 +1,7 @@
+## RBSRealmBrowser v 0.2.0
+- multiple bug fixes
+- swift 4 support
+
 ## RBSRealmBrowser v 0.1.9
 - fixed crash when attempting to view object with referenced object
 

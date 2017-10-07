@@ -45,7 +45,7 @@ class RBSTools {
                 }
                 break
             }
-            if propertyValue.characters.count == 0 {
+            if propertyValue.count == 0 {
                 propertyValue = obj.className
             }
             break

@@ -108,6 +108,7 @@ public class RBSRealmBrowser: UITableViewController {
         let navigationController = UINavigationController(rootViewController: rbsRealmBrowser)
         navigationController.navigationBar.barTintColor = UIColor(red:0.35, green:0.34, blue:0.62, alpha:1.0)
         navigationController.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
+//        navigationController.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
         navigationController.navigationBar.tintColor = .white
         navigationController.navigationBar.isTranslucent = false
         return navigationController
