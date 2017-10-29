@@ -48,7 +48,8 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
         let property = properties[indexPath.row] 
         let stringvalue = RBSTools.stringForProperty(property, object: object)
         var isArray = false
-        if property.type == .array {
+        
+        if property.type == .linkingObjects {
             isArray = true
         }
         (cell as! RBSRealmPropertyCell).cellWithAttributes(property.name, propertyValue: stringvalue, editMode:isEditMode, property:property, isArray:isArray)
@@ -75,7 +76,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
         if !isEditMode {
             tableView.deselectRow(at: indexPath, animated: true)
             let property = properties[indexPath.row] 
-            if property.type == .array {
+            if property.isArray {
                 let results = object.dynamicList(property.name)
                 var objects: Array<Object> = []
                 for obj in results {
@@ -132,7 +133,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
             let propertyValue:String = newValue as String
             saveValueForProperty(value: propertyValue, propertyName: property.name)
             break
-        case .array:
+        case .linkingObjects:
             
             break
         case .object:
