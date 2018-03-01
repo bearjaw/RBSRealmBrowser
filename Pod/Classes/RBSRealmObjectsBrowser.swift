@@ -14,15 +14,17 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
     
     private var objects: Array <Object>
     private var schema: ObjectSchema
-    private var properties: Array <AnyObject>
+    private var properties: Array <Property>
     private let cellIdentifier = "objectCell"
     private var isEditMode: Bool = false
     private var selectAll: Bool = false
+    private var realm:Realm
     private var selectedObjects: Array<Object> = []
     
-    init(objects: Array<Object>) {
+    init(objects: Array<Object>, realm: Realm) {
         
         self.objects = objects
+        self.realm = realm
         schema = objects[0].objectSchema
         properties = schema.properties
         super.init(nibName: nil, bundle: nil)
@@ -71,7 +73,9 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
     //MARK: TableView Datasource & Delegate
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let object = objects[indexPath.row]
-        let property = properties.first as! Property
+        guard let property = properties.first else {
+            return
+        }
         if !object.isInvalidated {
             let stringvalue = RBSTools.stringForProperty(property, object: object)
             if selectAll {
@@ -110,7 +114,7 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
             selectedObjects.append(objects[indexPath.row])
         } else {
             tableView.deselectRow(at: indexPath, animated: true)
-            let vc = RBSRealmPropertyBrowser(object:self.objects[indexPath.row])
+            let vc = RBSRealmPropertyBrowser(object:self.objects[indexPath.row], realm: realm)
             self.navigationController?.pushViewController(vc, animated: true)
         }
         
@@ -137,7 +141,7 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
     
     //MARK: private Methods
     
-    func actionToggleEdit(_ id: AnyObject) {
+    @objc func actionToggleEdit(_ id: AnyObject) {
         tableView.allowsMultipleSelection = true
         tableView.allowsMultipleSelectionDuringEditing = true
         isEditMode = !isEditMode
@@ -146,15 +150,10 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
                 deleteAllObjects()
             }else {
                 deleteObjects()
-                do {
-                    let realm = try Realm()
-                    let result:Results<DynamicObject> =  realm.dynamicObjects(schema.className)
-                    objects = Array(result)
-                    let indexSet = IndexSet(integer: 0)
-                    tableView.reloadSections(indexSet, with: .top)
-                }catch {
-                    print("error deleting objects")
-                }
+                let result:Results<DynamicObject> =  realm.dynamicObjects(schema.className)
+                objects = Array(result)
+                let indexSet = IndexSet(integer: 0)
+                tableView.reloadSections(indexSet, with: .top)
             }
             
             self.navigationItem.leftBarButtonItem = nil
@@ -165,7 +164,7 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
             self.navigationItem.leftBarButtonItem = bbi
         }
     }
-    func actionSelectAll(_ id: AnyObject) {
+    @objc func actionSelectAll(_ id: AnyObject) {
         selectAll = !selectAll
         if selectAll {
             self.navigationItem.leftBarButtonItem?.title = "Unselect all"
@@ -176,12 +175,11 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
         self.tableView.reloadData()
     }
     
-    func actionTogglePreview(_ id: AnyObject) {
+    @objc func actionTogglePreview(_ id: AnyObject) {
         
     }
     
     private func deleteAllObjects() {
-        let realm = try! Realm()
         try! realm.write {
             realm.delete(objects)
         }
@@ -191,7 +189,6 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
     }
     
     private func deleteObjects() {
-        let realm = try! Realm()
         if selectedObjects.count > 0 {
             try! realm.write {
                 realm.delete(selectedObjects)
@@ -208,8 +205,9 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
         
         guard let cell = tableView?.cellForRow(at:indexPath) else { return nil }
         
-        let detailVC =  RBSRealmPropertyBrowser(object:self.objects[indexPath.row])
-        detailVC.preferredContentSize = CGSize(width: 0.0, height: 300)
+        
+        let detailVC =  RBSRealmPropertyBrowser(object:self.objects[indexPath.row], realm: realm)
+        detailVC.preferredContentSize = CGSize(width: 0.0, height: 300.0)
         previewingContext.sourceRect = cell.frame
         
         return detailVC;

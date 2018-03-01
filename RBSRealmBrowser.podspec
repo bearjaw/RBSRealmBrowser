@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
 s.name             = "RBSRealmBrowser"
-s.version          = "0.1.9"
+s.version          = "0.2.1"
 s.summary          = "RBSRealmBrowser is a a Realm browser which you can use in your Swift projects."
 
 # This description is used to generate tags and improve search results.
@@ -24,10 +24,10 @@ DESC
 s.homepage         = "https://github.com/bearjaw/RBSRealmBrowser"
 # s.screenshots     = "www.example.com/screenshots_1", "www.example.com/screenshots_2"
 s.license          = 'MIT'
-s.author           = { "Max Baumbach" => "bearjaw@users.noreply.github.com" }
+s.author           = { "Max Baumbach" => "bearjaw.dev@gmail.com" }
 s.source           = { :git => "https://github.com/bearjaw/RBSRealmBrowser.git", :tag => s.version.to_s }
 
-s.platform     = :ios, '8.0'
+s.platform     = :ios, '9.0'
 s.requires_arc = true
 s.source_files = 'Pod/Classes/*.swift'
 

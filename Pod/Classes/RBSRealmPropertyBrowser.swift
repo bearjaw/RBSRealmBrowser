@@ -14,12 +14,14 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
     
     private var object: Object
     private var schema: ObjectSchema
-    private var properties: Array <AnyObject>
+    private var properties: Array <Property>
     private let cellIdentifier = "objectCell"
     private var isEditMode = false
+    private var realm:Realm
     
-    init(object: Object) {
+    init(object: Object, realm: Realm) {
         self.object = object
+        self.realm = realm
         schema = object.objectSchema
         properties = schema.properties
         
@@ -43,10 +45,11 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
     //MARK: TableView Datasource & Delegate
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        let property = properties[indexPath.row] as! Property
+        let property = properties[indexPath.row] 
         let stringvalue = RBSTools.stringForProperty(property, object: object)
         var isArray = false
-        if property.type == .array {
+        
+        if property.type == .linkingObjects {
             isArray = true
         }
         (cell as! RBSRealmPropertyCell).cellWithAttributes(property.name, propertyValue: stringvalue, editMode:isEditMode, property:property, isArray:isArray)
@@ -72,15 +75,15 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if !isEditMode {
             tableView.deselectRow(at: indexPath, animated: true)
-            let property = properties[indexPath.row] as! Property
-            if property.type == .array {
+            let property = properties[indexPath.row] 
+            if property.isArray {
                 let results = object.dynamicList(property.name)
                 var objects: Array<Object> = []
                 for obj in results {
                     objects.append(obj)
                 }
                 if objects.count > 0 {
-                    let objectsViewController = RBSRealmObjectsBrowser(objects: objects)
+                    let objectsViewController = RBSRealmObjectsBrowser(objects: objects, realm: realm)
                     navigationController?.pushViewController(objectsViewController, animated: true)
                 }
             }else if property.type == .object {
@@ -88,7 +91,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
                     print("failed getting object for property")
                     return
                 }
-                let objectsViewController = RBSRealmPropertyBrowser(object: obj as! Object)
+                let objectsViewController = RBSRealmPropertyBrowser(object: obj as! Object, realm: realm)
                 navigationController?.pushViewController(objectsViewController, animated: true)
             }
         }
@@ -130,7 +133,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
             let propertyValue:String = newValue as String
             saveValueForProperty(value: propertyValue, propertyName: property.name)
             break
-        case .array:
+        case .linkingObjects:
             
             break
         case .object:
@@ -144,7 +147,6 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
     
     private func saveValueForProperty(value:Any, propertyName:String) {
         do {
-            let realm = try Realm()
             try realm.write {
             object.setValue(value, forKey: propertyName)
             }
@@ -153,7 +155,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
         }
     }
     
-    func actionToggleEdit(_ id: UIBarButtonItem) {
+    @objc func actionToggleEdit(_ id: UIBarButtonItem) {
         isEditMode = !isEditMode
         if isEditMode {
             id.title = "Finish"

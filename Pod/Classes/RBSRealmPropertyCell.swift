@@ -55,7 +55,11 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         self.property = property
         textFieldPropValue.delegate = self
         labelPropertyTitle.text = propertyTitle
-        labelPropertyType.text = stringForType(type: property.type)
+        if property.isArray {
+            labelPropertyType.text = "Array"
+        }else {
+            labelPropertyType.text = stringForType(type: property.type)
+        }
         if editMode {
             textFieldPropValue.resignFirstResponder()
         }
@@ -102,7 +106,7 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
     private func labelWithAttributes(_ fontSize: CGFloat, weight: CGFloat, text: String) -> UILabel {
         let label = UILabel()
         if #available(iOS 8.2, *) {
-            label.font = UIFont.systemFont(ofSize: fontSize, weight: weight)
+            label.font = UIFont.systemFont(ofSize: fontSize, weight: UIFont.Weight(weight))
         } else {
             label.font = UIFont.systemFont(ofSize: fontSize)
         }
@@ -112,8 +116,6 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
     
     private func stringForType(type:PropertyType) -> String {
         switch type {
-        case .array:
-            return "Array"
         case .bool:
             return "Boolean"
         case .float:

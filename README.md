@@ -1,15 +1,20 @@
 # RBSRealmBrowser
 
-[![CI Status](http://img.shields.io/travis/bearjaw/RBSRealmBrowser.svg?style=flat)](https://travis-ci.org/bearjaw/RBSRealmBrowser)
+[![CI Status](https://travis-ci.org/bearjaw/RBSRealmBrowser.svg?branch=0.2.1)](https://travis-ci.org/bearjaw/RBSRealmBrowser)
 [![Version](https://img.shields.io/cocoapods/v/RBSRealmBrowser.svg?style=flat)](http://cocoapods.org/pods/RBSRealmBrowser)
 [![License](https://img.shields.io/cocoapods/l/RBSRealmBrowser.svg?style=flat)](http://cocoapods.org/pods/RBSRealmBrowser)
 [![Platform](https://img.shields.io/cocoapods/p/RBSRealmBrowser.svg?style=flat)](http://cocoapods.org/pods/RBSRealmBrowser)
+[![CocoaPods](https://img.shields.io/cocoapods/dt/RBSRealmBrowser.svg?maxAge=3600)](https://cocoapods.org/pods/RBSRealmBrowser)
 
-RBSRealmBrowser is based on NBNRealmBrowser by  [Nerdish by Nature](https://github.com/nerdishbynature/NBNRealmBrowser). It's a simple lightweight browser that lets you inspect which objects currently are in your realm database on your iOS device or simulator.
-Simply edit your existing object's properties' values by switching into edit mode.
+RBSRealmBrowser is based on NBNRealmBrowser by  [Nerdish by Nature](https://github.com/nerdishbynature/NBNRealmBrowser). It's a simple lightweight browser that lets you inspect which objects are currently in your realm database on your iOS device or simulator.
+Simply edit your existing object's property values by switching into edit mode.
 
 ## Swift 4.0 Support
 If you want to use the latest version of Swift make sure you check out the ```swift-4``` branch in your pod file.
+
+## Swift 4.0 Support
+The latest version (0.2.0) supports swift 4 by default. For any swift version less than 4 use 0.1.9.
+Swift-4 Status: [![Build Status](https://travis-ci.org/bearjaw/RBSRealmBrowser.svg?branch=swift-4)](https://travis-ci.org/bearjaw/RBSRealmBrowser)
 
 ## Features
 
@@ -106,8 +111,9 @@ To try the example project, clone the repo, and run `pod try` from the Example d
 ## Requirements
 
 - Xcode 8
-- iOS 8.0
+- iOS 9.0+
 - Swift 3.0 for any release after 0.1.4
+- Swift 4.0 for any release after 0.1.9
 
 
 ## Installation
@@ -116,7 +122,7 @@ RBSRealmBrowser is available through [CocoaPods](http://cocoapods.org). To insta
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod "RBSRealmBrowser"
+pod 'RBSRealmBrowser'
 ```
 ## Future features
 What's on the roadmap... 🚀
