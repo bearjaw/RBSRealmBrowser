@@ -2,7 +2,7 @@ import UIKit
 import XCTest
 import RBSRealmBrowser
 
-class Tests: XCTestCase {
+class RealmbrowserTest: XCTestCase {
 
     override func setUp() {
         super.setUp()
@@ -15,9 +15,8 @@ class Tests: XCTestCase {
     }
 
     func testDefaultRealmBrowser() {
-        // This is an example of a functional test case.
         guard RBSRealmBrowser.realmBrowser() != nil else {
-            XCTAssert(true, "Fail init")
+            XCTAssert(false, "Fail init")
             return
         }
         XCTAssert(true, "Pass")

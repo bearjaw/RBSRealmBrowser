@@ -11,32 +11,36 @@ import RealmSwift
 
 class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
     private var labelPropertyTitle = UILabel()
-    private var textFieldPropValue = UITextField()
-    private var labelPropertyType = UILabel()
+    private var textFieldPropValue:UITextField = {
+        let textField  = UITextField()
+        let spacing = UIView(frame:CGRect(x:0.0, y:0.0, width:10.0, height:0.0))
+        textField.leftViewMode = .always
+        textField.leftView = spacing
+        textField.rightViewMode = .always
+        textField.rightView = spacing
+        textField.returnKeyType = .done
+        textField.backgroundColor = .white
+        textField.textAlignment = .right
+        return textField
+    }()
+    private var labelPropertyType:UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 12.0)
+        label.textColor = .lightGray
+        return label
+    }()
     private var property: Property! = nil
     weak var delegate: RBSRealmPropertyCellDelegate?
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .none
-        
-        textFieldPropValue.returnKeyType = .done
-        textFieldPropValue.backgroundColor = .white
-        textFieldPropValue.textAlignment = .right
-        
-        let spacing = UIView(frame:CGRect(x:0.0, y:0.0, width:10.0, height:0.0))
-        textFieldPropValue.leftViewMode = .always
-        textFieldPropValue.leftView = spacing
-        textFieldPropValue.rightViewMode = .always
-        textFieldPropValue.rightView = spacing
         UITextField.appearance().tintColor = UIColor(red:0.35, green:0.34, blue:0.62, alpha:1.0)
         contentView.addSubview(self.textFieldPropValue)
         
         labelPropertyTitle = labelWithAttributes(14, weight:0.3, text: "")
         contentView.addSubview(self.labelPropertyTitle)
         
-        labelPropertyType.font = UIFont.systemFont(ofSize: 12.0)
-        labelPropertyType.textColor = .lightGray
         contentView.addSubview(labelPropertyType)
     }
     
