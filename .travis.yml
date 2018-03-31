@@ -3,16 +3,18 @@
 # * https://github.com/supermarin/xcpretty#usage
 
 language: objective-c
-osx_image: xcode9.1
+osx_image: xcode9.3beta
 cache: cocoapods
 podfile: Example/Podfile
 rvm:
 - 2.4.1
 before_install:
 - gem install cocoapods # Since Travis is not always on latest version
-- pod repo update
 - pod update --project-directory=Example
 
 script:
 - set -o pipefail && xcodebuild -workspace Example/RBSRealmBrowser.xcworkspace -scheme RBSRealmBrowser CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
-- pod lib lint --quick
+- xcodebuild test -workspace Example/RBSRealmBrowser.xcworkspace -scheme RBSRealmBrowser_Tests -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone X,OS=11.3' CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=NO
+- pod lib lint --quick --allow-warnings
+
+

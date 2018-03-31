@@ -33,6 +33,7 @@
 /* Begin PBXFileReference section */
 		30A3EED502460F17F66FCDB2 /* Pods_RBSRealmBrowser_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RBSRealmBrowser_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C3F08065BC626298B363F33 /* RBSRealmBrowser.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = RBSRealmBrowser.podspec; path = ../RBSRealmBrowser.podspec; sourceTree = "<group>"; };
+		481E8A4D206FE8AA00FF3B47 /* .travis.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = .travis.yml; path = ../.travis.yml; sourceTree = "<group>"; };
 		482EB7F01CC0144A000C7343 /* CHANGELOG.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = CHANGELOG.md; path = ../CHANGELOG.md; sourceTree = "<group>"; };
 		485A22B61CB3B807005D1A31 /* Cat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cat.swift; sourceTree = "<group>"; };
 		48B4BE831CAFC31E00A813BA /* RBSRealmBrowser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RBSRealmBrowser.framework; path = "../../../Library/Developer/Xcode/DerivedData/RBSRealmBrowser-bbnsmiiobnmzslczqgpmzinkcujg/Build/Products/Debug-iphoneos/RBSRealmBrowser.framework"; sourceTree = "<group>"; };
@@ -154,6 +155,7 @@
 				482EB7F01CC0144A000C7343 /* CHANGELOG.md */,
 				4E6CA5CFC69B468681307BC0 /* README.md */,
 				4E5E5B3396D6F862B57D70FF /* LICENSE */,
+				481E8A4D206FE8AA00FF3B47 /* .travis.yml */,
 			);
 			name = "Podspec Metadata";
 			sourceTree = "<group>";
