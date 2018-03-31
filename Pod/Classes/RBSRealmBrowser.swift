@@ -89,6 +89,10 @@ public class RBSRealmBrowser: UITableViewController {
         navigationController.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
         navigationController.navigationBar.tintColor = .white
         navigationController.navigationBar.isTranslucent = false
+        if #available(iOS 11.0, *) {
+            navigationController.navigationBar.prefersLargeTitles = true
+             navigationController.navigationBar.largeTitleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
+        }
         return navigationController
     }
     
@@ -138,9 +142,12 @@ public class RBSRealmBrowser: UITableViewController {
     @objc func sortObjects(_ id:UIBarButtonItem) {
         id.title = ascending == false ?"Sort Z-A": "Sort A-Z"
         ascending = !ascending
-        let sortDescriptor = NSSortDescriptor(key:"objectClassName", ascending: ascending)
-        let array = NSArray(array: objectPonsos)
-        objectPonsos = array.sortedArray(using: [sortDescriptor]) as! [RBSObjectPonso]
+        if ascending {
+            objectPonsos = objectPonsos.sorted { $0.objectClassName > $1.objectClassName }
+        }else {
+            objectPonsos = objectPonsos.sorted { $0.objectClassName < $1.objectClassName }
+        }
+        
         tableView.reloadData()
     }
 
@@ -158,7 +165,7 @@ public class RBSRealmBrowser: UITableViewController {
         let objectSchema = objectPonsos[indexPath.row]
         let results = self.resultsForObjectSchemaAtIndex(indexPath.row)
 
-        cell.realmBrowserObjectAttributes(objectSchema.objectClassName!, objectsCount: String(format: "Objects in Realm = %ld", results.count))
+        cell.realmBrowserObjectAttributes(objectSchema.objectClassName, objectsCount: String(format: "Objects in Realm = %ld", results.count))
 
         return cell
     }
@@ -184,7 +191,7 @@ public class RBSRealmBrowser: UITableViewController {
     ///   - indexPath: NSIndexPath
     /// - Returns: height of a single tableView row
     override public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
+        return 60.0
     }
     
     /// TableView Delegate method to handle cell selection
@@ -209,7 +216,7 @@ public class RBSRealmBrowser: UITableViewController {
     /// - Returns: all objects for a an Realm object at an index
     private func resultsForObjectSchemaAtIndex(_ index: Int)-> Array<Object> {
         let ponso = objectPonsos[index]
-        let results = realm.dynamicObjects(ponso.objectClassName!)
+        let results = realm.dynamicObjects(ponso.objectClassName)
         return Array(results)
     }
 }

@@ -9,9 +9,9 @@
 import RealmSwift
 import AVFoundation
 
-class RBSTools {
+final class RBSTools {
     
-    static let localVersion = "v0.2.1"
+    private static let localVersion = "v0.2.1"
     
     class func stringForProperty(_ property: Property, object: Object) -> String {
         var propertyValue = ""
@@ -73,7 +73,6 @@ class RBSTools {
         request.httpMethod = "GET"
         URLSession.shared.dataTask(with: request, completionHandler: { (data:Data?, response:URLResponse?, error:Error?) in
             guard let callback = response else {
-                print("no response")
                 return
             }
             if (callback as! HTTPURLResponse).statusCode != 200 {
