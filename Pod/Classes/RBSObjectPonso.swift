@@ -7,9 +7,9 @@
 //
 
 
-class RBSObjectPonso: NSObject {
+public class RBSObjectPonso {
     
-    var objectClassName:String? = nil
-    var numberOfObjects:String? = nil
+    public var objectClassName = ""
+    public var numberOfObjects = ""
 
 }
