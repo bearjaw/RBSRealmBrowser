@@ -1,3 +1,9 @@
+## RBSRealmBrowser v 0.2.2
+- Sort Objects crash fix
+- Clean up
+- iOS 11 style when available
+- Updated to Swift 4.1
+
 ## RBSRealmBrowser v 0.2.1
 - realm 3.0 support
 
