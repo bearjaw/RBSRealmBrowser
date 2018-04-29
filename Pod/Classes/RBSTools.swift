@@ -16,7 +16,7 @@ public struct RBSRequestConfig {
 
 final class RBSTools {
     
-    private static let localVersion = "v0.2.1"
+    private static let localVersion = "v0.2.3"
     
     class func stringForProperty(_ property: Property, object: Object) -> String {
         var propertyValue = ""
