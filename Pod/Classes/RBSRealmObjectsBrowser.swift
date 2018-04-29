@@ -12,16 +12,16 @@ import RealmSwift
 
 class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingDelegate {
     
-    private var objects: Array <Object>
+    private var objects: [Object]
     private var schema: ObjectSchema
-    private var properties: Array <Property>
+    private var properties: [Property]
     private let cellIdentifier = "objectCell"
     private var isEditMode: Bool = false
     private var selectAll: Bool = false
     private var realm:Realm
-    private var selectedObjects: Array<Object> = []
+    private var selectedObjects: [Object] = []
     
-    init(objects: Array<Object>, realm: Realm) {
+    init(objects: [Object], realm: Realm) {
         
         self.objects = objects
         self.realm = realm

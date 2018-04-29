@@ -93,4 +93,8 @@ final class RBSTools {
         }
         return isInPlayground;
     }
+    
+    open static func postObject(object:Object, atURL URL:URL) {
+        
+    }
 }

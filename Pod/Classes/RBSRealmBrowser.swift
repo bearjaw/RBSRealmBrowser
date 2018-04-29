@@ -30,6 +30,10 @@ public class RBSRealmBrowser: UITableViewController {
     private var objectPonsos: Array<RBSObjectPonso> = []
     private var ascending = false
     private var realm:Realm
+    private var filterOptions:UISegmentedControl = {
+        let segmentedControl = UISegmentedControl(items: ["All", "Hide base Realm models"])
+        return segmentedControl
+    }()
 
     /// Initialises the UITableViewController, sets title, registers datasource & delegates & cells
     ///
@@ -41,6 +45,9 @@ public class RBSRealmBrowser: UITableViewController {
         self.tableView.delegate = self
         self.tableView.dataSource = self
         tableView.tableFooterView = UIView()
+        
+        filterOptions.addTarget(self, action: .filterBaseModels, for: .valueChanged)
+        self.tableView.tableHeaderView = filterOptions
         self.tableView.register(RBSRealmObjectBrowserCell.self, forCellReuseIdentifier: cellIdentifier)
         
         var mutableObjectPonsos:[RBSObjectPonso] = []
@@ -150,6 +157,10 @@ public class RBSRealmBrowser: UITableViewController {
         
         tableView.reloadData()
     }
+    
+    @objc public func filterBaseModels(_ id:UISegmentedControl) {
+        
+    }
 
     //MARK: - TableView Datasource & Delegate
     
@@ -219,10 +230,12 @@ public class RBSRealmBrowser: UITableViewController {
         let results = realm.dynamicObjects(ponso.objectClassName)
         return Array(results)
     }
+    
 }
 
 // MARK: - Just a more beautiful way of working with selectors
 fileprivate extension Selector {
     static let dismissBrowser = #selector(RBSRealmBrowser.dismissBrowser(_:))
     static let sortObjects = #selector(RBSRealmBrowser.sortObjects(_:))
+    static let filterBaseModels = #selector(RBSRealmBrowser.filterBaseModels(_:))
 }
