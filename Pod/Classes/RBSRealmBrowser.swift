@@ -23,11 +23,11 @@ import RealmSwift
 ///
 /// - warning: This browser only works with RealmSwift because Realm (Objective-C) and RealmSwift
 /// 'are not interoperable and using them together is not supported.'
-public class RBSRealmBrowser: UITableViewController {
+public final class RBSRealmBrowser: UITableViewController {
 
     private let cellIdentifier = "RBSREALMBROWSERCELL"
-    private var objectsSchema: Array<ObjectSchema> = []
-    private var objectPonsos: Array<RBSObjectPonso> = []
+    private var objectsSchema: [ObjectSchema] = []
+    private var objectPonsos: [RBSObjectPonso] = []
     private var ascending = false
     private var realm:Realm
     private var filterOptions:UISegmentedControl = {
@@ -41,29 +41,16 @@ public class RBSRealmBrowser: UITableViewController {
     private init(realm: Realm) {
         self.realm = realm
         super.init(nibName: nil, bundle: nil)
-        self.title = "Realm Browser"
-        self.tableView.delegate = self
-        self.tableView.dataSource = self
-        tableView.tableFooterView = UIView()
-        
-        filterOptions.addTarget(self, action: .filterBaseModels, for: .valueChanged)
-        self.tableView.tableHeaderView = filterOptions
-        self.tableView.register(RBSRealmObjectBrowserCell.self, forCellReuseIdentifier: cellIdentifier)
-        
-        var mutableObjectPonsos:[RBSObjectPonso] = []
-        for object in realm.schema.objectSchema {
-            let objectPonso = RBSObjectPonso()
-            objectPonso.objectClassName = object.className
-            objectsSchema.append(object)
-            mutableObjectPonsos.append(objectPonso)
-        }
-        objectPonsos = mutableObjectPonsos
-        
+        title = "Realm Browser"
+        filterOptions.selectedSegmentIndex = 0
+    }
+    
+    public override func viewDidLoad() {
+        super.viewDidLoad()
+        configureBarButtonItems()
+        configureTableView()
+        fetchObjects()
         RBSTools.checkForUpdates()
-        
-        let bbiDismiss = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: .dismissBrowser)
-        let bbiSort = UIBarButtonItem(title: "Sort A-Z", style: .plain, target: self, action: .sortObjects)
-        self.navigationItem.rightBarButtonItems = [bbiDismiss, bbiSort]
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -159,7 +146,19 @@ public class RBSRealmBrowser: UITableViewController {
     }
     
     @objc public func filterBaseModels(_ id:UISegmentedControl) {
-        
+        let segmentedControl = id
+        switch segmentedControl.selectedSegmentIndex {
+        case 0:
+            fetchObjects()
+            tableView.reloadData()
+            break
+        case 1:
+            objectPonsos = objectPonsos.filter({!$0.objectClassName.hasPrefix("RLM") && !$0.objectClassName.hasPrefix("RealmSwift")})
+            tableView.reloadData()
+            break
+        default:
+            return
+        }
     }
 
     //MARK: - TableView Datasource & Delegate
@@ -225,12 +224,38 @@ public class RBSRealmBrowser: UITableViewController {
     ///
     /// - Parameter index: index of the object as Int
     /// - Returns: all objects for a an Realm object at an index
-    private func resultsForObjectSchemaAtIndex(_ index: Int)-> Array<Object> {
+    private func resultsForObjectSchemaAtIndex(_ index: Int)-> [Object] {
         let ponso = objectPonsos[index]
         let results = realm.dynamicObjects(ponso.objectClassName)
         return Array(results)
     }
     
+    private func configureBarButtonItems() {
+        let bbiDismiss = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: .dismissBrowser)
+        let bbiSort = UIBarButtonItem(title: "Sort A-Z", style: .plain, target: self, action: .sortObjects)
+        self.navigationItem.rightBarButtonItems = [bbiDismiss, bbiSort]
+    }
+    
+    private func configureTableView() {
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.tableFooterView = UIView()
+        tableView.tableHeaderView = filterOptions
+        tableView.register(RBSRealmObjectBrowserCell.self, forCellReuseIdentifier: cellIdentifier)
+        filterOptions.addTarget(self, action: .filterBaseModels, for: .valueChanged)
+    }
+    
+    private func fetchObjects() {
+        var mutableObjectPonsos:[RBSObjectPonso] = []
+        let objectSchema = realm.schema.objectSchema
+        for object in  objectSchema {
+            let objectPonso = RBSObjectPonso()
+            objectPonso.objectClassName = object.className
+            objectsSchema.append(object)
+            mutableObjectPonsos.append(objectPonso)
+        }
+        objectPonsos = mutableObjectPonsos
+    }
 }
 
 // MARK: - Just a more beautiful way of working with selectors
