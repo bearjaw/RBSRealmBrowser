@@ -47,8 +47,8 @@ public final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCe
     
     private func configureBarButtonItems() {
         let editButton = UIBarButtonItem(title: "Edit", style: .plain, target: self, action: #selector(RBSRealmPropertyBrowser.actionToggleEdit(_:)))
-        let requestButton = UIBarButtonItem(title: "POST", style: .plain, target: self, action:#selector(RBSRealmPropertyBrowser.showPostOption))
-        navigationItem.rightBarButtonItems = [requestButton,editButton]
+//        let requestButton = UIBarButtonItem(title: "POST", style: .plain, target: self, action:#selector(RBSRealmPropertyBrowser.showPostOption))
+        navigationItem.rightBarButtonItems = [editButton]
     }
     
     required public init?(coder aDecoder: NSCoder) {
