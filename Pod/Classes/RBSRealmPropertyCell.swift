@@ -21,6 +21,7 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         textField.returnKeyType = .done
         textField.backgroundColor = .white
         textField.textAlignment = .right
+        textField.autocorrectionType = .no
         return textField
     }()
     private var labelPropertyType:UILabel = {
