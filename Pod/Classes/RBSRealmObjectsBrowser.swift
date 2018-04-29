@@ -10,18 +10,18 @@ import UIKit
 import RealmSwift
 
 
-class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingDelegate {
-    
-    private var objects: Array <Object>
+public final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDelegate, UITableViewDataSource, UITableViewDelegate {
+    private var objects: [Object]
     private var schema: ObjectSchema
-    private var properties: Array <Property>
+    private var properties: [Property]
     private let cellIdentifier = "objectCell"
     private var isEditMode: Bool = false
     private var selectAll: Bool = false
     private var realm:Realm
-    private var selectedObjects: Array<Object> = []
+    private var selectedObjects: [Object] = []
+    private var realmView = RBSRealmBrowserView()
     
-    init(objects: Array<Object>, realm: Realm) {
+    init(objects: [Object], realm: Realm) {
         
         self.objects = objects
         self.realm = realm
@@ -32,10 +32,10 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
         
         self.title = "Objects"
         
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.tableFooterView = UIView()
-        tableView.register(RBSRealmObjectBrowserCell.self, forCellReuseIdentifier: cellIdentifier)
+        realmView.tableView.delegate = self
+        realmView.tableView.dataSource = self
+        realmView.tableView.tableFooterView = UIView()
+        realmView.tableView.register(RBSRealmObjectBrowserCell.self, forCellReuseIdentifier: cellIdentifier)
         
         let bbi = UIBarButtonItem(title: "Select", style: .plain, target: self, action: #selector(RBSRealmObjectsBrowser.actionToggleEdit(_:)))
         self.navigationItem.rightBarButtonItem = bbi
@@ -44,23 +44,26 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
         
     }
     
+    public override func loadView() {
+        view = realmView
+    }
     
-    required init?(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        tableView.reloadData()
+        realmView.tableView.reloadData()
     }
     
     
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+   public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         if #available(iOS 9.0, *) {
             switch traitCollection.forceTouchCapability {
             case .available:
-                registerForPreviewing(with: self, sourceView: tableView)
+                registerForPreviewing(with: self, sourceView: realmView.tableView)
                 break
             case .unavailable:
                 break
@@ -71,7 +74,7 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
     }
     
     //MARK: TableView Datasource & Delegate
-    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let object = objects[indexPath.row]
         guard let property = properties.first else {
             return
@@ -92,23 +95,23 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
         
     }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
         return cell
     }
-    override  func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    public  func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return objects.count
     }
     
-    override func numberOfSections(in tableView: UITableView) -> Int {
+    public func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
-    override  func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    public  func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60.0
     }
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if isEditMode && !selectAll {
             tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
             selectedObjects.append(objects[indexPath.row])
@@ -120,7 +123,7 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
         
     }
     
-    override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         if isEditMode {
             tableView.cellForRow(at: indexPath)?.accessoryType = .none
             var index = 0
@@ -142,8 +145,8 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
     //MARK: private Methods
     
     @objc func actionToggleEdit(_ id: AnyObject) {
-        tableView.allowsMultipleSelection = true
-        tableView.allowsMultipleSelectionDuringEditing = true
+        realmView.tableView.allowsMultipleSelection = true
+        realmView.tableView.allowsMultipleSelectionDuringEditing = true
         isEditMode = !isEditMode
         if !isEditMode {
             if selectAll {
@@ -153,7 +156,7 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
                 let result:Results<DynamicObject> =  realm.dynamicObjects(schema.className)
                 objects = Array(result)
                 let indexSet = IndexSet(integer: 0)
-                tableView.reloadSections(indexSet, with: .top)
+                realmView.tableView.reloadSections(indexSet, with: .top)
             }
             
             self.navigationItem.leftBarButtonItem = nil
@@ -172,7 +175,7 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
             selectedObjects.removeAll()
             self.navigationItem.leftBarButtonItem?.title = "Select all"
         }
-        self.tableView.reloadData()
+        realmView.tableView.reloadData()
     }
     
     @objc func actionTogglePreview(_ id: AnyObject) {
@@ -184,7 +187,7 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
             realm.delete(objects)
         }
         objects = []
-        tableView.reloadData()
+        realmView.tableView.reloadData()
         
     }
     
@@ -201,10 +204,8 @@ class RBSRealmObjectsBrowser: UITableViewController, UIViewControllerPreviewingD
     
     @available(iOS 9.0, *)
     public func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
-        guard let indexPath = tableView?.indexPathForRow(at:location) else { return nil }
-        
-        guard let cell = tableView?.cellForRow(at:indexPath) else { return nil }
-        
+        guard let indexPath = realmView.tableView.indexPathForRow(at:location) else { return nil }
+        guard let cell = realmView.tableView.cellForRow(at:indexPath) else { return nil }
         
         let detailVC =  RBSRealmPropertyBrowser(object:self.objects[indexPath.row], realm: realm)
         detailVC.preferredContentSize = CGSize(width: 0.0, height: 300.0)

@@ -9,6 +9,11 @@
 import RealmSwift
 import AVFoundation
 
+public struct RBSRequestConfig {
+    public let header: [String:Any]?
+    public let body: [String:Any]?
+}
+
 final class RBSTools {
     
     private static let localVersion = "v0.2.1"
@@ -92,5 +97,9 @@ final class RBSTools {
             return false
         }
         return isInPlayground;
+    }
+    
+    open static func postObject(object:Object, atURL URL:URL) {
+        print("Worked")
     }
 }
