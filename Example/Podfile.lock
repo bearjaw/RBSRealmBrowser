@@ -1,24 +1,29 @@
 PODS:
-  - RBSRealmBrowser (0.2.1):
+  - RBSRealmBrowser (0.2.2):
     - RealmSwift
-  - Realm (3.3.1):
-    - Realm/Headers (= 3.3.1)
-  - Realm/Headers (3.3.1)
-  - RealmSwift (3.3.1):
-    - Realm (= 3.3.1)
+  - Realm (3.5.0):
+    - Realm/Headers (= 3.5.0)
+  - Realm/Headers (3.5.0)
+  - RealmSwift (3.5.0):
+    - Realm (= 3.5.0)
 
 DEPENDENCIES:
   - RBSRealmBrowser (from `../`)
 
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - Realm
+    - RealmSwift
+
 EXTERNAL SOURCES:
   RBSRealmBrowser:
-    :path: ../
+    :path: "../"
 
 SPEC CHECKSUMS:
-  RBSRealmBrowser: fb7b29fa295289e8b7c14c929d8962d43b7e2591
-  Realm: 63ebf4903b446b0bdf2131244eb1e1549925c724
-  RealmSwift: f28fe8507bdfb8f1c924962401b83e7b9d7abb5c
+  RBSRealmBrowser: 0f39a54a29d9194b2077a14aefcbb76c0e6ceb2e
+  Realm: 0378021c424e4e2bd6a0e63b27881e929d9b9ad1
+  RealmSwift: 3322562622fda2ad596985ead4d8d8be30cf838c
 
 PODFILE CHECKSUM: 1364463224a161bbc3755d67738a98982408a727
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.5.0

@@ -191,7 +191,6 @@
 				607FACCD1AFB9204008FA782 /* Frameworks */,
 				607FACCE1AFB9204008FA782 /* Resources */,
 				AF125BA51F989A2901F18DAB /* [CP] Embed Pods Frameworks */,
-				5D75B9D81B24CCC74676CDB4 /* [CP] Copy Pods Resources */,
 				48C91D741E7D556F00D5CABE /* ShellScript */,
 			);
 			buildRules = (
@@ -212,7 +211,6 @@
 				607FACE21AFB9204008FA782 /* Frameworks */,
 				607FACE31AFB9204008FA782 /* Resources */,
 				D2406857FFF6A9ACF811C03E /* [CP] Embed Pods Frameworks */,
-				618316AD2EDBBF624EDDD8B5 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -314,36 +312,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		5D75B9D81B24CCC74676CDB4 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RBSRealmBrowser_Example/Pods-RBSRealmBrowser_Example-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		618316AD2EDBBF624EDDD8B5 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RBSRealmBrowser_Tests/Pods-RBSRealmBrowser_Tests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		AF125BA51F989A2901F18DAB /* [CP] Embed Pods Frameworks */ = {
