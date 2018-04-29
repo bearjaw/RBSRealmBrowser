@@ -59,6 +59,11 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
         RBSTools.checkForUpdates()
     }
     
+    public override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        realmBrowserView.tableView.reloadData()
+    }
+    
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -207,7 +212,7 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
     ///   - indexPath: NSIndexPath
     /// - Returns: height of a single tableView row
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60.0
+        return UITableViewAutomaticDimension
     }
     
     /// TableView Delegate method to handle cell selection
@@ -248,7 +253,6 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
         realmBrowserView.tableView.delegate = self
         realmBrowserView.tableView.dataSource = self
         realmBrowserView.tableView.tableFooterView = UIView()
-        realmBrowserView.tableView.cellLayoutMarginsFollowReadableWidth = true
         realmBrowserView.tableView.register(RBSRealmObjectBrowserCell.self, forCellReuseIdentifier: cellIdentifier)
         filterOptions.addTarget(self, action: .filterBaseModels, for: .valueChanged)
         
@@ -283,20 +287,23 @@ fileprivate enum RBSSortStyle: String {
     case descending = "Z-A"
 }
 
-fileprivate class RBSRealmBrowserView: UIView {
+public final class RBSRealmBrowserView: UIView {
     public var tableView:UITableView
     
     init() {
+        
         tableView = UITableView(frame: .zero, style: .plain)
         super.init(frame: .zero)
+        tableView.backgroundColor = .white
         addSubview(tableView)
+        backgroundColor = .white
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func layoutSubviews() {
+    override public func layoutSubviews() {
         super.layoutSubviews()
         let maxWidth:Double = 414.0
         let size = (CGSize(width: min(maxWidth, Double(bounds.size.width)), height: Double(bounds.size.height)))
@@ -304,7 +311,13 @@ fileprivate class RBSRealmBrowserView: UIView {
         if Double(size.width) == 414.0 {
             xPos = Double((bounds.size.width - size.width))/2.0
         }
-        let origin = (CGPoint(x: xPos, y: Double(frame.origin.y)))
+        let origin = (CGPoint(x: xPos, y: 0.0))
         tableView.frame = (CGRect(origin: origin, size: size))
+    }
+}
+
+public extension UIView  {
+    public func right()-> (CGPoint){
+        return (CGPoint(x: frame.origin.x + bounds.size.width, y: frame.origin.y + bounds.size.height))
     }
 }

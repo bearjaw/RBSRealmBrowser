@@ -10,14 +10,14 @@ import UIKit
 import RealmSwift
 import Realm
 
-class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelegate {
-    
+public final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDelegate, UITableViewDataSource, UITableViewDelegate {
     private var object: Object
     private var schema: ObjectSchema
     private var properties: [Property]
     private let cellIdentifier = "objectCell"
     private var isEditMode: Bool = false
     private var realm:Realm
+    private var realmView:RBSRealmBrowserView = RBSRealmBrowserView()
     
     init(object: Object, realm: Realm) {
         self.object = object
@@ -28,19 +28,21 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
         self.title = self.schema.className
     }
     
-    override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
-
         configureTableView()
         configureBarButtonItems()
     }
     
+    public override func loadView() {
+        view = realmView
+    }
     
     private func configureTableView() {
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.tableFooterView = UIView()
-        tableView.register(RBSRealmPropertyCell.self, forCellReuseIdentifier: cellIdentifier)
+        realmView.tableView.delegate = self
+        realmView.tableView.dataSource = self
+        realmView.tableView.tableFooterView = UIView()
+        realmView.tableView.register(RBSRealmPropertyCell.self, forCellReuseIdentifier: cellIdentifier)
     }
     
     private func configureBarButtonItems() {
@@ -49,7 +51,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
         navigationItem.rightBarButtonItems = [requestButton,editButton]
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -81,7 +83,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
     
     //MARK: TableView Datasource & Delegate
     
-    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let property = properties[indexPath.row] 
         let stringvalue = RBSTools.stringForProperty(property, object: object)
         var isArray = false
@@ -92,21 +94,21 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
         (cell as! RBSRealmPropertyCell).cellWithAttributes(property.name, propertyValue: stringvalue, editMode:isEditMode, property:property, isArray:isArray)
     }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell:RBSRealmPropertyCell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier) as? RBSRealmPropertyCell else {return UITableViewCell()}
         cell.delegate = self
         cell.isUserInteractionEnabled = true
         return cell
     }
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return properties.count
     }
     
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
     }
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if !isEditMode {
             tableView.deselectRow(at: indexPath, animated: true)
             let property = properties[indexPath.row] 
@@ -196,7 +198,7 @@ class RBSRealmPropertyBrowser: UITableViewController, RBSRealmPropertyCellDelega
         } else {
             id.title = "Edit"
         }
-        tableView.reloadData()
+        realmView.tableView.reloadData()
     }
     
 }
