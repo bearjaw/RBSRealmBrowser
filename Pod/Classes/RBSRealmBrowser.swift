@@ -251,7 +251,7 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
         let results = self.resultsForObjectSchemaAtIndex(indexPath.row)
         if results.count > 0 {
             let vc = RBSRealmObjectsBrowser(objects: results, realm: realm)
-            self.navigationController?.pushViewController(vc, animated: true)
+            navigationController?.pushViewController(vc, animated: true)
         }
     }
     
@@ -315,10 +315,6 @@ fileprivate extension Selector {
     static let filterBaseModels = #selector(RBSRealmBrowser.filterBaseModels(_:))
 }
 
-fileprivate struct RealmStyle {
-    public static let tintColor: UIColor =  UIColor(red:0.35, green:0.34, blue:0.62, alpha:1.0)
-}
-
 fileprivate enum RBSSortStyle: String {
     case ascending = "A-Z"
     case descending = "Z-A"
@@ -326,9 +322,7 @@ fileprivate enum RBSSortStyle: String {
 
 public final class RBSRealmBrowserView: UIView {
     public var tableView:UITableView
-    
     init() {
-        
         tableView = UITableView(frame: .zero, style: .plain)
         super.init(frame: .zero)
         tableView.backgroundColor = .white

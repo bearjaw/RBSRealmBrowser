@@ -113,11 +113,7 @@ public final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCe
             tableView.deselectRow(at: indexPath, animated: true)
             let property = properties[indexPath.row] 
             if property.isArray {
-                let results = object.dynamicList(property.name)
-                var objects: [Object] = []
-                for obj in results {
-                    objects.append(obj)
-                }
+                let objects = fetchObjects(for: property.name)
                 if objects.count > 0 {
                     let objectsViewController = RBSRealmObjectsBrowser(objects: objects, realm: realm)
                     navigationController?.pushViewController(objectsViewController, animated: true)
@@ -135,7 +131,7 @@ public final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCe
     }
     
     func textFieldDidFinishEdit(_ input: String, property: Property) {
-        self.savePropertyChangesInRealm(input, property: property)
+        savePropertyChangesInRealm(input, property: property)
         
         //        self.actionToggleEdit((self.navigationItem.rightBarButtonItem)!)
     }
@@ -169,11 +165,7 @@ public final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCe
             let propertyValue:String = newValue as String
             saveValueForProperty(value: propertyValue, propertyName: property.name)
             break
-        case .linkingObjects:
-            
-            break
-        case .object:
-            
+        case .linkingObjects,.object:
             break
         default:
             break
@@ -184,11 +176,20 @@ public final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCe
     private func saveValueForProperty(value:Any, propertyName:String) {
         do {
             try realm.write {
-            object.setValue(value, forKey: propertyName)
+                object.setValue(value, forKey: propertyName)
             }
         }catch {
             print("saving failed")
         }
+    }
+    
+    private func fetchObjects(for propertyName:String) -> [Object] {
+        let results = object.dynamicList(propertyName)
+        var objects: [Object] = []
+        for obj in results {
+            objects.append(obj)
+        }
+        return objects
     }
     
     @objc func actionToggleEdit(_ id: UIBarButtonItem) {

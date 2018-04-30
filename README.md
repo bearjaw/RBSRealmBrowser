@@ -51,7 +51,7 @@ class ViewController: UIViewController {
 ```
 
 ## Use one of the methods to browse your Realm database
-### All these convenience methods come a second method using a  `classes` option. Use theses methods if you
+### All these convenience methods come with a second method using a  `classes` option. Use theses methods if you
 want to restrict the results to (a) specific class(es). If you pass in `nil`, all objects will be displayed. The `[String]` must be composed
 of classNames and they must match. 
 
@@ -80,7 +80,7 @@ If you want to access your realm at a given URL use one of theses methods:
 public static func realmBroswerForRealmURL(_ url: URL) -> UINavigationController?
 ```
 ```swift
-// get the RealmBrowser for Realm at a specific url
+// Same as the above but you can pass an optional [String] containing Class names
 public static func realmBrowser(showing classes:[String]?,aURL URL:URL) -> UINavigationController?
 ```
 
