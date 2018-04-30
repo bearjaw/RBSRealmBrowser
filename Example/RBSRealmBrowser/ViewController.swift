@@ -44,21 +44,20 @@ class ViewController: UIViewController {
                 }
 
             }catch {
-                print("failed creatimg objects")
+                print("failed creating objects")
             }
             
             i += 1
         }
         
         let bbi = UIBarButtonItem(title: "Open", style: UIBarButtonItemStyle.plain, target: self, action: #selector(ViewController.openBrowser))
-        self.navigationItem.rightBarButtonItem = bbi
+        navigationItem.rightBarButtonItem = bbi
     }
     
     @objc func openBrowser() {
-        let rb:UIViewController =  RBSRealmBrowser.realmBrowser()!
-        self.present(rb, animated: true) {
-        }
-        
+        guard let realmBrowser = RBSRealmBrowser.realmBrowser(showing: ["Person"]) else { return }
+//        guard let realmBrowser = RBSRealmBrowser.realmBrowser() else { return }
+        present(realmBrowser, animated: true, completion: nil)
     }
     
 }
