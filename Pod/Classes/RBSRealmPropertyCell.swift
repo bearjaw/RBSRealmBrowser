@@ -158,7 +158,7 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
     }
     
     private func shouldAllowEditing() -> Bool {
-        return !property.isArray && !(property.type != .object || property.type != .linkingObjects || property.type != .data)
+        return !property.isArray && !(property.type == .data || property.type == .linkingObjects || property.type == .object)
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
