@@ -55,8 +55,8 @@ class ViewController: UIViewController {
     }
     
     @objc func openBrowser() {
+        //        guard let realmBrowser = RBSRealmBrowser.realmBrowser() else { return }
         guard let realmBrowser = RBSRealmBrowser.realmBrowser(showing: ["Person"]) else { return }
-//        guard let realmBrowser = RBSRealmBrowser.realmBrowser() else { return }
         present(realmBrowser, animated: true, completion: nil)
     }
     

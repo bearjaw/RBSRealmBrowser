@@ -107,9 +107,10 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
     /// Instantiate the browser using a specific version of Realm.
     ///
     /// - Parameter realm: A realm custom realm
+    /// - Parameter filteredClasses: filter results based on classNames
     /// - Returns: UINavigationController with an instance of realmBrowser
-    public static func realmBrowserForRealm(_ realm: Realm, showing filteredClasses:[String]?) -> UINavigationController? {
-        let rbsRealmBrowser = RBSRealmBrowser(realm:realm, filteredClasses: filteredClasses)
+    public static func realmBrowserForRealm(_ realm: Realm, showing classes:[String]?) -> UINavigationController? {
+        let rbsRealmBrowser = RBSRealmBrowser(realm:realm, filteredClasses: classes)
         let navigationController = UINavigationController(rootViewController: rbsRealmBrowser)
         navigationController.navigationBar.barTintColor = RealmStyle.tintColor
         navigationController.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
@@ -120,6 +121,17 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
             navigationController.navigationBar.largeTitleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
         }
         return navigationController
+    }
+    
+    
+    /// Instantiate the browser using a specific version of Realm and
+    /// use no pre-filtering
+    ///
+    /// - Parameter realm: a realm instance
+    /// - Returns: an instance of UINavigationController containing a browser
+    public static func realmBrowserForRealm(_ realm: Realm ) -> UINavigationController? {
+        let rbsRealmBrowser = realmBrowserForRealm(realm, showing: nil)
+        return rbsRealmBrowser
     }
     
     ///  Instantiate the browser using a specific version of Realm at a specific path.
