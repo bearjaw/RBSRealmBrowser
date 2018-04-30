@@ -1,3 +1,8 @@
+## RBSRealmBrowser v 0.2.3
+- minor layout improvements
+- clean up
+- filter objects (your own models vs all)
+
 ## RBSRealmBrowser v 0.2.2
 - Sort Objects crash fix
 - Clean up
