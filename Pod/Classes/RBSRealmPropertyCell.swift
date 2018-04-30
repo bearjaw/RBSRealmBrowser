@@ -36,12 +36,11 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .none
-        UITextField.appearance().tintColor = UIColor(red:0.35, green:0.34, blue:0.62, alpha:1.0)
-        contentView.addSubview(self.textFieldPropValue)
+        UITextField.appearance().tintColor = RealmStyle.tintColor
+        contentView.addSubview(textFieldPropValue)
         
         labelPropertyTitle = labelWithAttributes(14, weight:0.3, text: "")
-        contentView.addSubview(self.labelPropertyTitle)
-        
+        contentView.addSubview(labelPropertyTitle)
         contentView.addSubview(labelPropertyType)
     }
     
@@ -56,40 +55,14 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         labelPropertyType.text = ""
     }
     
-    func cellWithAttributes(_ propertyTitle: String, propertyValue: String, editMode: Bool, property: Property, isArray:Bool) {
+    func cellWithAttributes(_ propertyTitle: String, propertyValue: String, editMode: Bool, property: Property) {
         self.property = property
-        textFieldPropValue.delegate = self
         labelPropertyTitle.text = propertyTitle
-        if property.isArray {
-            labelPropertyType.text = "Array"
-        }else {
-            labelPropertyType.text = stringForType(type: property.type)
-        }
-        if editMode {
-            textFieldPropValue.resignFirstResponder()
-        }
-        self.textFieldPropValue.isUserInteractionEnabled = editMode
-        
-        if isArray || property.type == .object{
-            textFieldPropValue.isUserInteractionEnabled = false
-        }
-        
-        if property.type == .float || property.type == .double {
-            textFieldPropValue.keyboardType = .decimalPad
-        } else if property.type == .int {
-            textFieldPropValue.keyboardType = .numberPad
-        }
-        
         textFieldPropValue.text = propertyValue
-        if editMode && !isArray && property.type != .object {
-            textFieldPropValue.layer.borderColor = UIColor(red:0.35, green:0.34, blue:0.62, alpha:1.0).cgColor
-            textFieldPropValue.layer.borderWidth = 1.0
-        }else {
-            textFieldPropValue.layer.borderWidth = 0.0
-        }
-        
+        configureKeyboard(for: property.type)
+        configureLabelType(for: property)
+        configureTextField(for: editMode)
         setNeedsLayout()
-        isUserInteractionEnabled = true
     }
     
     override func layoutSubviews() {
@@ -144,15 +117,52 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         }
     }
     
+    private func configureKeyboard(for propertyType:PropertyType) {
+        if property.type == .float || property.type == .double {
+            textFieldPropValue.keyboardType = .decimalPad
+        } else if property.type == .int {
+            textFieldPropValue.keyboardType = .numberPad
+        }else if propertyType == .string {
+            textFieldPropValue.keyboardType = .alphabet
+        }
+        let allowEditing = shouldAllowEditing()
+        if  allowEditing {
+            textFieldPropValue.layer.borderColor = RealmStyle.tintColor.cgColor
+            textFieldPropValue.layer.borderWidth = 1.0
+        }else {
+            textFieldPropValue.layer.borderWidth = 0.0
+        }
+    }
+    
+    private func configureLabelType(for property:Property) {
+        if property.isArray {
+            labelPropertyType.text = "Array"
+        }else {
+            labelPropertyType.text = stringForType(type: property.type)
+        }
+    }
+    
+    private func configureTextField(for editMode:Bool) {
+        if editMode {
+            textFieldPropValue.resignFirstResponder()
+        }
+        textFieldPropValue.isUserInteractionEnabled = editMode
+        textFieldPropValue.delegate = self
+    }
+    
     //MARK: UITextFieldDelegate
     
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
-        return true
+        return shouldAllowEditing()
+    }
+    
+    private func shouldAllowEditing() -> Bool {
+        return !property.isArray && !(property.type == .data || property.type == .linkingObjects || property.type == .object)
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
         if  (property != nil) && (property.type == .bool) {
-            textField.resignFirstResponder()
+            
             let isEqual:Bool = (textFieldPropValue.text! as String == "false")
             var newValue = "0"
             if isEqual {
@@ -166,15 +176,15 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
                 print("delegate not set")
                 return
             }
-            
             del.textFieldDidFinishEdit(newValue, property: self.property)
-            self.setNeedsLayout()
+            textField.resignFirstResponder()
+            setNeedsLayout()
         }
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.isUserInteractionEnabled = false
-                return true
+        return true
     }
     
     
@@ -193,7 +203,7 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
             textField.resignFirstResponder()
             return false
         }
-        self.setNeedsLayout()
+        setNeedsLayout()
         return true
     }
 }

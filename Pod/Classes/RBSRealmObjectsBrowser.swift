@@ -22,25 +22,17 @@ public final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPre
     private var realmView = RBSRealmBrowserView()
     
     init(objects: [Object], realm: Realm) {
-        
         self.objects = objects
         self.realm = realm
         schema = objects[0].objectSchema
         properties = schema.properties
         super.init(nibName: nil, bundle: nil)
-        
-        
-        self.title = "Objects"
-        
-        realmView.tableView.delegate = self
-        realmView.tableView.dataSource = self
-        realmView.tableView.tableFooterView = UIView()
-        realmView.tableView.register(RBSRealmObjectBrowserCell.self, forCellReuseIdentifier: cellIdentifier)
+        title = "Objects"
         
         let bbi = UIBarButtonItem(title: "Select", style: .plain, target: self, action: #selector(RBSRealmObjectsBrowser.actionToggleEdit(_:)))
-        self.navigationItem.rightBarButtonItem = bbi
+        navigationItem.rightBarButtonItem = bbi
         let bbiPreview = UIBarButtonItem(barButtonSystemItem: .action, target: self, action:#selector(RBSRealmObjectsBrowser.actionTogglePreview(_:)) )
-        self.navigationItem.rightBarButtonItems = [bbi, bbiPreview]
+        navigationItem.rightBarButtonItems = [bbi, bbiPreview]
         
     }
     
@@ -48,13 +40,20 @@ public final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPre
         view = realmView
     }
     
+    public override func viewDidLoad() {
+        super.viewDidLoad()
+        configureTableView()
+    }
+    
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        realmView.tableView.reloadData()
+    private func configureTableView() {
+        realmView.tableView.delegate = self
+        realmView.tableView.dataSource = self
+        realmView.tableView.tableFooterView = UIView()
+        realmView.tableView.register(RBSRealmObjectBrowserCell.self, forCellReuseIdentifier: cellIdentifier)
     }
     
     
@@ -113,7 +112,10 @@ public final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPre
     
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if isEditMode && !selectAll {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
+            if let cell = tableView.cellForRow(at: indexPath) {
+                cell.accessoryType = .checkmark
+                cell.tintColor = RealmStyle.tintColor
+            }
             selectedObjects.append(objects[indexPath.row])
         } else {
             tableView.deselectRow(at: indexPath, animated: true)
@@ -159,12 +161,12 @@ public final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPre
                 realmView.tableView.reloadSections(indexSet, with: .top)
             }
             
-            self.navigationItem.leftBarButtonItem = nil
-            self.navigationItem.rightBarButtonItem?.title = "Select"
+            navigationItem.leftBarButtonItem = nil
+            navigationItem.rightBarButtonItem?.title = "Select"
         } else {
-            self.navigationItem.rightBarButtonItem?.title = "Delete"
+            navigationItem.rightBarButtonItem?.title = "Delete"
             let bbi = UIBarButtonItem(title: "Select All", style: UIBarButtonItemStyle.plain, target: self, action: #selector(RBSRealmObjectsBrowser.actionSelectAll(_:)))
-            self.navigationItem.leftBarButtonItem = bbi
+            navigationItem.leftBarButtonItem = bbi
         }
     }
     @objc func actionSelectAll(_ id: AnyObject) {
@@ -183,12 +185,17 @@ public final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPre
     }
     
     private func deleteAllObjects() {
-        try! realm.write {
-            realm.delete(objects)
+        if objects.count > 0 {
+            do {
+                try realm.write {
+                    realm.delete(objects)
+                    objects = []
+                    realmView.tableView.reloadData()
+                }
+            }catch {
+                print("Couldn't delete all realm objects.")
+            }
         }
-        objects = []
-        realmView.tableView.reloadData()
-        
     }
     
     private func deleteObjects() {

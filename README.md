@@ -11,10 +11,11 @@ Simply edit your existing object's property values by switching into edit mode.
 
 ## Features
 
-- quickly browse realm objects
-- edit realm objects
-- delete realm objects
-- quick actions(start the browser from the homescreen)
+- Quickly browse realm objects
+- Edit Realm objects
+- Delete Realm objects
+- Quick actions (start the browser from the homescreen)
+- Open RealmBrowser constrained to specific classes (i.e. you only want to inspect the Person classes) 
 
 For editing objects these types are currently supported:
 
@@ -33,36 +34,54 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 This browser only works with RealmSwift because Realm (Objective-C) and RealmSwift 'are not interoperable and using them together is not supported.'
 
 ```swift
-override func viewDidLoad() {
+class ViewController: UIViewController {
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // add a UIBarButtonItem 
+        let bbi = UIBarButtonItem(title: "Open", style: UIBarButtonItemStyle.plain, target: self, action:   #selector(ViewController.openBrowser))
+        navigationItem.rightBarButtonItem = bbi
+    }
 
-super.viewDidLoad()
-    // add a UIBarButtonItem 
-
-let bbi = UIBarButtonItem(title: "Open", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(ViewController.openBrowser))
-    self.navigationItem.rightBarButtonItem = bbi
-}
-
-func openBrowser(id:AnyObject) {
-
-    // get an instance of RBSRealmBrowser
-    let rb = RBSRealmBrowser.realmBrowser()
-    self.presentViewController(rb as! UIViewController, animated: true) { 
-
+    @objc func openBrowser() {
+        guard let realmBrowser = RBSRealmBrowser.realmBrowser(showing: ["Person"]) else { return }
+        present(realmBrxowser, animated: true, completion: nil)
     }
 }
 ```
 
-Use one of the three methods to browse your Realm database
+## Use one of the methods to browse your Realm database
+### All these convenience methods come with a second method using a  `classes` option. Use theses methods if you
+want to restrict the results to (a) specific class(es). If you pass in `nil`, all objects will be displayed. The `[String]` must be composed
+of classNames and they must match. 
 
+If you quickly want to access all objects in  the default realm database use one these two methods:
 ```swift
 // get the RealmBrowser for default Realm 
-realmBrowser()
+public static func realmBrowser() -> UINavigationController?
+```
+```swift
+// get the RealmBrowser for default Realm, filtered by an optional class names array 
+public static func realmBrowser(showing classes:[String]?) -> UINavigationController?
+```
 
+If you want to specifiy a realm use one of these two methods:
+```swift
 // get the RealmBrowser for Realm 
-realmBrowserForRealm(realm:Realm)
-
+public static func realmBrowserForRealm(_ realm: Realm, ) -> UINavigationController?
+```
+```swift
+// Pass an optional array of class names you want to display & your realm
+public static func realmBrowserForRealm(_ realm: Realm, showing filteredClasses:[String]?) -> UINavigationController?
+```
+If you want to access your realm at a given URL use one of theses methods:
+```swift
 // get the RealmBrowser for Realm at a specific url
-realmBroswerForRealmAtURL(path:String)
+public static func realmBroswerForRealmURL(_ url: URL) -> UINavigationController?
+```
+```swift
+// Same as the above but you can pass an optional [String] containing Class names
+public static func realmBrowser(showing classes:[String]?,aURL URL:URL) -> UINavigationController?
 ```
 
 ## Quick actions
@@ -91,7 +110,6 @@ Now handle the action:
         }
         let vc = (window?.rootViewController)! as UIViewController
         vc.present(rb, animated: true)
-        
     }
 ```
 

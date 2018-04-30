@@ -103,3 +103,7 @@ final class RBSTools {
         print("Worked")
     }
 }
+
+public struct RealmStyle {
+    public static let tintColor: UIColor =  UIColor(red:0.35, green:0.34, blue:0.62, alpha:1.0)
+}
