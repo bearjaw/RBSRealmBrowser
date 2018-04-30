@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
 s.name             = "RBSRealmBrowser"
-s.version          = "0.2.3"
+s.version          = "0.2.4"
 s.summary          = "RBSRealmBrowser is a a Realm browser which you can use in your Swift projects."
 
 # This description is used to generate tags and improve search results.
@@ -17,8 +17,8 @@ s.summary          = "RBSRealmBrowser is a a Realm browser which you can use in 
 #   * Write the description between the DESC delimiters below.
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 s.description      = <<-DESC
-RBSRealmBrowser is based on NBN's RealmBrowser. If you're using RealmSwift, this browser offers a brief insight into your Realm database.
-Inspect objects, their properties and their properties' values easly.
+RBSRealmBrowser is based on NBN's RealmBrowser. If you're using RealmSwift, this browser offers a brief insight into your Realm database. You can define an array of classNames to get those explicit models.
+Inspect objects, their properties and their values with ease.
 DESC
 
 s.homepage         = "https://github.com/bearjaw/RBSRealmBrowser"

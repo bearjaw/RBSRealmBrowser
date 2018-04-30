@@ -295,7 +295,12 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
         var objectSchema = realm.schema.objectSchema
         
         if let classFilter = filteredClasses {
-            objectSchema = objectSchema.filter({classFilter.contains($0.className)})
+            if classFilter.count > 0 {
+                objectSchema = objectSchema.filter({classFilter.contains($0.className)})
+            }
+            if objectSchema.count == 0 {
+                objectSchema = realm.schema.objectSchema
+            }
         }
         
         for object in  objectSchema {

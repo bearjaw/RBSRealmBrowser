@@ -1,3 +1,15 @@
+## RBSRealmBrowser v 0.2.4
+- minor layout improvements
+- clean up
+- updated readme with Swift 4.1 code
+- removed explicit Swift 4.0 support as it is 4.1 from now on by default
+- New feature:  Inspect (a) specific class(es) by passing an optional String array of classNames
+```swift
+// only show the objects of the Person class
+guard let realmBrowser = RBSRealmBrowser.realmBrowser(showing: ["Person"]) else { return }
+```
+A `className` `String` must match a `String` representation of a given Class. If no `String` in `[String]` matches a className in the realm schema, all objects are returned.
+
 ## RBSRealmBrowser v 0.2.3
 - minor layout improvements
 - clean up
@@ -40,18 +52,18 @@
     - using real world objects for pod try
 
 ## RBSRealmBrowser v 0.1.6
-- Improved delete functionality 
+- Improved delete functionality
 - minor layout and logic fixes
 - added quick actions
 
 ## RBSRealmBrowser v 0.1.5
-- Added possibilty to delete one or multiple objects. 
+- Added possibilty to delete one or multiple objects.
 - minor layout and logic fixes
 - compatible with Swift 3.0
 - updated to the latest realm version
 
 ## RBSRealmBrowser v 0.1.4
-- Added possibilty to inspect elements contained in your objects' lists. 
+- Added possibilty to inspect elements contained in your objects' lists.
 - minor fixes
 - Improved documentation
 
@@ -66,14 +78,14 @@
 
 ## RBSRealmBrowser v 0.1.0
 
-- Inital release with basic functionality. 
+- Inital release with basic functionality.
 - The browser can be triggered using one of the three methods:
 
 ```swift
-// get the RealmBrowser for default Realm 
+// get the RealmBrowser for default Realm
 realmBrowser()
 
-// get the RealmBrowser for Realm 
+// get the RealmBrowser for Realm
 realmBrowserForRealm(realm:Realm)
 
 // get the RealmBrowser for Realm at a specific path
