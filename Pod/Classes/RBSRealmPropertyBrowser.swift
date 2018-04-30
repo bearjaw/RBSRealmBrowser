@@ -86,18 +86,12 @@ public final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCe
     public func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let property = properties[indexPath.row] 
         let stringvalue = RBSTools.stringForProperty(property, object: object)
-        var isArray = false
-        
-        if property.type == .linkingObjects {
-            isArray = true
-        }
-        (cell as! RBSRealmPropertyCell).cellWithAttributes(property.name, propertyValue: stringvalue, editMode:isEditMode, property:property, isArray:isArray)
+        (cell as! RBSRealmPropertyCell).cellWithAttributes(property.name, propertyValue: stringvalue, editMode:isEditMode, property:property)
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell:RBSRealmPropertyCell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier) as? RBSRealmPropertyCell else {return UITableViewCell()}
+        guard let cell:RBSRealmPropertyCell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier) as? RBSRealmPropertyCell else { return UITableViewCell() }
         cell.delegate = self
-        cell.isUserInteractionEnabled = true
         return cell
     }
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

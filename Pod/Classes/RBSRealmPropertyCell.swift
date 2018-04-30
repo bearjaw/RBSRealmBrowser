@@ -36,7 +36,7 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .none
-        UITextField.appearance().tintColor = UIColor(red:0.35, green:0.34, blue:0.62, alpha:1.0)
+        UITextField.appearance().tintColor = RealmStyle.tintColor
         contentView.addSubview(textFieldPropValue)
         
         labelPropertyTitle = labelWithAttributes(14, weight:0.3, text: "")
@@ -55,21 +55,13 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         labelPropertyType.text = ""
     }
     
-    func cellWithAttributes(_ propertyTitle: String, propertyValue: String, editMode: Bool, property: Property, isArray:Bool) {
+    func cellWithAttributes(_ propertyTitle: String, propertyValue: String, editMode: Bool, property: Property) {
         self.property = property
+        labelPropertyTitle.text = propertyTitle
+        textFieldPropValue.text = propertyValue
         configureKeyboard(for: property.type)
         configureLabelType(for: property)
         configureTextField(for: editMode)
-        
-        labelPropertyTitle.text = propertyTitle
-        textFieldPropValue.text = propertyValue
-        
-        if editMode && !isArray && property.type != .object {
-            textFieldPropValue.layer.borderColor = RealmStyle.tintColor.cgColor
-            textFieldPropValue.layer.borderWidth = 1.0
-        }else {
-            textFieldPropValue.layer.borderWidth = 0.0
-        }
         setNeedsLayout()
     }
     
@@ -132,6 +124,13 @@ class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
             textFieldPropValue.keyboardType = .numberPad
         }else if propertyType == .string {
             textFieldPropValue.keyboardType = .alphabet
+        }
+        let allowEditing = shouldAllowEditing()
+        if  allowEditing {
+            textFieldPropValue.layer.borderColor = RealmStyle.tintColor.cgColor
+            textFieldPropValue.layer.borderWidth = 1.0
+        }else {
+            textFieldPropValue.layer.borderWidth = 0.0
         }
     }
     
