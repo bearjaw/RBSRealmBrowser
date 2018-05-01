@@ -7,7 +7,7 @@
 //
 
 
-public class RBSObjectPonso {
+final class RBSObjectPonso {
     
     public var objectClassName = ""
     public var numberOfObjects = ""

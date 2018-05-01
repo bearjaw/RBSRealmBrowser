@@ -8,7 +8,7 @@
 
 import UIKit
 
-class RBSRealmObjectBrowserCell: UITableViewCell {
+final class RBSRealmObjectBrowserCell: UITableViewCell {
     private var labelTitle = UILabel()
     private var labelDetailText = UILabel()
     private let maxHeight = 2000.0
