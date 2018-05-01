@@ -45,14 +45,14 @@ class ViewController: UIViewController {
 
     @objc func openBrowser() {
         guard let realmBrowser = RBSRealmBrowser.realmBrowser(showing: ["Person"]) else { return }
-        present(realmBrxowser, animated: true, completion: nil)
+        present(realmBrowser, animated: true, completion: nil)
     }
 }
 ```
 
 ## Use one of the methods to browse your Realm database
-### All these convenience methods come with a second method using a  `classes` option. Use theses methods if you
-want to restrict the results to (a) specific class(es). If you pass in `nil`, all objects will be displayed. The `[String]` must be composed
+### All these convenience methods come with a second method using a  `classes` option. Use theses methods if you want to restrict the results to (a) specific class(es).
+If you pass in `nil`, all objects will be displayed. The `[String]` must be composed
 of classNames and they must match. 
 
 If you quickly want to access all objects in  the default realm database use one these two methods:
@@ -68,7 +68,7 @@ public static func realmBrowser(showing classes:[String]?) -> UINavigationContro
 If you want to specifiy a realm use one of these two methods:
 ```swift
 // get the RealmBrowser for Realm 
-public static func realmBrowserForRealm(_ realm: Realm, ) -> UINavigationController?
+public static func realmBrowserForRealm(_ realm: Realm) -> UINavigationController?
 ```
 ```swift
 // Pass an optional array of class names you want to display & your realm
@@ -125,6 +125,7 @@ To try the example project, clone the repo, and run `pod try` from the Example d
 - iOS 9.0+
 - Swift 3.0 for any release after 0.1.4
 - Swift 4.0 for any release after 0.1.9
+- Swift 4.1 for any release after 0.2.2
 
 
 ## Installation
