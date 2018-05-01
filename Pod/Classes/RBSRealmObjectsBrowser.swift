@@ -10,7 +10,7 @@ import UIKit
 import RealmSwift
 
 
-public final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDelegate, UITableViewDataSource, UITableViewDelegate {
+final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDelegate, UITableViewDataSource, UITableViewDelegate {
     private var objects: [Object]
     private var schema: ObjectSchema
     private var properties: [Property]

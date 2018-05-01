@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
+final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
     private var labelPropertyTitle = UILabel()
     private var textFieldPropValue:UITextField = {
         let textField  = UITextField()
