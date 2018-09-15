@@ -165,7 +165,7 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
             navigationItem.rightBarButtonItem?.title = "Select"
         } else {
             navigationItem.rightBarButtonItem?.title = "Delete"
-            let bbi = UIBarButtonItem(title: "Select All", style: UIBarButtonItemStyle.plain, target: self, action: #selector(RBSRealmObjectsBrowser.actionSelectAll(_:)))
+            let bbi = UIBarButtonItem(title: "Select All", style: .plain, target: self, action: #selector(RBSRealmObjectsBrowser.actionSelectAll(_:)))
             navigationItem.leftBarButtonItem = bbi
         }
     }

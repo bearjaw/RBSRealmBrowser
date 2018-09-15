@@ -14,7 +14,7 @@ final class RBSRealmObjectBrowserCell: UITableViewCell {
     private let maxHeight = 2000.0
     
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    override init(style: CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         labelTitle.font = UIFont.preferredFont(forTextStyle: .title2)
         contentView.addSubview(labelTitle)
