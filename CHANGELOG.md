@@ -1,3 +1,6 @@
+## RBSRealmBrowser v 0.2.5
+- minor update to use swift 4.2
+
 ## RBSRealmBrowser v 0.2.4
 - minor layout improvements
 - clean up
