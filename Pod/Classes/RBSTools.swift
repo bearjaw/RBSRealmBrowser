@@ -92,15 +92,17 @@ final class RBSTools {
             }
         }).resume()
     }
-    static func isPlayground() -> Bool {
+    
+    public static func postObject(object:Object, atURL URL:URL) {
+        print("Worked")
+    }
+    
+    
+    private static func isPlayground() -> Bool {
         guard let isInPlayground = (Bundle.main.bundleIdentifier?.hasPrefix("com.apple.dt.playground")) else {
             return false
         }
         return isInPlayground;
-    }
-    
-    public static func postObject(object:Object, atURL URL:URL) {
-        print("Worked")
     }
 }
 
