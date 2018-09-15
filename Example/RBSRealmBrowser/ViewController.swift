@@ -50,7 +50,7 @@ class ViewController: UIViewController {
             i += 1
         }
         
-        let bbi = UIBarButtonItem(title: "Open", style: UIBarButtonItemStyle.plain, target: self, action: #selector(ViewController.openBrowser))
+        let bbi = UIBarButtonItem(title: "Open", style: .plain, target: self, action: #selector(ViewController.openBrowser))
         navigationItem.rightBarButtonItem = bbi
     }
     

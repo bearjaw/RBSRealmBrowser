@@ -99,7 +99,7 @@ final class RBSTools {
         return isInPlayground;
     }
     
-    open static func postObject(object:Object, atURL URL:URL) {
+    public static func postObject(object:Object, atURL URL:URL) {
         print("Worked")
     }
 }

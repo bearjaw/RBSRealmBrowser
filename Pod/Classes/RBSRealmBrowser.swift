@@ -39,7 +39,7 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
     private var filterOptions:UISegmentedControl = {
         let segmentedControl = UISegmentedControl(items: ["All", "Hide base Realm models"])
         segmentedControl.tintColor =  .white
-        segmentedControl.setTitleTextAttributes([kCTForegroundColorAttributeName: UIColor.white], for: UIControlState.selected)
+        segmentedControl.setTitleTextAttributes([kCTForegroundColorAttributeName as NSAttributedString.Key: UIColor.white], for: .selected)
         return segmentedControl
     }()
     
@@ -118,7 +118,7 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
         navigationController.navigationBar.isTranslucent = false
         if #available(iOS 11.0, *) {
             navigationController.navigationBar.prefersLargeTitles = true
-            navigationController.navigationBar.largeTitleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
+            navigationController.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
         }
         return navigationController
     }
@@ -151,7 +151,7 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
     ///
     /// - Returns: UIApplicationShortcutItem to open the realmBrowser from your homescreen
     public static func addBrowserQuickAction() -> UIApplicationShortcutItem {
-        let browserShortcut = UIMutableApplicationShortcutItem(type: "org.cocoapods.bearjaw.RBSRealmBrowser.open",
+        let browserShortcut = UIApplicationShortcutItem(type: "org.cocoapods.bearjaw.RBSRealmBrowser.open",
                                                                localizedTitle: "Realm browser",
                                                                localizedSubtitle: "",
                                                                icon: UIApplicationShortcutIcon(type: .search),
@@ -238,7 +238,7 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
     ///   - indexPath: NSIndexPath
     /// - Returns: height of a single tableView row
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableViewAutomaticDimension
+        return UITableView.automaticDimension
     }
     
     /// TableView Delegate method to handle cell selection
