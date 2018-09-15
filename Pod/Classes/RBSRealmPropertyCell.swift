@@ -33,7 +33,7 @@ final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
     private var property: Property! = nil
     weak var delegate: RBSRealmPropertyCellDelegate?
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    override init(style: CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .none
         UITextField.appearance().tintColor = RealmStyle.tintColor
