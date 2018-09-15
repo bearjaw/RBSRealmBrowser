@@ -16,11 +16,11 @@ public struct RBSRequestConfig {
 
 final class RBSTools {
     
-    private static let localVersion = "v0.2.3"
+    private static let localVersion = "v0.2.5"
     
     class func stringForProperty(_ property: Property, object: Object) -> String {
         var propertyValue = ""
-        if property.isArray {
+        if property.isArray || property.type == .linkingObjects {
             let array = object.dynamicList(property.name)
             propertyValue = String.localizedStringWithFormat("%li objects  ->", array.count)
         
@@ -40,15 +40,14 @@ final class RBSTools {
                 propertyValue = object[property.name] as! String
                 break
             case .object:
-                guard let objAsProperty = object[property.name] else {
-                    return ""
-                }
-                let obj = objAsProperty as! Object
-                let schema = obj.objectSchema
-                for prop in schema.properties {
-                    if prop.type == .string {
-                        propertyValue = obj[prop.name] as! String
-                    }
+                if let objAsProperty:Object = object[property.name] as? Object {
+                    let schema = objAsProperty.objectSchema
+                    _ = schema.properties.map{ $0.type == .string }
+//                    for prop in  {
+//                        if prop.type == .string {
+//                            propertyValue = obj[prop.name] as! String
+//                        }
+//                }
                     break
                 }
                 if propertyValue.count == 0 {
