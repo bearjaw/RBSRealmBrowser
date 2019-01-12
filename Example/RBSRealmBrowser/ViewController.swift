@@ -11,9 +11,7 @@ import RBSRealmBrowser
 import RealmSwift
 
 class ViewController: UIViewController {
-    
     private var sampleView = SampleView()
-    
     override func loadView() {
         self.view = sampleView
     }
@@ -21,37 +19,49 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
         let catNames = ["Garfield", "Lutz", "Squanch"]
         let humanNames = ["Morty", "Rick", "Birdperson"]
-        var i = 0
-        while i < 3 {
+        var index = 0
+        while index < 3 {
             do {
                 let realm = try Realm()
-                try realm.write() {
-                    let person = Person()
-                    person.personName = humanNames[i]
+                try realm.write {
+                    let person = createMockPerson(named: humanNames[index])
                     realm.add(person)
-                    let cat = Cat()
-                    person.cat = cat;
-                    cat.catName = catNames[i]
-                    cat.isTired = true
-                    cat.toys.append(person)
-                    cat.toys.append(person)
-                    cat.toys.append(person)
-                    person.cat = cat;
-                    realm.add(cat)
+                    let aCat = createMockCat(named: catNames[index])
+                    aCat.toys.append(person)
+                    aCat.toys.append(person)
+                    aCat.toys.append(person)
+                    person.aCat = aCat
+                    realm.add(aCat)
                 }
 
-            }catch {
-                print("failed creating objects")
+            } catch {
+                print("failed creating objects \(error)")
             }
             
-            i += 1
+            index += 1
         }
         
-        let bbi = UIBarButtonItem(title: "Open", style: .plain, target: self, action: #selector(ViewController.openBrowser))
-        navigationItem.rightBarButtonItem = bbi
+        let openBbi = UIBarButtonItem(title: "Open",
+                                      style: .plain,
+                                      target: self,
+                                      action: #selector(ViewController.openBrowser
+            ))
+        navigationItem.rightBarButtonItem = openBbi
+    }
+    
+    private func createMockPerson(named name: String) -> Person {
+        let person = Person()
+        person.personName = name
+        return person
+    }
+    
+    private  func createMockCat(named name: String) -> Cat {
+        let aCat = Cat()
+        aCat.catName = name
+        aCat.isTired = true
+        return aCat
     }
     
     @objc func openBrowser() {

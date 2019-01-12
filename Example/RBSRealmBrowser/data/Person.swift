@@ -12,6 +12,6 @@ class Person: Object {
 
     @objc dynamic var personName = ""
     @objc dynamic var hungry = false
-    @objc dynamic var cat:Cat?
+    @objc dynamic var aCat: Cat?
 
 }
