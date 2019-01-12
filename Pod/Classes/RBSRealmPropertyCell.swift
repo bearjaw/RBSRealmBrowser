@@ -55,7 +55,10 @@ final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         labelPropertyType.text = ""
     }
     
-    func cellWithAttributes(_ propertyTitle: String, propertyValue: String, editMode: Bool, property: Property) {
+    func cellWithAttributes(propertyTitle: String,
+                            propertyValue: String,
+                            editMode: Bool,
+                            property: Property) {
         self.property = property
         labelPropertyTitle.text = propertyTitle
         textFieldPropValue.text = propertyValue
@@ -79,7 +82,7 @@ final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         textFieldPropValue.frame = (CGRect(x:contentView.bounds.size.width-min(labelSize.width,labelWidth)-borderOffset, y: (contentView.bounds.size.height-labelSize.height - borderOffset)/2, width:min(labelSize.width,labelWidth), height: labelSize.height + borderOffset))
     }
     
-    //MARK: private method
+    // MARK: - private method
     
     private func labelWithAttributes(_ fontSize: CGFloat, weight: CGFloat, text: String) -> UILabel {
         let label = UILabel()
@@ -92,44 +95,19 @@ final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         return label
     }
     
-    private func stringForType(type:PropertyType) -> String {
-        switch type {
-        case .bool:
-            return "Boolean"
-        case .float:
-            return "Float"
-        case .double:
-            return "Double"
-        case .string:
-            return "String"
-        case .int:
-            return "Int"
-        case .data:
-            return "Data"
-        case .date:
-            return "Date"
-        case .linkingObjects:
-            return "Linking objects"
-        case .object:
-            return "Object"
-        case .any:
-            return "Any"
-        }
-    }
-    
     private func configureKeyboard(for propertyType:PropertyType) {
         if property.type == .float || property.type == .double {
             textFieldPropValue.keyboardType = .decimalPad
         } else if property.type == .int {
             textFieldPropValue.keyboardType = .numberPad
-        }else if propertyType == .string {
+        } else if propertyType == .string {
             textFieldPropValue.keyboardType = .alphabet
         }
         let allowEditing = shouldAllowEditing()
         if  allowEditing {
             textFieldPropValue.layer.borderColor = RealmStyle.tintColor.cgColor
             textFieldPropValue.layer.borderWidth = 1.0
-        }else {
+        } else {
             textFieldPropValue.layer.borderWidth = 0.0
         }
     }
@@ -137,8 +115,8 @@ final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
     private func configureLabelType(for property:Property) {
         if property.isArray {
             labelPropertyType.text = "Array"
-        }else {
-            labelPropertyType.text = stringForType(type: property.type)
+        } else {
+            labelPropertyType.text = property.type.humanReadable
         }
     }
     
@@ -150,14 +128,17 @@ final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         textFieldPropValue.delegate = self
     }
     
-    //MARK: UITextFieldDelegate
+    // MARK: - UITextFieldDelegate
     
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         return shouldAllowEditing()
     }
     
     private func shouldAllowEditing() -> Bool {
-        return !property.isArray && !(property.type == .data || property.type == .linkingObjects || property.type == .object)
+        return !property.isArray &&
+            !(property.type == .data ||
+                property.type == .linkingObjects ||
+                property.type == .object)
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
@@ -187,7 +168,6 @@ final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         return true
     }
     
-    
     func textFieldDidEndEditing(_ textField: UITextField) {
         if  property.type != .bool {
             guard let del = delegate else {
@@ -198,7 +178,9 @@ final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         }
         textField.resignFirstResponder()
     }
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    func textField(_ textField: UITextField,
+                   shouldChangeCharactersIn range: NSRange,
+                   replacementString string: String) -> Bool {
         if textField.text == "\n" {
             textField.resignFirstResponder()
             return false

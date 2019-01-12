@@ -9,7 +9,6 @@
 import UIKit
 import RealmSwift
 
-
 final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDelegate, UITableViewDataSource, UITableViewDelegate {
     private var objects: [Object]
     private var schema: ObjectSchema
@@ -17,7 +16,7 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
     private let cellIdentifier = "objectCell"
     private var isEditMode: Bool = false
     private var selectAll: Bool = false
-    private var realm:Realm
+    private var realm: Realm
     private var selectedObjects: [Object] = []
     private var realmView = RBSRealmBrowserView()
     
@@ -29,9 +28,9 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
         super.init(nibName: nil, bundle: nil)
         title = "Objects"
         
-        let bbi = UIBarButtonItem(title: "Select", style: .plain, target: self, action: #selector(RBSRealmObjectsBrowser.actionToggleEdit(_:)))
+        let bbi = UIBarButtonItem(title: "Select", style: .plain, target: self, action: .edit)
         navigationItem.rightBarButtonItem = bbi
-        let bbiPreview = UIBarButtonItem(barButtonSystemItem: .action, target: self, action:#selector(RBSRealmObjectsBrowser.actionTogglePreview(_:)) )
+        let bbiPreview = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: .togglePreview)
         navigationItem.rightBarButtonItems = [bbi, bbiPreview]
         
     }
@@ -56,28 +55,24 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
         realmView.tableView.register(RBSRealmObjectBrowserCell.self, forCellReuseIdentifier: cellIdentifier)
     }
     
-    
    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         if #available(iOS 9.0, *) {
             switch traitCollection.forceTouchCapability {
             case .available:
                 registerForPreviewing(with: self, sourceView: realmView.tableView)
-                break
-            case .unavailable:
-                break
-            case .unknown:
+            case .unavailable, .unknown:
                 break
             }
         }
     }
     
-    //MARK: TableView Datasource & Delegate
-    public func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    // MARK: - TableView Datasource & Delegate
+    public func tableView(_ tableView: UITableView,
+                          willDisplay cell: UITableViewCell,
+                          forRowAt indexPath: IndexPath) {
+        guard let property = properties.first else { return }
         let object = objects[indexPath.row]
-        guard let property = properties.first else {
-            return
-        }
         if !object.isInvalidated {
             let stringvalue = RBSTools.stringForProperty(property, object: object)
             if selectAll {
@@ -88,10 +83,9 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
                 cell.isSelected = false
                 cell.accessoryType = .none
             }
-            (cell as! RBSRealmObjectBrowserCell).realmBrowserObjectAttributes(schema.className, objectsCount:String(format:"%@: %@", property.name, stringvalue ))
+            (cell as! RBSRealmObjectBrowserCell).realmBrowserObjectAttributes(schema.className,
+                                                                              objectsCount:"\(property.name): \(stringvalue)")
         }
-        
-        
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -119,8 +113,8 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
             selectedObjects.append(objects[indexPath.row])
         } else {
             tableView.deselectRow(at: indexPath, animated: true)
-            let vc = RBSRealmPropertyBrowser(object:self.objects[indexPath.row], realm: realm)
-            self.navigationController?.pushViewController(vc, animated: true)
+            let viewController = RBSRealmPropertyBrowser(object:self.objects[indexPath.row], realm: realm)
+            self.navigationController?.pushViewController(viewController, animated: true)
         }
         
     }
@@ -144,16 +138,16 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
         }
     }
     
-    //MARK: private Methods
+    // MARK: - private Methods
     
     @objc func actionToggleEdit(_ id: AnyObject) {
         realmView.tableView.allowsMultipleSelection = true
         realmView.tableView.allowsMultipleSelectionDuringEditing = true
-        isEditMode = !isEditMode
+        isEditMode.toggle()
         if !isEditMode {
             if selectAll {
                 deleteAllObjects()
-            }else {
+            } else {
                 deleteObjects()
                 let result:Results<DynamicObject> =  realm.dynamicObjects(schema.className)
                 objects = Array(result)
@@ -165,12 +159,12 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
             navigationItem.rightBarButtonItem?.title = "Select"
         } else {
             navigationItem.rightBarButtonItem?.title = "Delete"
-            let bbi = UIBarButtonItem(title: "Select All", style: .plain, target: self, action: #selector(RBSRealmObjectsBrowser.actionSelectAll(_:)))
+            let bbi = UIBarButtonItem(title: "Select All", style: .plain, target: self, action: .selectAll)
             navigationItem.leftBarButtonItem = bbi
         }
     }
     @objc func actionSelectAll(_ id: AnyObject) {
-        selectAll = !selectAll
+        selectAll.toggle()
         if selectAll {
             self.navigationItem.leftBarButtonItem?.title = "Unselect all"
         } else {
@@ -185,32 +179,38 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
     }
     
     private func deleteAllObjects() {
-        if objects.count > 0 {
+        if objects.isNonEmpty {
             do {
                 try realm.write {
                     realm.delete(objects)
                     objects = []
                     realmView.tableView.reloadData()
                 }
-            }catch {
+            } catch {
                 print("Couldn't delete all realm objects.")
             }
         }
     }
     
     private func deleteObjects() {
-        if selectedObjects.count > 0 {
-            try! realm.write {
-                realm.delete(selectedObjects)
-                selectedObjects = []
+        if selectedObjects.isNonEmpty {
+            do {
+                try realm.write {
+                    realm.delete(selectedObjects)
+                    selectedObjects = []
+                }
+            } catch {
+                print("Could not perform deletion. Error \(error)")
             }
+            
         }
     }
     
-    //MARK: UIViewControllerPreviewingDelegate
+    // MARK: - UIViewControllerPreviewingDelegate
     
     @available(iOS 9.0, *)
-    public func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+    public func previewingContext(_ previewingContext: UIViewControllerPreviewing,
+                                  viewControllerForLocation location: CGPoint) -> UIViewController? {
         guard let indexPath = realmView.tableView.indexPathForRow(at:location) else { return nil }
         guard let cell = realmView.tableView.cellForRow(at:indexPath) else { return nil }
         
@@ -218,12 +218,18 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
         detailVC.preferredContentSize = CGSize(width: 0.0, height: 300.0)
         previewingContext.sourceRect = cell.frame
         
-        return detailVC;
+        return detailVC
     }
     
     @available(iOS 9.0, *)
-    public func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+    public func previewingContext(_ previewingContext: UIViewControllerPreviewing,
+                                  commit viewControllerToCommit: UIViewController) {
         navigationController?.pushViewController(viewControllerToCommit, animated: true)
     }
-    
+}
+
+internal extension Selector {
+    static let selectAll = #selector(RBSRealmObjectsBrowser.actionSelectAll(_:))
+    static let togglePreview = #selector(RBSRealmObjectsBrowser.actionTogglePreview(_:))
+    static let edit = #selector(RBSRealmObjectsBrowser.actionToggleEdit(_:))
 }

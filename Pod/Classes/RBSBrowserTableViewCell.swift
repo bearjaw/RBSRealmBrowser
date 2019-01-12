@@ -1,20 +1,21 @@
 //
-//  RBSRealmObjectBrowserCell.swift
-//  Pods
+//  RBSBrowserTableViewCell.swift
+//  RBSRealmBrowser
 //
-//  Created by Max Baumbach on 31/03/16.
-//
+//  Created by Max Baumbach on 12/01/2019.
 //
 
 import UIKit
 
-final class RBSRealmObjectBrowserCell: UITableViewCell {
+internal class RBSBrowserTableViewCell<Element>: UITableViewCell where Element: Displayable {
+    
     private var labelTitle = UILabel()
     private var labelDetailText = UILabel()
     private let maxHeight: CGFloat = 2000.0
     
-    override init(style: CellStyle, reuseIdentifier: String?) {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
         labelTitle.font = UIFont.preferredFont(forTextStyle: .title2)
         contentView.addSubview(labelTitle)
         contentView.addSubview(labelDetailText)
@@ -24,9 +25,9 @@ final class RBSRealmObjectBrowserCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func realmBrowserObjectAttributes(_ objectTitle: String, objectsCount: String) {
-        labelTitle.text = objectTitle
-        labelDetailText.text = objectsCount
+    func update<Element: Displayable>(element: Element) {
+        labelTitle.text = element.title
+        labelDetailText.text = element.subtitle
         labelDetailText.font = .systemFont(ofSize: 11)
     }
     
@@ -41,7 +42,7 @@ final class RBSRealmObjectBrowserCell: UITableViewCell {
         let screenWidth: CGFloat = bounds.size.width
         let offset: CGFloat = 45.0
         let usableSize = CGSize(width: screenWidth-2*borderOffset,
-                                 height: maxHeight)
+                                height: maxHeight)
         let sizeTitle = labelTitle.sizeThatFits(usableSize)
         let labelDetailWidth = usableSize.width - labelTitle.bounds.size.width
         let sizeDetail = labelDetailText.sizeThatFits(CGSize(width: labelDetailWidth,
@@ -59,15 +60,24 @@ final class RBSRealmObjectBrowserCell: UITableViewCell {
         let usableSize = CGSize(width: screenWidth-2*borderOffset,
                                 height: maxHeight)
         
-        let sizeTitle = labelTitle.sizeThatFits(usableSize)
         let originTitle = (CGPoint(x: borderOffset, y: 10.0))
-        labelTitle.frame = (CGRect(origin: originTitle, size: sizeTitle))
+        layoutTitlelLabel(fitting: usableSize, origin: originTitle)
         
-        let labelDetailWidth = usableSize.width - labelTitle.bounds.size.width
-        let sizeDetail = labelDetailText.sizeThatFits(CGSize(width: labelDetailWidth,
-                                                             height: usableSize.height))
         let originDetail = (CGPoint(x: borderOffset, y: labelTitle.bottomRight.y+labelOffset))
-        labelDetailText.frame = (CGRect(origin: originDetail, size: sizeDetail))
+        layoutDetailLabel(fitting: usableSize, origin: originDetail)
+        
     }
     
+    private func layoutDetailLabel(fitting size: CGSize, origin: CGPoint) {
+        let labelDetailWidth = size.width - labelTitle.bounds.size.width
+        let sizeDetail = labelDetailText.sizeThatFits(CGSize(width: labelDetailWidth,
+                                                             height: size.height))
+        
+        labelDetailText.frame = (CGRect(origin: origin, size: sizeDetail))
+    }
+    
+    private func layoutTitlelLabel(fitting size: CGSize, origin: CGPoint) {
+        let sizeTitle = labelTitle.sizeThatFits(size)
+        labelTitle.frame = (CGRect(origin: origin, size: sizeTitle))
+    }
 }

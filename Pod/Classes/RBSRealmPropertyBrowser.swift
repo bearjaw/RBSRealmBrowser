@@ -10,7 +10,7 @@ import UIKit
 import RealmSwift
 import Realm
 
-final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDelegate, UITableViewDataSource, UITableViewDelegate {
+final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDelegate {
     private var object: Object
     private var schema: ObjectSchema
     private var properties: [Property]
@@ -46,8 +46,10 @@ final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDeleg
     }
     
     private func configureBarButtonItems() {
-        let editButton = UIBarButtonItem(title: "Edit", style: .plain, target: self, action: #selector(RBSRealmPropertyBrowser.actionToggleEdit(_:)))
-//        let requestButton = UIBarButtonItem(title: "POST", style: .plain, target: self, action:#selector(RBSRealmPropertyBrowser.showPostOption))
+        let editButton = UIBarButtonItem(title: "Edit",
+                                         style: .plain,
+                                         target: self,
+                                         action: #selector(RBSRealmPropertyBrowser.actionToggleEdit(_:)))
         navigationItem.rightBarButtonItems = [editButton]
     }
     
@@ -81,56 +83,26 @@ final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDeleg
         }
     }
     
-    //MARK: TableView Datasource & Delegate
+    // MARK: - TableView Datasource & Delegate
     
-    public func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView,
+                          willDisplay cell: UITableViewCell,
+                          forRowAt indexPath: IndexPath) {
         let property = properties[indexPath.row] 
         let stringvalue = RBSTools.stringForProperty(property, object: object)
-        (cell as! RBSRealmPropertyCell).cellWithAttributes(property.name, propertyValue: stringvalue, editMode:isEditMode, property:property)
-    }
-    
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell:RBSRealmPropertyCell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier) as? RBSRealmPropertyCell else { return UITableViewCell() }
-        cell.delegate = self
-        return cell
-    }
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return properties.count
-    }
-    
-    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
-    }
-    
-    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if !isEditMode {
-            tableView.deselectRow(at: indexPath, animated: true)
-            let property = properties[indexPath.row] 
-            if property.isArray {
-                let objects = fetchObjects(for: property.name)
-                if objects.count > 0 {
-                    let objectsViewController = RBSRealmObjectsBrowser(objects: objects, realm: realm)
-                    navigationController?.pushViewController(objectsViewController, animated: true)
-                }
-            }else if property.type == .object {
-                guard let obj = object[property.name] else {
-                    print("failed getting object for property")
-                    return
-                }
-                let objectsViewController = RBSRealmPropertyBrowser(object: obj as! Object, realm: realm)
-                navigationController?.pushViewController(objectsViewController, animated: true)
-            }
+        if let cell = cell as? RBSRealmPropertyCell {
+            cell.cellWithAttributes(propertyTitle: property.name,
+                                    propertyValue: stringvalue,
+                                    editMode:isEditMode,
+                                    property:property)
         }
-        
     }
     
     func textFieldDidFinishEdit(_ input: String, property: Property) {
         savePropertyChangesInRealm(input, property: property)
-        
-        //        self.actionToggleEdit((self.navigationItem.rightBarButtonItem)!)
     }
     
-    //MARK: private Methods
+    // MARK: - private methods
     
     private func savePropertyChangesInRealm(_ newValue: String, property: Property) {
         let letters = CharacterSet.letters
@@ -139,26 +111,21 @@ final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDeleg
         case .bool:
             let propertyValue = Int(newValue)!
             saveValueForProperty(value: propertyValue, propertyName: property.name)
-            break
         case .int:
             let range = newValue.rangeOfCharacter(from: letters)
             if  range == nil {
                 let propertyValue = Int(newValue)!
                 saveValueForProperty(value: propertyValue, propertyName: property.name)
             }
-            break
         case .float:
             let propertyValue = Float(newValue)!
             saveValueForProperty(value: propertyValue, propertyName: property.name)
-            break
         case .double:
             let propertyValue:Double = Double(newValue)!
             saveValueForProperty(value: propertyValue, propertyName: property.name)
-            break
         case .string:
             let propertyValue:String = newValue as String
             saveValueForProperty(value: propertyValue, propertyName: property.name)
-            break
         case .linkingObjects,.object:
             break
         default:
@@ -172,7 +139,7 @@ final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDeleg
             try realm.write {
                 object.setValue(value, forKey: propertyName)
             }
-        }catch {
+        } catch {
             print("saving failed")
         }
     }
@@ -187,7 +154,7 @@ final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDeleg
     }
     
     @objc func actionToggleEdit(_ id: UIBarButtonItem) {
-        isEditMode = !isEditMode
+        isEditMode.toggle()
         if isEditMode {
             id.title = "Finish"
         } else {
@@ -196,4 +163,47 @@ final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDeleg
         realmView.tableView.reloadData()
     }
     
+}
+
+extension RBSRealmPropertyBrowser: UITableViewDelegate {
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if !isEditMode {
+            tableView.deselectRow(at: indexPath, animated: true)
+            let property = properties[indexPath.row]
+            if property.isArray {
+                let objects = fetchObjects(for: property.name)
+                if objects.isNonEmpty {
+                    let objectsViewController = RBSRealmObjectsBrowser(objects: objects, realm: realm)
+                    navigationController?.pushViewController(objectsViewController, animated: true)
+                }
+            } else if property.type == .object {
+                guard let obj = object[property.name] else {
+                    print("failed getting object for property")
+                    return
+                }
+                if let object = obj as? Object {
+                    let objectsViewController = RBSRealmPropertyBrowser(object: object, realm: realm)
+                    navigationController?.pushViewController(objectsViewController, animated: true)
+                }
+            }
+        }
+        
+    }
+}
+
+extension RBSRealmPropertyBrowser: UITableViewDataSource {
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier) as? RBSRealmPropertyCell else {
+            fatalError("Could not load a cell.")
+        }
+        cell.delegate = self
+        return cell
+    }
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return properties.count
+    }
+    
+    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 60
+    }
 }
