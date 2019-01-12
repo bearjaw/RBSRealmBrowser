@@ -6,14 +6,17 @@ PODS:
   - Realm/Headers (3.9.0)
   - RealmSwift (3.9.0):
     - Realm (= 3.9.0)
+  - SwiftLint (0.27.0)
 
 DEPENDENCIES:
   - RBSRealmBrowser (from `../`)
+  - SwiftLint
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - Realm
     - RealmSwift
+    - SwiftLint
 
 EXTERNAL SOURCES:
   RBSRealmBrowser:
@@ -23,7 +26,8 @@ SPEC CHECKSUMS:
   RBSRealmBrowser: 42a1462011d568e22b7c3fa7dc49d841a39e6b6f
   Realm: 3d36f208bf3aff8335dc3298742140182bde4edb
   RealmSwift: aa4d11917bfcfaa3ed51f219102a487ecd895447
+  SwiftLint: 3207c1faa2240bf8973b191820a116113cd11073
 
-PODFILE CHECKSUM: 1364463224a161bbc3755d67738a98982408a727
+PODFILE CHECKSUM: ae64994cf51558712e7d425668b4e9bb50d908ed
 
 COCOAPODS: 1.5.3

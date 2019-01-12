@@ -35,6 +35,7 @@
 		3C3F08065BC626298B363F33 /* RBSRealmBrowser.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = RBSRealmBrowser.podspec; path = ../RBSRealmBrowser.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		482EB7F01CC0144A000C7343 /* CHANGELOG.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = CHANGELOG.md; path = ../CHANGELOG.md; sourceTree = "<group>"; };
 		485A22B61CB3B807005D1A31 /* Cat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cat.swift; sourceTree = "<group>"; };
+		4885DFC421EA6156008A442E /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .swiftlint.yml; sourceTree = SOURCE_ROOT; };
 		48B4BE831CAFC31E00A813BA /* RBSRealmBrowser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RBSRealmBrowser.framework; path = "../../../Library/Developer/Xcode/DerivedData/RBSRealmBrowser-bbnsmiiobnmzslczqgpmzinkcujg/Build/Products/Debug-iphoneos/RBSRealmBrowser.framework"; sourceTree = "<group>"; };
 		48B4BE891CAFC7DA00A813BA /* Person.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
 		48C3EA2A1CBF89FC00E6D79D /* SampleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SampleView.swift; sourceTree = "<group>"; };
@@ -110,6 +111,7 @@
 		607FACD21AFB9204008FA782 /* Example for RBSRealmBrowser */ = {
 			isa = PBXGroup;
 			children = (
+				4885DFC421EA6156008A442E /* .swiftlint.yml */,
 				48B4BE881CAFC7DA00A813BA /* data */,
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
@@ -294,7 +296,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "";
+			shellScript = "\"${PODS_ROOT}/SwiftLint/swiftlint\"\n";
 		};
 		5562BE5D9FA33C64429B745C /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
