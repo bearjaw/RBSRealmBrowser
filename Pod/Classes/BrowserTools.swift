@@ -14,7 +14,7 @@ public struct RBSRequestConfig {
     public let body: [String:Any]?
 }
 
-final class RBSTools {
+final class BrowserTools {
     
     private static let localVersion = "v0.2.6"
     
@@ -72,6 +72,8 @@ final class RBSTools {
         return ""
     }
     
+    // Disabled 
+    // swiftlint:disable cyclomatic_complexity
     private static func handleSupportedTypes(for property: Property, object: Object) -> String {
         switch property.type {
         case .bool:

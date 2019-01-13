@@ -62,7 +62,7 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
         configureNavigationBar()
         configureTableView()
         fetchObjects()
-        RBSTools.checkForUpdates()
+        BrowserTools.checkForUpdates()
     }
     
     public override func viewWillTransition(to size: CGSize,

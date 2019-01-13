@@ -82,7 +82,7 @@ final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDeleg
     
     private func handlePOST(urlString: String) {
         if let url:URL = URL(string: urlString) {
-            RBSTools.postObject(object: self.object, atURL: url)
+            BrowserTools.postObject(object: self.object, atURL: url)
         }
     }
     
@@ -92,7 +92,7 @@ final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDeleg
                           willDisplay cell: UITableViewCell,
                           forRowAt indexPath: IndexPath) {
         let property = properties[indexPath.row] 
-        let stringvalue = RBSTools.stringForProperty(property, object: object)
+        let stringvalue = BrowserTools.stringForProperty(property, object: object)
         if let cell = cell as? RBSRealmPropertyCell {
             cell.cellWithAttributes(propertyTitle: property.name,
                                     propertyValue: stringvalue,
