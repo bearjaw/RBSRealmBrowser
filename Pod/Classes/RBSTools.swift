@@ -20,7 +20,6 @@ final class RBSTools {
     
     class func stringForProperty(_ property: Property, object: Object) -> String {
         var propertyValue = ""
-        print("\(property.description)")
         if property.isArray || property.type == .linkingObjects {
             let array = object.dynamicList(property.name)
             propertyValue = "\(array.count) objects ->"
