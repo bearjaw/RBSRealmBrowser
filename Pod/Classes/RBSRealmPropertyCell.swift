@@ -125,7 +125,7 @@ internal final class RBSRealmPropertyCell: UITableViewCell {
                                           height: .greatestFiniteMagnitude))
         let sizeTextField = textFieldPropValue.sizeThatFits(usableTextFieldSize)
         let minWidth = min(sizeTextField.width,usableTextFieldSize.width)
-        let originTextField = (CGPoint(x: contentView.bounds.size.width-minWidth-margin-sizeCircle.width,
+        let originTextField = (CGPoint(x: contentView.bounds.size.width-minWidth-margin,
                                        y: margin))
         textFieldPropValue.frame = (CGRect(origin: originTextField,
                                            size: (CGSize(width: minWidth,
