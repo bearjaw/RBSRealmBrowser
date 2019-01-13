@@ -13,6 +13,7 @@ Simply edit your existing object's property values by switching into edit mode.
 - Quickly browse realm objects
 - Edit Realm objects
 - Delete Realm objects
+- Search for specific values
 - Quick actions (start the browser from the homescreen)
 - Open RealmBrowser constrained to specific classes (i.e. you only want to inspect the Person classes) 
 
