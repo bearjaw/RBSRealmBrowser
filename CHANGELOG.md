@@ -1,3 +1,12 @@
+## RBSRealmBrowser v 0.2.7
+### New
+- Search for specific property names or values when inspecting a List of Objects
+
+### Improvements
+- Fix array out of bounds
+- Reset & refetch data after performing delete action
+- UI improvements
+
 ## RBSRealmBrowser v 0.2.6
 ### New
 - Search for specific property names or values when inspecting a List of Objects
