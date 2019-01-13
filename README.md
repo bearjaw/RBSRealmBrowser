@@ -4,7 +4,6 @@
 [![Version](https://img.shields.io/cocoapods/v/RBSRealmBrowser.svg?style=flat)](http://cocoapods.org/pods/RBSRealmBrowser)
 [![License](https://img.shields.io/cocoapods/l/RBSRealmBrowser.svg?style=flat)](http://cocoapods.org/pods/RBSRealmBrowser)
 [![Platform](https://img.shields.io/cocoapods/p/RBSRealmBrowser.svg?style=flat)](http://cocoapods.org/pods/RBSRealmBrowser)
-[![CocoaPods](https://img.shields.io/cocoapods/dt/RBSRealmBrowser.svg?maxAge=3600)](https://cocoapods.org/pods/RBSRealmBrowser)
 
 RBSRealmBrowser is based on NBNRealmBrowser by  [Nerdish by Nature](https://github.com/nerdishbynature/NBNRealmBrowser). It's a simple lightweight browser that lets you inspect which objects are currently in your realm database on your iOS device or simulator.
 Simply edit your existing object's property values by switching into edit mode.
@@ -141,10 +140,11 @@ pod 'RBSRealmBrowser'
 What's on the roadmap... 🚀
 - [ ] Tests
 - [ ] Be able to create objects
-- [ ] Clean up
+- [x] Clean up
 - [ ] Live reload the browser if updates happen in the background
 - [x] Layout improvements
-- [ ] Search 
+- [x] Basic search 
+- [ ] Better search
 
 ## Documentation
 Available method documentation [here](http://cocoadocs.org/docsets/RBSRealmBrowser/0.1.7/)
