@@ -277,7 +277,7 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
     private func configureNavigationBar() {
         navigationItem.titleView = filterOptions
         let bbiDismiss = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: .dismissBrowser)
-        let title = "RBSSortStyle.ascending.rawValue"
+        let title = RBSSortStyle.ascending.rawValue
         let bbiSort = UIBarButtonItem(title: title, style: .plain, target: self, action: .sortObjects)
         self.navigationItem.rightBarButtonItems = [bbiDismiss, bbiSort]
     }
