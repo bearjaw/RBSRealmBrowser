@@ -1,3 +1,12 @@
+## RBSRealmBrowser v 0.2.6
+### New
+- Search for specific property names or values when inspecting a List of Objects
+
+### Improvements
+- Code clean up, swiftier coding style
+- Add SwiftLint
+- UI improvements
+
 ## RBSRealmBrowser v 0.2.5
 - minor update to use swift 4.2
 
@@ -5,7 +14,7 @@
 - minor layout improvements
 - clean up
 - updated readme with Swift 4.1 code
-- removed explicit Swift 4.0 support as it is 4.1 from now on by default
+-  removed explicit Swift 4.0 support as it is 4.1 from now on by default
 - New feature:  Inspect (a) specific class(es) by passing an optional String array of classNames
 ```swift
 // only show the objects of the Person class
