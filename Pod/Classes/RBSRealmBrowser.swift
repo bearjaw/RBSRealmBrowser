@@ -215,7 +215,7 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
             let count = elementCount(named: title)
             
             cell.realmBrowserObjectAttributes(title,
-                                              objectsCount: "Objects in Realm = \(count)")
+                                              detailText: "Objects in Realm = \(count)")
         }
         return cell
     }

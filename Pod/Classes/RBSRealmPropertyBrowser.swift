@@ -14,6 +14,7 @@ final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDeleg
     private var object: Object
     private var schema: ObjectSchema
     private var properties: [Property]
+    private var filteredProperties: [Property]
     private let cellIdentifier = "objectCell"
     private var isEditMode: Bool = false
     private var realm:Realm
@@ -23,7 +24,9 @@ final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDeleg
         self.object = object
         self.realm = realm
         schema = object.objectSchema
+        let filters = ["personName", "hungry"]
         properties = schema.properties
+        filteredProperties = schema.properties.filter( { filters.contains($0.name) })
         super.init(nibName: nil, bundle: nil)
         self.title = self.schema.className
     }
@@ -106,7 +109,7 @@ final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDeleg
     
     private func savePropertyChangesInRealm(_ newValue: String, property: Property) {
         let letters = CharacterSet.letters
-
+        
         switch property.type {
         case .bool:
             let propertyValue = Int(newValue)!
@@ -174,14 +177,12 @@ extension RBSRealmPropertyBrowser: UITableViewDelegate {
                     navigationController?.pushViewController(objectsViewController, animated: true)
                 }
             } else if property.type == .object {
-                guard let obj = object[property.name] else {
+                guard let object = object[property.name] as? Object else {
                     print("failed getting object for property")
                     return
                 }
-                if let object = obj as? Object {
-                    let objectsViewController = RBSRealmPropertyBrowser(object: object, realm: realm)
-                    navigationController?.pushViewController(objectsViewController, animated: true)
-                }
+                let objectsViewController = RBSRealmPropertyBrowser(object: object, realm: realm)
+                navigationController?.pushViewController(objectsViewController, animated: true)
             }
         }
         
@@ -190,10 +191,13 @@ extension RBSRealmPropertyBrowser: UITableViewDelegate {
 
 extension RBSRealmPropertyBrowser: UITableViewDataSource {
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier) as? RBSRealmPropertyCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier) else {
             fatalError("Could not load a cell.")
         }
-        cell.delegate = self
+        if let cell = cell as? RBSRealmPropertyCell {
+            cell.delegate = self
+        }
+        
         return cell
     }
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -201,6 +205,6 @@ extension RBSRealmPropertyBrowser: UITableViewDataSource {
     }
     
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
+        return UITableView.automaticDimension
     }
 }

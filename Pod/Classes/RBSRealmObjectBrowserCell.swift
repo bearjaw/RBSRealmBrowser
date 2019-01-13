@@ -17,6 +17,7 @@ final class RBSRealmObjectBrowserCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         labelTitle.font = UIFont.preferredFont(forTextStyle: .title2)
         contentView.addSubview(labelTitle)
+        labelDetailText.numberOfLines = 0
         contentView.addSubview(labelDetailText)
     }
     
@@ -24,9 +25,9 @@ final class RBSRealmObjectBrowserCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func realmBrowserObjectAttributes(_ objectTitle: String, objectsCount: String) {
+    func realmBrowserObjectAttributes(_ objectTitle: String, detailText: String) {
         labelTitle.text = objectTitle
-        labelDetailText.text = objectsCount
+        labelDetailText.text = detailText
         labelDetailText.font = .systemFont(ofSize: 11)
     }
     
@@ -38,7 +39,7 @@ final class RBSRealmObjectBrowserCell: UITableViewCell {
     
     override func sizeThatFits(_ size: CGSize) -> CGSize {
         let borderOffset: CGFloat = 20.0
-        let screenWidth: CGFloat = bounds.size.width
+        let screenWidth: CGFloat = size.width
         let offset: CGFloat = 45.0
         let usableSize = CGSize(width: screenWidth-2*borderOffset,
                                  height: maxHeight)
