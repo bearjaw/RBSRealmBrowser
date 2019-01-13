@@ -30,7 +30,7 @@ final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         label.textColor = .lightGray
         return label
     }()
-    private var property: Property! = nil
+    private var property: Property? = nil
     weak var delegate: RBSRealmPropertyCellDelegate?
     
     override init(style: CellStyle, reuseIdentifier: String?) {
@@ -96,14 +96,14 @@ final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
     }
     
     private func configureKeyboard(for propertyType:PropertyType) {
-        if property.type == .float || property.type == .double {
+        if propertyType == .float || propertyType == .double {
             textFieldPropValue.keyboardType = .decimalPad
-        } else if property.type == .int {
+        } else if propertyType == .int {
             textFieldPropValue.keyboardType = .numberPad
         } else if propertyType == .string {
             textFieldPropValue.keyboardType = .alphabet
         }
-        let allowEditing = shouldAllowEditing()
+        let allowEditing = shouldAllowEditing(for: propertyType)
         if  allowEditing {
             textFieldPropValue.layer.borderColor = RealmStyle.tintColor.cgColor
             textFieldPropValue.layer.borderWidth = 1.0
@@ -131,33 +131,29 @@ final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
     // MARK: - UITextFieldDelegate
     
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
-        return shouldAllowEditing()
+        guard let property = property else { print("No properzy set"); return false }
+        return shouldAllowEditing(for: property.type)
     }
     
-    private func shouldAllowEditing() -> Bool {
-        return !property.isArray &&
-            !(property.type == .data ||
-                property.type == .linkingObjects ||
-                property.type == .object)
+    private func shouldAllowEditing(for propertyType: PropertyType) -> Bool {
+        return !(propertyType == .linkingObjects ||
+            propertyType == .data ||
+                propertyType == .linkingObjects ||
+                propertyType == .object)
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        if  (property != nil) && (property.type == .bool) {
+        guard let property = property else { return }
+        if property.type == .bool {
+            var isEqual: Bool = (textFieldPropValue.text! as String == "false")
+            isEqual.toggle()
+            textField.text = isEqual.humanReadable
             
-            let isEqual:Bool = (textFieldPropValue.text! as String == "false")
-            var newValue = "0"
-            if isEqual {
-                newValue = "1"
-                textField.text = "true"
-            } else {
-                textField.text = "false"
-            }
-            
-            guard let del = delegate else {
+            guard let delegate = delegate, let text = textField.text else {
                 print("delegate not set")
                 return
             }
-            del.textFieldDidFinishEdit(newValue, property: self.property)
+            delegate.textFieldDidFinishEdit(text, property: property)
             textField.resignFirstResponder()
             setNeedsLayout()
         }
@@ -169,12 +165,13 @@ final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
+        guard let property = property else { return }
         if  property.type != .bool {
-            guard let del = delegate else {
+            guard let delegate = delegate, let text = textField.text else {
                 print("delegate not set")
                 return
             }
-            del.textFieldDidFinishEdit(textField.text!, property: self.property)
+            delegate.textFieldDidFinishEdit(text, property: property)
         }
         textField.resignFirstResponder()
     }
@@ -190,6 +187,6 @@ final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
     }
 }
 
-protocol RBSRealmPropertyCellDelegate: class {
+protocol RBSRealmPropertyCellDelegate: AnyObject {
     func textFieldDidFinishEdit(_ input: String, property: Property)
 }
