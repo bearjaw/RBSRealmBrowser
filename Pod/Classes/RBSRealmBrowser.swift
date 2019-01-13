@@ -253,8 +253,10 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
         tableView.deselectRow(at: indexPath, animated: true)
         let ponso = objectPonsos[indexPath.row]
         let results = realm.dynamicObjects(ponso.title)
-        let viewController = RBSRealmObjectsBrowser(objects: Array(results), realm: realm)
-        navigationController?.pushViewController(viewController, animated: true)
+        if results.isNonEmpty {
+            let viewController = RBSRealmObjectsBrowser(objects: Array(results), realm: realm)
+            navigationController?.pushViewController(viewController, animated: true)
+        }
     }
     
     // MARK: - private Methods

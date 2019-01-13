@@ -27,7 +27,8 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
     init(objects: [Object], realm: Realm) {
         self.objects = objects
         self.realm = realm
-        schema = objects[0].objectSchema
+        guard let object = objects.first else { fatalError("No objects of this type left") }
+        schema = object.objectSchema
         properties = schema.properties
         filteredProperties = properties
         filteredObjects = []
@@ -85,7 +86,7 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
                 deleteAllObjects()
             } else {
                 deleteObjects()
-                let result:Results<DynamicObject> =  realm.dynamicObjects(schema.className)
+                let result: Results<DynamicObject> =  realm.dynamicObjects(schema.className)
                 objects = Array(result)
                 let indexSet = IndexSet(integer: 0)
                 realmView.tableView.reloadSections(indexSet, with: .top)
@@ -118,8 +119,9 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
         if objects.isNonEmpty {
             do {
                 try realm.write {
-                    realm.delete(data())
+                    realm.delete(objects)
                     objects = []
+                    filteredObjects = []
                     realmView.tableView.reloadData()
                 }
             } catch {
