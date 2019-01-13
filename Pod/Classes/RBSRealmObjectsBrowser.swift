@@ -27,7 +27,8 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
     init(objects: [Object], realm: Realm) {
         self.objects = objects
         self.realm = realm
-        schema = objects[0].objectSchema
+        guard let object = objects.first else { fatalError("No objects of this type left") }
+        schema = object.objectSchema
         properties = schema.properties
         filteredProperties = properties
         filteredObjects = []
@@ -81,15 +82,10 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
         realmView.tableView.allowsMultipleSelectionDuringEditing = true
         isEditMode.toggle()
         if !isEditMode {
-            if selectAll {
-                deleteAllObjects()
-            } else {
-                deleteObjects()
-                let result:Results<DynamicObject> =  realm.dynamicObjects(schema.className)
-                objects = Array(result)
-                let indexSet = IndexSet(integer: 0)
-                realmView.tableView.reloadSections(indexSet, with: .top)
-            }
+            if selectAll { deleteAllObjects() } else { deleteObjects() }
+            let result: Results<DynamicObject> = realm.dynamicObjects(schema.className)
+            objects = Array(result)
+            realmView.tableView.reloadData()
             
             navigationItem.leftBarButtonItem = nil
             navigationItem.rightBarButtonItem?.title = "Select"
@@ -115,12 +111,12 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
     }
     
     private func deleteAllObjects() {
-        if objects.isNonEmpty {
+        if data().isNonEmpty {
             do {
                 try realm.write {
                     realm.delete(data())
-                    objects = []
-                    realmView.tableView.reloadData()
+                    resetData()
+                    selectAll.toggle()
                 }
             } catch {
                 print("Couldn't delete all realm objects.")
@@ -128,12 +124,18 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
         }
     }
     
+    private func resetData() {
+        objects = []
+        filteredObjects = []
+        selectedObjects = []
+    }
+    
     private func deleteObjects() {
         if selectedObjects.isNonEmpty {
             do {
                 try realm.write {
                     realm.delete(selectedObjects)
-                    selectedObjects = []
+                    resetData()
                 }
             } catch {
                 print("Could not perform deletion. Error \(error)")
@@ -309,5 +311,9 @@ extension RBSRealmObjectsBrowser: UISearchResultsUpdating, UISearchBarDelegate, 
     
     func willPresentSearchController(_ searchController: UISearchController) {
         searchController.searchBar.textField?.textColor = .white
+    }
+    
+    func willDismissSearchController(_ searchController: UISearchController) {
+        realmView.tableView.reloadData()
     }
 }
