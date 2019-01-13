@@ -16,7 +16,7 @@ public struct RBSRequestConfig {
 
 final class BrowserTools {
     
-    private static let localVersion = "v0.2.6"
+    private static let localVersion = "v0.2.7"
     
     static func stringForProperty(_ property: Property, object: Object) -> String {
         if property.isArray || property.type == .linkingObjects {
