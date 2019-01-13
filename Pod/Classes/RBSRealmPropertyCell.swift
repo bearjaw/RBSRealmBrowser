@@ -143,17 +143,15 @@ final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        guard let property = property else { return }
+        guard let property = property, let delegate = delegate else { return }
         if property.type == .bool {
-            var isEqual: Bool = (textFieldPropValue.text! as String == "false")
-            isEqual.toggle()
+            let isEqual: Bool = (textField.text! as String == "false")
             textField.text = isEqual.humanReadable
             
-            guard let delegate = delegate else { print("delegate not set"); return }
-            delegate.textFieldDidFinishEdit("\(isEqual)", property: property)
-            textField.resignFirstResponder()
+            delegate.textFieldDidFinishEdit("\(isEqual.rawValue)", property: property)
             setNeedsLayout()
         }
+        textField.resignFirstResponder()
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -186,4 +184,10 @@ final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
 
 protocol RBSRealmPropertyCellDelegate: AnyObject {
     func textFieldDidFinishEdit(_ input: String, property: Property)
+}
+
+internal extension Bool {
+    var rawValue: Int {
+        return self ? 1 : 0
+    }
 }
