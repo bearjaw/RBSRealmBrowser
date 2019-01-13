@@ -65,7 +65,10 @@ class ViewController: UIViewController {
     }
     
     @objc func openBrowser() {
+        // uncomment & use this line if you want to view all objects again
         //        guard let realmBrowser = RBSRealmBrowser.realmBrowser() else { return }
+        
+        // use this to query & display all Person objects
         guard let realmBrowser = RBSRealmBrowser.realmBrowser(showing: ["Person"]) else { return }
         present(realmBrowser, animated: true, completion: nil)
     }
