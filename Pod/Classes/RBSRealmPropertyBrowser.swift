@@ -82,7 +82,7 @@ final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDeleg
     
     private func handlePOST(urlString: String) {
         if let url:URL = URL(string: urlString) {
-            BrowserTools.postObject(object: self.object, atURL: url)
+            BrowserTools.postObject(object: object, atURL: url)
         }
     }
     
@@ -138,7 +138,7 @@ final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDeleg
         
     }
     
-    private func saveValueForProperty(value:Any, propertyName:String) {
+    private func saveValueForProperty(value: Any, propertyName: String) {
         do {
             try realm.write {
                 object.setValue(value, forKey: propertyName)

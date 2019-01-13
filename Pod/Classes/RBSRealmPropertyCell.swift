@@ -13,14 +13,14 @@ protocol RBSRealmPropertyCellDelegate: AnyObject {
     func textFieldDidFinishEdit(_ input: String, property: Property)
 }
 
-internal final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
+internal final class RBSRealmPropertyCell: UITableViewCell {
     private lazy var circleView: UIView = {
-       let view = UIView()
+        let view = UIView()
         view.backgroundColor = .random
         return view
     }()
     private lazy var labelPropertyTitle = {
-       return labelWithAttributes(fontSize: 16, weight:0.3, text: "")
+        return labelWithAttributes(fontSize: 16, weight:0.3, text: "")
     }()
     private var textFieldPropValue: UITextField = {
         let textField  = UITextField()
@@ -44,6 +44,9 @@ internal final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate 
     
     private var property: Property?
     weak var delegate: RBSRealmPropertyCellDelegate?
+    
+    private let margin: CGFloat = 20.0
+    private let padding: CGFloat = 10.0
     
     override init(style: CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -81,7 +84,6 @@ internal final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate 
     }
     
     override func sizeThatFits(_ size: CGSize) -> CGSize {
-        let margin: CGFloat = 20.0
         let usableSize = (CGSize(width: size.width - 2*margin, height: .greatestFiniteMagnitude))
         let sizeTitle = labelPropertyTitle.sizeThatFits(usableSize)
         let sizeDetail = labelPropertyType.sizeThatFits(usableSize)
@@ -89,13 +91,12 @@ internal final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate 
         let sizeTextField = textFieldPropValue.sizeThatFits((CGSize(width: labelWidth,
                                                                     height: .greatestFiniteMagnitude)))
         let combinedHeight = ([sizeTitle, sizeDetail].reduce(.zero, +) < sizeTextField).height
-        return CGSize(width: size.width, height: combinedHeight + 4*margin + 10.0)
+        return CGSize(width: size.width, height: combinedHeight + 4*margin + padding)
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        let margin: CGFloat = 20.0
-        let padding: CGFloat = 10.0
+        
         let usableSize = (CGSize(width: contentView.bounds.size.width - 2*margin,
                                  height: .greatestFiniteMagnitude))
         let sizes = viewSizes(for: [labelPropertyTitle, labelPropertyType],
@@ -105,7 +106,7 @@ internal final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate 
         let sizeDetail = sizes[1]
         
         let sizeCircle = (CGSize(width: sizeTitle.height/2, height: sizeTitle.height/2))
-        let originCircle = (CGPoint(x: margin, y: margin + sizeTitle.height/2))
+        let originCircle = (CGPoint(x: margin, y: margin + (sizeTitle.height-sizeCircle.height)/2))
         circleView.frame = (CGRect(origin: originCircle, size: sizeCircle))
         circleView.layer.cornerRadius = sizeCircle.height/2
         
@@ -115,14 +116,21 @@ internal final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate 
         let originDetail = (CGPoint(x: originTitle.x, y: labelPropertyTitle.bottomRight.y + padding))
         labelPropertyType.frame = (CGRect(origin: originDetail, size: sizeDetail))
         
-        let usableTextFieldWidth = contentView.bounds.size.width-labelPropertyTitle.bounds.size.width-4*margin
+        let usableTextFieldWidth = contentView.bounds.size.width
+                                    - sizeCircle.width
+                                    - labelPropertyTitle.bounds.size.width
+                                    - 3*margin
+        
         let usableTextFieldSize = (CGSize(width: usableTextFieldWidth,
                                           height: .greatestFiniteMagnitude))
         let sizeTextField = textFieldPropValue.sizeThatFits(usableTextFieldSize)
         let minWidth = min(sizeTextField.width,usableTextFieldSize.width)
-        let originTextField = (CGPoint(x: contentView.bounds.size.width-minWidth-margin,
+        let originTextField = (CGPoint(x: contentView.bounds.size.width-minWidth-margin-sizeCircle.width,
                                        y: margin))
-        textFieldPropValue.frame = (CGRect(origin: originTextField, size: sizeTextField))
+        textFieldPropValue.frame = (CGRect(origin: originTextField,
+                                           size: (CGSize(width: minWidth,
+                                                         height: sizeTextField.height))
+        ))
     }
     
     private func viewSizes(for views: [UIView], fitting size: CGSize) -> [CGSize] {
@@ -167,7 +175,11 @@ internal final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate 
             labelPropertyType.text = property.type.humanReadable
         }
     }
-    
+}
+
+// MARK: - UITextFieldDelegate
+
+extension RBSRealmPropertyCell: UITextFieldDelegate {
     private func configureTextField(for editMode:Bool) {
         if editMode {
             textFieldPropValue.resignFirstResponder()
@@ -175,8 +187,6 @@ internal final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate 
         textFieldPropValue.isUserInteractionEnabled = editMode
         textFieldPropValue.delegate = self
     }
-    
-    // MARK: - UITextFieldDelegate
     
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         guard let property = property else { print("No properzy set"); return false }
@@ -186,8 +196,8 @@ internal final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate 
     private func shouldAllowEditing(for propertyType: PropertyType) -> Bool {
         return !(propertyType == .linkingObjects ||
             propertyType == .data ||
-                propertyType == .linkingObjects ||
-                propertyType == .object)
+            propertyType == .linkingObjects ||
+            propertyType == .object)
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {

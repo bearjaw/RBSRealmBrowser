@@ -183,9 +183,16 @@ extension RBSRealmObjectsBrowser: UITableViewDelegate {
             let viewController = RBSRealmPropertyBrowser(object: data()[indexPath.row], realm: realm)
             
             if let searchController = searchController {
-                searchController.dismiss(animated: true)
+                if searchController.isActive {
+                    searchController.dismiss(animated: true) { [weak self] in
+                        self?.navigationController?.pushViewController(viewController, animated: true)
+                    }
+                } else {
+                    navigationController?.pushViewController(viewController, animated: true)
+                }
+            } else {
+                navigationController?.pushViewController(viewController, animated: true)
             }
-            self.navigationController?.pushViewController(viewController, animated: true)
         }
     }
     
@@ -252,7 +259,7 @@ extension RBSRealmObjectsBrowser: UITableViewDataSource {
 extension RBSRealmObjectsBrowser: UISearchResultsUpdating, UISearchBarDelegate, UISearchControllerDelegate {
     private func setupSearch() {
         searchController = UISearchController(searchResultsController: nil)
-        if let searchController =  searchController {
+        if let searchController = searchController {
             searchController.searchResultsUpdater = self
             searchController.searchBar.delegate = self
             searchController.delegate = self

@@ -46,7 +46,7 @@ final class BrowserTools {
                                     }
                                     if (!gitVersion) {
                                         print("""
-                        A new version of RBSRealmBrowser is now available:
+                        🚀 A new version of RBSRealmBrowser is now available:
                         https://github.com/bearjaw/RBSRealmBrowser/blob/master/CHANGELOG.md
                     """)
                                     }
