@@ -68,18 +68,43 @@ final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         setNeedsLayout()
     }
     
+    override func sizeThatFits(_ size: CGSize) -> CGSize {
+        let margin: CGFloat = 20.0
+        let usableSize = (CGSize(width: size.width - 2*margin, height: .greatestFiniteMagnitude))
+        let sizeTitle = labelPropertyTitle.sizeThatFits(usableSize)
+        let sizeDetail = labelPropertyType.sizeThatFits(usableSize)
+        let labelWidth = usableSize.width-labelPropertyTitle.bounds.size.width-4*margin
+        let sizeTextField = textFieldPropValue.sizeThatFits((CGSize(width: labelWidth,
+                                                                    height: .greatestFiniteMagnitude)))
+        let combinedHeight = ([sizeTitle, sizeDetail].reduce(.zero, +) < sizeTextField).height
+        return CGSize(width: size.width, height: combinedHeight + 2*margin + 10.0)
+    }
+    
     override func layoutSubviews() {
         super.layoutSubviews()
-        let borderOffset: CGFloat = 20.0
-        
-        var labelSize = labelPropertyTitle.sizeThatFits(CGSize(width: contentView.bounds.size.width - 2*borderOffset, height: 2000.0))
-        let labelPropertyTypeSize = labelPropertyType.sizeThatFits(CGSize(width: contentView.bounds.size.width - 2*borderOffset, height: 2000.0))
-        labelPropertyTitle.frame = (CGRect(x: borderOffset, y: (contentView.bounds.size.height - labelSize.height - labelPropertyTypeSize.height - 10.0)/2.0, width: labelSize.width, height: labelSize.height))
-        labelPropertyType.frame = (CGRect(x: borderOffset, y: labelPropertyTitle.frame.origin.y + labelSize.height + borderOffset/2.0, width: labelPropertyTypeSize.width, height: labelPropertyTypeSize.height))
-        
-        let labelWidth = contentView.bounds.size.width-labelPropertyTitle.bounds.size.width-4*borderOffset
-        labelSize = textFieldPropValue.sizeThatFits(CGSize(width: labelWidth, height: 2000.0))
-        textFieldPropValue.frame = (CGRect(x:contentView.bounds.size.width-min(labelSize.width,labelWidth)-borderOffset, y: (contentView.bounds.size.height-labelSize.height - borderOffset)/2, width:min(labelSize.width,labelWidth), height: labelSize.height + borderOffset))
+        let margin: CGFloat = 20.0
+        let usableSize = (CGSize(width: contentView.bounds.size.width - 2*margin,
+                                 height: .greatestFiniteMagnitude))
+        let sizes = viewSizes(for: [labelPropertyTitle, labelPropertyType],
+                              fitting: usableSize)
+        let sizeTitle = sizes[0]
+        let sizeDetail = sizes[1]
+        let originTitle = CGPoint(x: margin, y: margin)
+        labelPropertyTitle.frame = (CGRect(origin: originTitle, size: sizeTitle))
+        let originDetail = (CGPoint(x: margin, y: labelPropertyTitle.bottomRight.y + 10.0))
+        labelPropertyType.frame = (CGRect(origin: originDetail, size: sizeDetail))
+        let usableTextFieldWidth = contentView.bounds.size.width-labelPropertyTitle.bounds.size.width-4*margin
+        let usableTextFieldSize = (CGSize(width: usableTextFieldWidth,
+                                          height: .greatestFiniteMagnitude))
+        let sizeTextField = textFieldPropValue.sizeThatFits(usableTextFieldSize)
+        let originTextField = (CGPoint(x: contentView.bounds.size.width-min(sizeTextField.width,usableTextFieldSize.width)-margin,
+                                       y: margin))
+        textFieldPropValue.frame = (CGRect(origin: originTextField, size: sizeTextField))
+    }
+    
+    private func viewSizes(for views: [UIView], fitting size: CGSize) -> [CGSize] {
+        let sizes = views.map({ $0.sizeThatFits(size) })
+        return sizes
     }
     
     // MARK: - private method

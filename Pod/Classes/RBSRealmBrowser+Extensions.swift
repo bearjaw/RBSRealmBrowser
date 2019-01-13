@@ -14,9 +14,21 @@ internal extension Collection {
     }
 }
 
-extension CGSize {
+internal extension CGSize {
     static func + (lhs: CGSize, rhs: CGSize) -> CGSize {
         return (CGSize(width: lhs.width + rhs.width, height: lhs.height + rhs.height))
+    }
+    
+    static func - (lhs: CGSize, rhs: CGSize) -> CGSize {
+        return (CGSize(width: min(lhs.width - rhs.width, 0.0), height: min(lhs.height - rhs.height,0)))
+    }
+    
+    static func > (lhs: CGSize, rhs: CGSize) -> CGSize {
+        return lhs.width > rhs.width ? lhs: rhs
+    }
+    
+    static func < (lhs: CGSize, rhs: CGSize) -> CGSize {
+        return lhs.height > rhs.height ? lhs: rhs
     }
 }
 

@@ -26,7 +26,7 @@ final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDeleg
         schema = object.objectSchema
         let filters = ["personName", "hungry"]
         properties = schema.properties
-        filteredProperties = schema.properties.filter( { filters.contains($0.name) })
+        filteredProperties = schema.properties.filter({ filters.contains($0.name) })
         super.init(nibName: nil, bundle: nil)
         self.title = self.schema.className
     }
