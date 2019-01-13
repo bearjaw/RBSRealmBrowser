@@ -9,9 +9,20 @@
 import UIKit
 import RealmSwift
 
-final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
-    private var labelPropertyTitle = UILabel()
-    private var textFieldPropValue:UITextField = {
+protocol RBSRealmPropertyCellDelegate: AnyObject {
+    func textFieldDidFinishEdit(_ input: String, property: Property)
+}
+
+internal final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
+    private lazy var circleView: UIView = {
+       let view = UIView()
+        view.backgroundColor = .random
+        return view
+    }()
+    private lazy var labelPropertyTitle = {
+       return labelWithAttributes(fontSize: 16, weight:0.3, text: "")
+    }()
+    private var textFieldPropValue: UITextField = {
         let textField  = UITextField()
         let spacing = UIView(frame:CGRect(x:0.0, y:0.0, width:10.0, height:0.0))
         textField.leftViewMode = .always
@@ -24,12 +35,13 @@ final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         textField.autocorrectionType = .no
         return textField
     }()
-    private var labelPropertyType:UILabel = {
+    private lazy var labelPropertyType: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 12.0)
+        label.font = UIFont.systemFont(ofSize: 14.0)
         label.textColor = .lightGray
         return label
     }()
+    
     private var property: Property?
     weak var delegate: RBSRealmPropertyCellDelegate?
     
@@ -39,7 +51,7 @@ final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         UITextField.appearance().tintColor = RealmStyle.tintColor
         contentView.addSubview(textFieldPropValue)
         
-        labelPropertyTitle = labelWithAttributes(14, weight:0.3, text: "")
+        contentView.addSubview(circleView)
         contentView.addSubview(labelPropertyTitle)
         contentView.addSubview(labelPropertyType)
     }
@@ -77,27 +89,38 @@ final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         let sizeTextField = textFieldPropValue.sizeThatFits((CGSize(width: labelWidth,
                                                                     height: .greatestFiniteMagnitude)))
         let combinedHeight = ([sizeTitle, sizeDetail].reduce(.zero, +) < sizeTextField).height
-        return CGSize(width: size.width, height: combinedHeight + 2*margin + 10.0)
+        return CGSize(width: size.width, height: combinedHeight + 4*margin + 10.0)
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
         let margin: CGFloat = 20.0
+        let padding: CGFloat = 10.0
         let usableSize = (CGSize(width: contentView.bounds.size.width - 2*margin,
                                  height: .greatestFiniteMagnitude))
         let sizes = viewSizes(for: [labelPropertyTitle, labelPropertyType],
                               fitting: usableSize)
+        
         let sizeTitle = sizes[0]
         let sizeDetail = sizes[1]
-        let originTitle = CGPoint(x: margin, y: margin)
+        
+        let sizeCircle = (CGSize(width: sizeTitle.height/2, height: sizeTitle.height/2))
+        let originCircle = (CGPoint(x: margin, y: margin + sizeTitle.height/2))
+        circleView.frame = (CGRect(origin: originCircle, size: sizeCircle))
+        circleView.layer.cornerRadius = sizeCircle.height/2
+        
+        let originTitle = CGPoint(x: circleView.bottomRight.y + padding/2, y: margin)
         labelPropertyTitle.frame = (CGRect(origin: originTitle, size: sizeTitle))
-        let originDetail = (CGPoint(x: margin, y: labelPropertyTitle.bottomRight.y + 10.0))
+        
+        let originDetail = (CGPoint(x: originTitle.x, y: labelPropertyTitle.bottomRight.y + padding))
         labelPropertyType.frame = (CGRect(origin: originDetail, size: sizeDetail))
+        
         let usableTextFieldWidth = contentView.bounds.size.width-labelPropertyTitle.bounds.size.width-4*margin
         let usableTextFieldSize = (CGSize(width: usableTextFieldWidth,
                                           height: .greatestFiniteMagnitude))
         let sizeTextField = textFieldPropValue.sizeThatFits(usableTextFieldSize)
-        let originTextField = (CGPoint(x: contentView.bounds.size.width-min(sizeTextField.width,usableTextFieldSize.width)-margin,
+        let minWidth = min(sizeTextField.width,usableTextFieldSize.width)
+        let originTextField = (CGPoint(x: contentView.bounds.size.width-minWidth-margin,
                                        y: margin))
         textFieldPropValue.frame = (CGRect(origin: originTextField, size: sizeTextField))
     }
@@ -109,7 +132,7 @@ final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
     
     // MARK: - private method
     
-    private func labelWithAttributes(_ fontSize: CGFloat, weight: CGFloat, text: String) -> UILabel {
+    private func labelWithAttributes(fontSize: CGFloat, weight: CGFloat, text: String) -> UILabel {
         let label = UILabel()
         if #available(iOS 8.2, *) {
             label.font = UIFont.systemFont(ofSize: fontSize, weight: UIFont.Weight(weight))
@@ -175,8 +198,8 @@ final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
             
             delegate.textFieldDidFinishEdit("\(isEqual.rawValue)", property: property)
             setNeedsLayout()
+            textField.resignFirstResponder()
         }
-        textField.resignFirstResponder()
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -204,15 +227,5 @@ final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         }
         setNeedsLayout()
         return true
-    }
-}
-
-protocol RBSRealmPropertyCellDelegate: AnyObject {
-    func textFieldDidFinishEdit(_ input: String, property: Property)
-}
-
-internal extension Bool {
-    var rawValue: Int {
-        return self ? 1 : 0
     }
 }
