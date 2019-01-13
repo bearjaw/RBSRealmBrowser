@@ -118,13 +118,14 @@ final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDeleg
                 saveValueForProperty(value: propertyValue, propertyName: property.name)
             }
         case .float:
-            let propertyValue = Float(newValue)!
-            saveValueForProperty(value: propertyValue, propertyName: property.name)
+            if let propertyValue = Float(newValue) {
+                saveValueForProperty(value: propertyValue, propertyName: property.name)
+            }
         case .double:
-            let propertyValue:Double = Double(newValue)!
+            let propertyValue: Double = Double(newValue)!
             saveValueForProperty(value: propertyValue, propertyName: property.name)
         case .string:
-            let propertyValue:String = newValue as String
+            let propertyValue: String = newValue as String
             saveValueForProperty(value: propertyValue, propertyName: property.name)
         case .linkingObjects,.object:
             break
@@ -146,11 +147,7 @@ final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDeleg
     
     private func fetchObjects(for propertyName:String) -> [Object] {
         let results = object.dynamicList(propertyName)
-        var objects: [Object] = []
-        for obj in results {
-            objects.append(obj)
-        }
-        return objects
+        return Array(results)
     }
     
     @objc func actionToggleEdit(_ id: UIBarButtonItem) {

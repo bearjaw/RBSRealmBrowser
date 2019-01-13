@@ -30,7 +30,7 @@ final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
         label.textColor = .lightGray
         return label
     }()
-    private var property: Property? = nil
+    private var property: Property?
     weak var delegate: RBSRealmPropertyCellDelegate?
     
     override init(style: CellStyle, reuseIdentifier: String?) {
@@ -149,11 +149,8 @@ final class RBSRealmPropertyCell: UITableViewCell, UITextFieldDelegate {
             isEqual.toggle()
             textField.text = isEqual.humanReadable
             
-            guard let delegate = delegate, let text = textField.text else {
-                print("delegate not set")
-                return
-            }
-            delegate.textFieldDidFinishEdit(text, property: property)
+            guard let delegate = delegate else { print("delegate not set"); return }
+            delegate.textFieldDidFinishEdit("\(isEqual)", property: property)
             textField.resignFirstResponder()
             setNeedsLayout()
         }

@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDelegate, UITableViewDataSource, UITableViewDelegate {
+final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDelegate {
     private var objects: [Object]
     private var schema: ObjectSchema
     private var properties: [Property]
@@ -55,7 +55,7 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
         realmView.tableView.register(RBSRealmObjectBrowserCell.self, forCellReuseIdentifier: cellIdentifier)
     }
     
-   public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         if #available(iOS 9.0, *) {
             switch traitCollection.forceTouchCapability {
@@ -68,56 +68,6 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
     }
     
     // MARK: - TableView Datasource & Delegate
-    public func tableView(_ tableView: UITableView,
-                          willDisplay cell: UITableViewCell,
-                          forRowAt indexPath: IndexPath) {
-        guard let property = properties.first else { return }
-        let object = objects[indexPath.row]
-        if !object.isInvalidated {
-            let stringvalue = RBSTools.stringForProperty(property, object: object)
-            if selectAll {
-                cell.accessoryType = .checkmark
-                tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
-                selectedObjects.append(objects[indexPath.row])
-            } else {
-                cell.isSelected = false
-                cell.accessoryType = .none
-            }
-            (cell as! RBSRealmObjectBrowserCell).realmBrowserObjectAttributes(schema.className,
-                                                                              objectsCount:"\(property.name): \(stringvalue)")
-        }
-    }
-    
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
-        return cell
-    }
-    public  func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return objects.count
-    }
-    
-    public func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-    
-    public  func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60.0
-    }
-    
-    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if isEditMode && !selectAll {
-            if let cell = tableView.cellForRow(at: indexPath) {
-                cell.accessoryType = .checkmark
-                cell.tintColor = RealmStyle.tintColor
-            }
-            selectedObjects.append(objects[indexPath.row])
-        } else {
-            tableView.deselectRow(at: indexPath, animated: true)
-            let viewController = RBSRealmPropertyBrowser(object:self.objects[indexPath.row], realm: realm)
-            self.navigationController?.pushViewController(viewController, animated: true)
-        }
-        
-    }
     
     public func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         if isEditMode {
@@ -232,4 +182,55 @@ internal extension Selector {
     static let selectAll = #selector(RBSRealmObjectsBrowser.actionSelectAll(_:))
     static let togglePreview = #selector(RBSRealmObjectsBrowser.actionTogglePreview(_:))
     static let edit = #selector(RBSRealmObjectsBrowser.actionToggleEdit(_:))
+}
+
+extension RBSRealmObjectsBrowser: UITableViewDelegate {
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if isEditMode && !selectAll {
+            if let cell = tableView.cellForRow(at: indexPath) {
+                cell.accessoryType = .checkmark
+                cell.tintColor = RealmStyle.tintColor
+            }
+            selectedObjects.append(objects[indexPath.row])
+        } else {
+            tableView.deselectRow(at: indexPath, animated: true)
+            let viewController = RBSRealmPropertyBrowser(object:self.objects[indexPath.row], realm: realm)
+            self.navigationController?.pushViewController(viewController, animated: true)
+        }
+    }
+}
+
+extension RBSRealmObjectsBrowser: UITableViewDataSource {
+    public func tableView(_ tableView: UITableView,
+                          willDisplay cell: UITableViewCell,
+                          forRowAt indexPath: IndexPath) {
+        guard let property = properties.first else { return }
+        guard let cell = cell as? RBSRealmObjectBrowserCell else { return }
+        let object = objects[indexPath.row]
+        if !object.isInvalidated {
+            let stringvalue = RBSTools.stringForProperty(property, object: object)
+            if selectAll {
+                cell.accessoryType = .checkmark
+                tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
+                selectedObjects.append(objects[indexPath.row])
+            } else {
+                cell.isSelected = false
+                cell.accessoryType = .none
+            }
+            cell.realmBrowserObjectAttributes(schema.className,
+                                              objectsCount:"\(property.name): \(stringvalue)")
+        }
+    }
+    
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
+        return cell
+    }
+    public  func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return objects.count
+    }
+    
+    public  func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 60.0
+    }
 }

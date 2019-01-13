@@ -6,14 +6,12 @@
 //
 //
 
-internal struct ElementViewData: Displayable {
+internal struct ElementViewData {
     
     var title: String = ""
     
     var subtitle: String = ""
     
     var value: String = ""
-    
-    var type: ElementType = .undefined
     
 }

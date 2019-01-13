@@ -207,16 +207,16 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
     ///   - indexPath: NSIndexPath
     /// - Returns: a UITableViewCell
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier) as? RBSRealmObjectBrowserCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier) else {
             fatalError("Could not configure cell.")
         }
-        
-        let title = objectPonsos[indexPath.row].title
-        let count = elementCount(named: title)
-        
-        cell.realmBrowserObjectAttributes(title,
-                                          objectsCount: "Objects in Realm = \(count)")
-        
+        if let cell = cell as? RBSRealmObjectBrowserCell {
+            let title = objectPonsos[indexPath.row].title
+            let count = elementCount(named: title)
+            
+            cell.realmBrowserObjectAttributes(title,
+                                              objectsCount: "Objects in Realm = \(count)")
+        }
         return cell
     }
     
@@ -253,18 +253,7 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
         tableView.deselectRow(at: indexPath, animated: true)
         let ponso = objectPonsos[indexPath.row]
         let results = realm.dynamicObjects(ponso.title)
-        let elements: [ElementViewData] = results.map { (object) -> ElementViewData in
-            var element = ElementViewData()
-            element.title = object.objectSchema.className
-            element.subtitle = "\(results.count)"
-            return element
-        }
-        let viewController = RBSBrowserTableViewController(style: .plain,
-                                                           elementName: ponso.title,
-                                                           elements: elements,
-                                                           selectionHandler: { [unowned self] element in
-                                                            
-        })
+        let viewController = RBSRealmObjectsBrowser(objects: Array(results), realm: realm)
         navigationController?.pushViewController(viewController, animated: true)
     }
     
@@ -299,7 +288,6 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
     }
     
     private func fetchObjects() {
-        var mutableObjectPonsos:[ElementViewData] = []
         var objectSchema = realm.schema.objectSchema
         
         if let classFilter = filteredClasses {
@@ -310,14 +298,13 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
                 objectSchema = realm.schema.objectSchema
             }
         }
-        
-        for object in  objectSchema {
+        let objects = objectSchema.map { (object) -> ElementViewData in
             var objectPonso = ElementViewData()
             objectPonso.title = object.className
-            objectsSchema.append(object)
-            mutableObjectPonsos.append(objectPonso)
+            return objectPonso
         }
-        objectPonsos = mutableObjectPonsos
+        objectsSchema = objectSchema
+        objectPonsos = objects
     }
 }
 
@@ -333,7 +320,7 @@ private enum RBSSortStyle: String {
     case descending = "Z-A"
 }
 
-public final class RBSRealmBrowserView: UIView {
+internal final class RBSRealmBrowserView: UIView {
     public var tableView:UITableView
     init() {
         tableView = UITableView(frame: .zero, style: .plain)
