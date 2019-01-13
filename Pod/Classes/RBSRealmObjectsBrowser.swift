@@ -230,7 +230,7 @@ extension RBSRealmObjectsBrowser: UITableViewDataSource {
             let object = data()[indexPath.row]
             if !object.isInvalidated {
                 let detailText = filteredProperties.map { (property) -> String in
-                    return "\(property.name): \(BrowserTools.stringForProperty(property, object: object)) "
+                    return "\(property.name): \(BrowserTools.stringForProperty(property, object: object))\n\n"
                     }.reduce("", +)
                 if selectAll {
                     cell.accessoryType = .checkmark

@@ -51,7 +51,10 @@ extension Object: HumanReadable {
     var humanReadable: String {
         let schema = self.objectSchema
         let propertyValue = schema.properties.reduce("\(objectSchema.className) ", { partial, property in
-            return partial + " \(property.name) "
+            if property.type == .object {
+                return partial + " \(property.name): maximum depth reached)\n"
+            }
+            return partial + " \(property.name): \(self[property.name] ?? "value not parsed")\n"
         })
         return propertyValue
     }
