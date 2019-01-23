@@ -98,10 +98,10 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
     @objc func actionSelectAll(_ id: AnyObject) {
         selectAll.toggle()
         if selectAll {
-            self.navigationItem.leftBarButtonItem?.title = "Unselect all"
+            navigationItem.leftBarButtonItem?.title = "Unselect all"
         } else {
             selectedObjects.removeAll()
-            self.navigationItem.leftBarButtonItem?.title = "Select all"
+            navigationItem.leftBarButtonItem?.title = "Select all"
         }
         realmView.tableView.reloadData()
     }
