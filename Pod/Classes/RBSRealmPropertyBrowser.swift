@@ -52,7 +52,7 @@ final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDeleg
         let editButton = UIBarButtonItem(title: "Edit",
                                          style: .plain,
                                          target: self,
-                                         action: #selector(RBSRealmPropertyBrowser.actionToggleEdit(_:)))
+                                         action: .toggleEdit)
         navigationItem.rightBarButtonItems = [editButton]
     }
     
@@ -207,4 +207,8 @@ extension RBSRealmPropertyBrowser: UITableViewDataSource {
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
     }
+}
+
+fileprivate extension Selector {
+    static let toggleEdit = #selector(RBSRealmPropertyBrowser.actionToggleEdit(_:))
 }
