@@ -52,6 +52,11 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
         setupSearch()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        realmView.tableView.reloadData()
+    }
+    
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
