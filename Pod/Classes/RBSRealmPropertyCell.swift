@@ -73,6 +73,7 @@ internal final class RBSRealmPropertyCell: UITableViewCell {
             observe(\.isEditingAllowed, onChange: { [weak self] (value) in
                 self?.textFieldPropValue.isUserInteractionEnabled = value
                 self?.setTextFieldBorders(for: value)
+                self?.toggle.isEnabled = value
             })
         )
         toggle.isHidden = true
