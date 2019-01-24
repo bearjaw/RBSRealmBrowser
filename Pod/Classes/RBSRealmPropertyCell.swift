@@ -24,7 +24,8 @@ internal final class RBSRealmPropertyCell: UITableViewCell {
     }()
     private var textFieldPropValue: UITextField = {
         let textField  = UITextField()
-        let spacing = UIView(frame:CGRect(x:0.0, y:0.0, width:10.0, height:0.0))
+        let spacing = UIView(frame:CGRect(x: 0.0, y: 0.0, width: 10.0, height: 0.0))
+        spacing.backgroundColor = .clear
         textField.leftViewMode = .always
         textField.leftView = spacing
         textField.rightViewMode = .always
@@ -41,22 +42,38 @@ internal final class RBSRealmPropertyCell: UITableViewCell {
         label.textColor = .lightGray
         return label
     }()
+    private lazy var toggle: UISwitch = {
+        let toggle = UISwitch()
+        toggle.addTarget(self, action: .toggleSwitch, for: .valueChanged)
+        return toggle
+    }()
     
     private var property: Property?
     weak var delegate: RBSRealmPropertyCellDelegate?
     
     private let margin: CGFloat = 20.0
     private let padding: CGFloat = 10.0
+    private var disposables: [NSKeyValueObservation] = []
+    private var isEditingAllowed = false
     
     override init(style: CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .none
         UITextField.appearance().tintColor = RealmStyle.tintColor
         contentView.addSubview(textFieldPropValue)
-        
         contentView.addSubview(circleView)
         contentView.addSubview(labelPropertyTitle)
         contentView.addSubview(labelPropertyType)
+        toggle.frame = .zero
+        disposables.append(
+            toggle.observe(\.isHidden, onChange: { [weak self] (value) in
+            self?.textFieldPropValue.isHidden = !value
+        }))
+        disposables.append(
+            textFieldPropValue.bind(\.isUserInteractionEnabled, to: self, at: \.isEditingAllowed
+        ))
+        toggle.isHidden = true
+        contentView.addSubview(toggle)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -68,6 +85,9 @@ internal final class RBSRealmPropertyCell: UITableViewCell {
         textFieldPropValue.text = ""
         labelPropertyTitle.text = ""
         labelPropertyType.text = ""
+        textFieldPropValue.frame = .zero
+        toggle.frame = .zero
+        toggle.isHidden = true
     }
     
     func cellWithAttributes(propertyTitle: String,
@@ -75,12 +95,21 @@ internal final class RBSRealmPropertyCell: UITableViewCell {
                             editMode: Bool,
                             property: Property) {
         self.property = property
+        isEditingAllowed = shouldAllowEditing(for: property.type) && editMode
         labelPropertyTitle.text = propertyTitle
         textFieldPropValue.text = propertyValue
+        configureToggle(for: property, value: propertyValue)
         configureKeyboard(for: property.type)
         configureLabelType(for: property)
         configureTextField(for: editMode)
         setNeedsLayout()
+    }
+    
+    func configureToggle(for property: Property, value: String) {
+        if property.type == .bool {
+            toggle.isOn = Bool(value)!
+            toggle.isHidden = false
+        }
     }
     
     override func sizeThatFits(_ size: CGSize) -> CGSize {
@@ -127,15 +156,27 @@ internal final class RBSRealmPropertyCell: UITableViewCell {
         let minWidth = min(sizeTextField.width,usableTextFieldSize.width)
         let originTextField = (CGPoint(x: contentView.bounds.size.width-minWidth-margin,
                                        y: margin))
-        textFieldPropValue.frame = (CGRect(origin: originTextField,
-                                           size: (CGSize(width: minWidth,
-                                                         height: sizeTextField.height))
-        ))
+        if let prop = property {
+            if prop.type == .bool {
+                toggle.frame = (CGRect(origin: originTextField,
+                                       size: (CGSize(width: minWidth,
+                                                     height: toggle.bounds.size.height))))
+            } else {
+                textFieldPropValue.frame = (CGRect(origin: originTextField,
+                                                   size: (CGSize(width: minWidth,
+                                                                 height: sizeTextField.height))))
+            }
+        }
     }
     
     private func viewSizes(for views: [UIView], fitting size: CGSize) -> [CGSize] {
         let sizes = views.map({ $0.sizeThatFits(size) })
         return sizes
+    }
+    
+    @objc func toggleSwitch() {
+        guard let delegate = delegate, let prop = property else { return }
+        delegate.textFieldDidFinishEdit("\(toggle.isOn)", property: prop)
     }
     
     // MARK: - private method
@@ -151,7 +192,7 @@ internal final class RBSRealmPropertyCell: UITableViewCell {
         return label
     }
     
-    private func configureKeyboard(for propertyType:PropertyType) {
+    private func configureKeyboard(for propertyType: PropertyType) {
         if propertyType == .float || propertyType == .double {
             textFieldPropValue.keyboardType = .decimalPad
         } else if propertyType == .int {
@@ -159,21 +200,19 @@ internal final class RBSRealmPropertyCell: UITableViewCell {
         } else if propertyType == .string {
             textFieldPropValue.keyboardType = .alphabet
         }
-        let allowEditing = shouldAllowEditing(for: propertyType)
-        if  allowEditing {
-            textFieldPropValue.layer.borderColor = RealmStyle.tintColor.cgColor
-            textFieldPropValue.layer.borderWidth = 1.0
-        } else {
-            textFieldPropValue.layer.borderWidth = 0.0
-        }
     }
     
-    private func configureLabelType(for property:Property) {
+    private func configureLabelType(for property: Property) {
         if property.isArray {
             labelPropertyType.text = "Array"
         } else {
             labelPropertyType.text = property.type.humanReadable
         }
+    }
+    
+    deinit {
+        disposables.forEach({ $0.invalidate() })
+        disposables = []
     }
 }
 
@@ -186,6 +225,12 @@ extension RBSRealmPropertyCell: UITextFieldDelegate {
         }
         textFieldPropValue.isUserInteractionEnabled = editMode
         textFieldPropValue.delegate = self
+        if  isEditingAllowed {
+            textFieldPropValue.layer.borderColor = RealmStyle.tintColor.cgColor
+            textFieldPropValue.layer.borderWidth = 1.0
+        } else {
+            textFieldPropValue.layer.borderWidth = 0.0
+        }
     }
     
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
@@ -238,4 +283,8 @@ extension RBSRealmPropertyCell: UITextFieldDelegate {
         setNeedsLayout()
         return true
     }
+}
+
+fileprivate extension Selector {
+    static let toggleSwitch = #selector(RBSRealmPropertyCell.toggleSwitch)
 }
