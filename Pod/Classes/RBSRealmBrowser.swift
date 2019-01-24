@@ -30,8 +30,7 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
     private var realmBrowserView:RBSRealmBrowserView = RBSRealmBrowserView()
     
     private var realm: Realm
-    private var objectPonsos: [ElementViewData] = []
-    private var objectsSchema: [ObjectSchema]   = []
+    private var objects: [ObjectSchema] = []
     private var filteredClasses: [String]?
     
     private var filterOptions:UISegmentedControl = {
@@ -175,9 +174,9 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
         id.title = ascending == false ? RBSSortStyle.descending.rawValue: RBSSortStyle.ascending.rawValue
         ascending.toggle()
         if ascending {
-            objectPonsos = objectPonsos.sorted { $0.title > $1.title }
+            objects = objects.sorted { $0.className > $1.className }
         } else {
-            objectPonsos = objectPonsos.sorted { $0.title < $1.title }
+            objects = objects.sorted { $0.className < $1.className }
         }
         realmBrowserView.tableView.reloadData()
     }
@@ -189,9 +188,9 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
             fetchObjects()
             realmBrowserView.tableView.reloadData()
         case 1:
-            objectPonsos = objectPonsos.filter({
-                !$0.title.hasPrefix("RLM") &&
-                    !$0.title.hasPrefix("RealmSwift") })
+            objects = objects.filter({
+                !$0.className.hasPrefix("RLM") &&
+                    !$0.className.hasPrefix("RealmSwift") })
             realmBrowserView.tableView.reloadData()
         default:
             return
@@ -211,7 +210,7 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
             fatalError("Could not configure cell.")
         }
         if let cell = cell as? RBSRealmObjectBrowserCell {
-            let title = objectPonsos[indexPath.row].title
+            let title = objects[indexPath.row].className
             let count = elementCount(named: title)
             
             cell.realmBrowserObjectAttributes(title,
@@ -228,7 +227,7 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
     ///   - section: Int
     /// - Returns: number of cells per section
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return objectPonsos.count
+        return objects.count
     }
     
     /// TableView Delegate method
@@ -251,8 +250,8 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
     ///   - indexPath: NSIndexPath
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let ponso = objectPonsos[indexPath.row]
-        let results = realm.dynamicObjects(ponso.title)
+        let object = objects[indexPath.row]
+        let results = realm.dynamicObjects(object.className)
         if results.isNonEmpty {
             let viewController = RBSRealmObjectsBrowser(objects: Array(results), realm: realm)
             navigationController?.pushViewController(viewController, animated: true)
@@ -285,7 +284,7 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
     
     private func filterObjects() {
         if let classFilters = filteredClasses {
-            objectPonsos = objectPonsos.filter({ classFilters.contains($0.title) })
+            objects = objects.filter({ classFilters.contains($0.className) })
         }
     }
     
@@ -294,19 +293,15 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
         
         if let classFilter = filteredClasses {
             if classFilter.isNonEmpty {
-                objectSchema = objectSchema.filter({classFilter.contains($0.className)})
+                objectSchema = objectSchema
+                    .filter({ classFilter
+                        .contains($0.className) })
             }
             if objectSchema.isEmpty {
                 objectSchema = realm.schema.objectSchema
             }
         }
-        let objects = objectSchema.map { (object) -> ElementViewData in
-            var objectPonso = ElementViewData()
-            objectPonso.title = object.className
-            return objectPonso
-        }
-        objectsSchema = objectSchema
-        objectPonsos = objects
+        objects = objectSchema
     }
 }
 
