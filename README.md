@@ -51,7 +51,7 @@ class ViewController: UIViewController {
 ```
 
 ## Use one of the methods to browse your Realm database
-### All these convenience methods come with a second method using a  `classes` option. Use theses methods if you want to restrict the results to (a) specific class(es).
+### All these convenience methods come with a second method using a  `classes` option. Use these methods if you want to restrict the results to (a) specific class(es).
 If you pass in `nil`, all objects will be displayed. The `[String]` must be composed
 of classNames and they must match. 
 
