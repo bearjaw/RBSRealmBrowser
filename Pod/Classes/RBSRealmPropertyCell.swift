@@ -54,7 +54,7 @@ internal final class RBSRealmPropertyCell: UITableViewCell {
     private let margin: CGFloat = 20.0
     private let padding: CGFloat = 10.0
     private var disposables: [NSKeyValueObservation] = []
-    private var isEditingAllowed = false
+    @objc private dynamic var isEditingAllowed = false
     
     override init(style: CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -70,8 +70,11 @@ internal final class RBSRealmPropertyCell: UITableViewCell {
             self?.textFieldPropValue.isHidden = !value
         }))
         disposables.append(
-            textFieldPropValue.bind(\.isUserInteractionEnabled, to: self, at: \.isEditingAllowed
-        ))
+            observe(\.isEditingAllowed, onChange: { [weak self] (value) in
+                self?.textFieldPropValue.isUserInteractionEnabled = value
+                self?.setTextFieldBorders(for: value)
+            })
+        )
         toggle.isHidden = true
         contentView.addSubview(toggle)
     }
@@ -225,6 +228,9 @@ extension RBSRealmPropertyCell: UITextFieldDelegate {
         }
         textFieldPropValue.isUserInteractionEnabled = editMode
         textFieldPropValue.delegate = self
+    }
+    
+    private func setTextFieldBorders(for value: Bool) {
         if  isEditingAllowed {
             textFieldPropValue.layer.borderColor = RealmStyle.tintColor.cgColor
             textFieldPropValue.layer.borderWidth = 1.0
