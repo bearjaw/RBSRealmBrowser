@@ -16,7 +16,7 @@ public struct RBSRequestConfig {
 
 final class BrowserTools {
     
-    private static let localVersion = "v0.2.6"
+    private static let localVersion = "v0.2.8"
     
     static func stringForProperty(_ property: Property, object: Object) -> String {
         if property.isArray || property.type == .linkingObjects {
@@ -37,9 +37,7 @@ final class BrowserTools {
                                     guard let callback = response as? HTTPURLResponse else {
                                         return
                                     }
-                                    if callback.statusCode != 200 {
-                                        return
-                                    }
+                                    if callback.statusCode != 200 { return }
                                     let websiteData = String.init(data: data!, encoding: .utf8)
                                     guard let gitVersion = websiteData?.contains(localVersion) else {
                                         return
