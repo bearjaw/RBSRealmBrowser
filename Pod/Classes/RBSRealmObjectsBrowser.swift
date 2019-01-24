@@ -275,7 +275,6 @@ extension RBSRealmObjectsBrowser: UISearchResultsUpdating, UISearchBarDelegate, 
             searchController.dimsBackgroundDuringPresentation = false
             searchController.searchBar.sizeToFit()
             searchController.searchBar.tintColor = .white
-            searchController.searchBar.showsCancelButton = true
             if #available(iOS 11.0, *) {
                 navigationItem.searchController = searchController
             } else {
@@ -291,7 +290,7 @@ extension RBSRealmObjectsBrowser: UISearchResultsUpdating, UISearchBarDelegate, 
         }
     }
     
-    private func searchForText(_ searchText:String?) {
+    private func searchForText(_ searchText: String?) {
         if let searchText = searchText {
             if searchText.isNonEmpty {
                 filteredObjects = objects.filter({ isIncluded(for: searchText, concerning: $0) })
@@ -316,9 +315,15 @@ extension RBSRealmObjectsBrowser: UISearchResultsUpdating, UISearchBarDelegate, 
     
     func willPresentSearchController(_ searchController: UISearchController) {
         searchController.searchBar.textField?.textColor = .white
+        UIView.animate(withDuration: 0.2) {
+            searchController.searchBar.showsCancelButton = true
+        }
     }
     
     func willDismissSearchController(_ searchController: UISearchController) {
         realmView.tableView.reloadData()
+        UIView.animate(withDuration: 0.2) {
+            searchController.searchBar.showsCancelButton = false
+        }
     }
 }
