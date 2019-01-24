@@ -1,4 +1,11 @@
 ## RBSRealmBrowser v 0.2.6
+
+### Improvements
+- Add a toggle to handle Booleans
+- Improved edit mode layout
+- Fix search bar cancel button flickering
+
+## RBSRealmBrowser v 0.2.6
 ### New
 - Search for specific property names or values when inspecting a List of Objects
 
