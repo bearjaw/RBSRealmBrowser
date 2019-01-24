@@ -17,8 +17,8 @@ final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDeleg
     private var filteredProperties: [Property]
     private let cellIdentifier = "objectCell"
     private var isEditMode: Bool = false
-    private var realm:Realm
-    private var realmView:RBSRealmBrowserView = RBSRealmBrowserView()
+    private var realm: Realm
+    private var realmView: RBSRealmBrowserView = RBSRealmBrowserView()
     
     init(object: Object, realm: Realm) {
         self.object = object
@@ -28,7 +28,7 @@ final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDeleg
         properties = schema.properties
         filteredProperties = schema.properties.filter({ filters.contains($0.name) })
         super.init(nibName: nil, bundle: nil)
-        self.title = self.schema.className
+        title =  schema.className
     }
     
     override public func viewDidLoad() {
@@ -112,7 +112,7 @@ final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDeleg
         
         switch property.type {
         case .bool:
-            let propertyValue = Int(newValue)!
+            let propertyValue = Bool(newValue)!
             saveValueForProperty(value: propertyValue, propertyName: property.name)
         case .int:
             let range = newValue.rangeOfCharacter(from: letters)
