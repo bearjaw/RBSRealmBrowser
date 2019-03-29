@@ -1,3 +1,8 @@
+## RBSRealmBrowser v 0.2.9
+
+### Improvements
+- Update project to Swift 5.0
+
 ## RBSRealmBrowser v 0.2.8
 
 ### Improvements
