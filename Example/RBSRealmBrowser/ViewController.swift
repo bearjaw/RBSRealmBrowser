@@ -21,26 +21,17 @@ class ViewController: UIViewController {
         
         let catNames = ["Garfield", "Lutz", "Squanch"]
         let humanNames = ["Morty", "Rick", "Birdperson"]
-        var index = 0
-        while index < 3 {
-            do {
-                let realm = try Realm()
-                try realm.write {
-                    let person = createMockPerson(named: humanNames[index])
-                    realm.add(person)
+        humanNames.forEach { name in
+            safeWrite { realm in
+                let person = createMockPerson(named: name)
+                realm.add(person)
+                if let index = humanNames.firstIndex(of: name) {
                     let aCat = createMockCat(named: catNames[index])
-                    aCat.toys.append(person)
-                    aCat.toys.append(person)
                     aCat.toys.append(person)
                     person.aCat = aCat
                     realm.add(aCat)
                 }
-
-            } catch {
-                print("failed creating objects \(error)")
             }
-            
-            index += 1
         }
         
         let openBbi = UIBarButtonItem(title: "Open",
@@ -62,6 +53,17 @@ class ViewController: UIViewController {
         aCat.catName = name
         aCat.isTired = true
         return aCat
+    }
+    
+    private func safeWrite(inWrite: (Realm) -> Void) {
+        do {
+            let realm = try Realm()
+            try realm.write {
+                inWrite(realm)
+            }
+        } catch {
+            NSLog("Failed creating objects \(error)")
+        }
     }
     
     @objc func openBrowser() {
