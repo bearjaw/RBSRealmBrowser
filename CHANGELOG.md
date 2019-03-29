@@ -1,9 +1,23 @@
-## RBSRealmBrowser v 0.2.6
+## RBSRealmBrowser v 0.2.9
+
+### Improvements
+- Update project to Swift 5.0
+
+## RBSRealmBrowser v 0.2.8
 
 ### Improvements
 - Add a toggle to handle Booleans
 - Improved edit mode layout
 - Fix search bar cancel button flickering
+
+## RBSRealmBrowser v 0.2.7
+### New
+- Search for specific property names or values when inspecting a List of Objects
+
+### Improvements
+- Fix array out of bounds
+- Reset & refetch data after performing delete action
+- UI improvements
 
 ## RBSRealmBrowser v 0.2.6
 ### New

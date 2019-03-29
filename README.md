@@ -4,7 +4,6 @@
 [![Version](https://img.shields.io/cocoapods/v/RBSRealmBrowser.svg?style=flat)](http://cocoapods.org/pods/RBSRealmBrowser)
 [![License](https://img.shields.io/cocoapods/l/RBSRealmBrowser.svg?style=flat)](http://cocoapods.org/pods/RBSRealmBrowser)
 [![Platform](https://img.shields.io/cocoapods/p/RBSRealmBrowser.svg?style=flat)](http://cocoapods.org/pods/RBSRealmBrowser)
-[![CocoaPods](https://img.shields.io/cocoapods/dt/RBSRealmBrowser.svg?maxAge=3600)](https://cocoapods.org/pods/RBSRealmBrowser)
 
 RBSRealmBrowser is based on NBNRealmBrowser by  [Nerdish by Nature](https://github.com/nerdishbynature/NBNRealmBrowser). It's a simple lightweight browser that lets you inspect which objects are currently in your realm database on your iOS device or simulator.
 Simply edit your existing object's property values by switching into edit mode.
@@ -14,6 +13,7 @@ Simply edit your existing object's property values by switching into edit mode.
 - Quickly browse realm objects
 - Edit Realm objects
 - Delete Realm objects
+- Search for specific values
 - Quick actions (start the browser from the homescreen)
 - Open RealmBrowser constrained to specific classes (i.e. you only want to inspect the Person classes) 
 
@@ -51,7 +51,7 @@ class ViewController: UIViewController {
 ```
 
 ## Use one of the methods to browse your Realm database
-### All these convenience methods come with a second method using a  `classes` option. Use theses methods if you want to restrict the results to (a) specific class(es).
+### All these convenience methods come with a second method using a  `classes` option. Use these methods if you want to restrict the results to (a) specific class(es).
 If you pass in `nil`, all objects will be displayed. The `[String]` must be composed
 of classNames and they must match. 
 
@@ -127,6 +127,7 @@ To try the example project, clone the repo, and run `pod try` from the Example d
 - Swift 4.0 for any release after 0.1.9
 - Swift 4.1 for any release after 0.2.2
 - Swift 4.2 for any release after 0.2.4
+- Swift 5.0 for any release after 0.2.9
 
 
 ## Installation
@@ -141,10 +142,11 @@ pod 'RBSRealmBrowser'
 What's on the roadmap... 🚀
 - [ ] Tests
 - [ ] Be able to create objects
-- [ ] Clean up
+- [x] Clean up
 - [ ] Live reload the browser if updates happen in the background
 - [x] Layout improvements
-- [ ] Search 
+- [x] Basic search 
+- [ ] Better search
 
 ## Documentation
 Available method documentation [here](http://cocoadocs.org/docsets/RBSRealmBrowser/0.1.7/)
