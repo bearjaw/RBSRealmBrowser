@@ -76,6 +76,8 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
                 registerForPreviewing(with: self, sourceView: realmView.tableView)
             case .unavailable, .unknown:
                 break
+            @unknown default:
+                break
             }
         }
     }
