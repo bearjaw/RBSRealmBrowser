@@ -30,7 +30,7 @@ s.source           = { :git => "https://github.com/bearjaw/RBSRealmBrowser.git",
 s.platform     = :ios, '9.0'
 s.requires_arc = true
 s.source_files = 'Pod/Classes/*.swift'
-s.swift_version = '4.2'
+s.swift_version = '5.0'
 
 # s.public_header_files = 'Pod/Classes/**/*.h'
 s.dependency 'RealmSwift'
