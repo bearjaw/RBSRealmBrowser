@@ -9,7 +9,7 @@ import UIKit
 import RealmSwift
 
 internal extension Collection {
-    internal var isNonEmpty: Bool {
+    var isNonEmpty: Bool {
         return !isEmpty
     }
 }
@@ -66,7 +66,7 @@ internal protocol HumanReadable {
 
 internal extension UIView {
     
-    internal var bottomRight: CGPoint {
+    var bottomRight: CGPoint {
         return (CGPoint(x: frame.origin.x + bounds.size.width, y: frame.origin.y + bounds.size.height))
     }
 }
