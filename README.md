@@ -127,6 +127,7 @@ To try the example project, clone the repo, and run `pod try` from the Example d
 - Swift 4.0 for any release after 0.1.9
 - Swift 4.1 for any release after 0.2.2
 - Swift 4.2 for any release after 0.2.4
+- Swift 5.0 for any release after 0.2.9
 
 
 ## Installation
