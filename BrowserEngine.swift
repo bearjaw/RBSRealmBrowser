@@ -14,6 +14,7 @@ final class BrowserEngine {
     private(set) var objectSchemas: [ObjectSchema] = []
     private var filter: [String]? = nil
     private var tokenObjects: NotificationToken?
+    private var tokenObject: NotificationToken?
     
     
     init(realm: Realm, filter: [String]? = nil) {
@@ -65,6 +66,19 @@ extension BrowserEngine {
                 onInitial(collecttion)
             case .update(let collection, let deletions, let insertions, let modifications):
                 onUpdate(collection, deletions, insertions, modifications)
+            case .error(let error):
+                fatalError("Error: Encountered error while observing collection. Was \(error)")
+            }
+        }
+    }
+    
+    func observe(object: DynamicObject, onUpdate: @escaping  () -> Void) {
+        tokenObject = object.observe { updateCallback in
+            switch updateCallback {
+            case .change:
+                onUpdate()
+            case .deleted:
+                dump("Object delete")
             case .error(let error):
                 fatalError("Error: Encountered error while observing collection. Was \(error)")
             }
