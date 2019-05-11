@@ -12,7 +12,6 @@ final class RealmObjectBrowserCell: UITableViewCell {
     static var identifier: String { return "RealmObjectBrowserCell"  }
     private var labelTitle = UILabel()
     private var labelDetailText = UILabel()
-    private let maxHeight: CGFloat = 2000.0
     private let margin: CGFloat = 20.0
 
     private lazy var circleView: UIView = {
@@ -38,7 +37,6 @@ final class RealmObjectBrowserCell: UITableViewCell {
     func updateWith(title: String, detailText: String) {
         labelTitle.text = title
         labelDetailText.text = detailText
-
     }
 
     override func prepareForReuse() {
@@ -50,7 +48,7 @@ final class RealmObjectBrowserCell: UITableViewCell {
     override func sizeThatFits(_ size: CGSize) -> CGSize {
         let screenWidth: CGFloat = size.width
         let usableSize = CGSize(width: screenWidth-2*margin,
-                                 height: maxHeight)
+                                 height: .greatestFiniteMagnitude)
         let sizeTitle = labelTitle.sizeThatFits(usableSize)
         let labelDetailWidth = usableSize.width - labelTitle.bounds.size.width
         let sizeDetail = labelDetailText.sizeThatFits(CGSize(width: labelDetailWidth,
@@ -65,7 +63,7 @@ final class RealmObjectBrowserCell: UITableViewCell {
         let labelOffset: CGFloat = 5.0
         let screenWidth: CGFloat = bounds.size.width
         let usableSize = CGSize(width: screenWidth-2*margin,
-                                height: maxHeight)
+                                height: .greatestFiniteMagnitude)
 
         let sizeTitle = labelTitle.sizeThatFits(usableSize)
 
