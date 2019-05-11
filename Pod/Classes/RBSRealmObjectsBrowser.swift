@@ -21,9 +21,9 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
     private var realm: Realm
     private var selectedObjects: [Object] = []
     private var realmView = RBSRealmBrowserView()
-    
+
     fileprivate var searchController : UISearchController?
-    
+
     init(objects: [Object], realm: Realm) {
         self.objects = objects
         self.realm = realm
@@ -33,41 +33,41 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
         filteredProperties = properties
         filteredObjects = []
         super.init(nibName: nil, bundle: nil)
-        
+
         title = "Objects"
         let bbi = UIBarButtonItem(title: "Select", style: .plain, target: self, action: .edit)
         navigationItem.rightBarButtonItem = bbi
         let bbiPreview = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: .togglePreview)
         navigationItem.rightBarButtonItems = [bbi, bbiPreview]
-        
+
     }
-    
+
     public override func loadView() {
         view = realmView
     }
-    
+
     public override func viewDidLoad() {
         super.viewDidLoad()
         configureTableView()
         setupSearch()
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         realmView.tableView.reloadData()
     }
-    
+
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     private func configureTableView() {
         realmView.tableView.delegate = self
         realmView.tableView.dataSource = self
         realmView.tableView.tableFooterView = UIView()
         realmView.tableView.register(RBSRealmObjectBrowserCell.self, forCellReuseIdentifier: cellIdentifier)
     }
-    
+
     public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         if #available(iOS 9.0, *) {
@@ -81,9 +81,9 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
             }
         }
     }
-    
+
     // MARK: - private Methods
-    
+
     @objc func actionToggleEdit(_ id: AnyObject) {
         realmView.tableView.allowsMultipleSelection = true
         realmView.tableView.allowsMultipleSelectionDuringEditing = true
@@ -93,13 +93,16 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
             let result: Results<DynamicObject> = realm.dynamicObjects(schema.className)
             objects = Array(result)
             realmView.tableView.reloadData()
-            
+
             navigationItem.leftBarButtonItem = nil
             navigationItem.rightBarButtonItem?.title = "Select"
         } else {
             navigationItem.rightBarButtonItem?.title = "Delete"
-            let bbi = UIBarButtonItem(title: "Select All", style: .plain, target: self, action: .selectAll)
-            navigationItem.leftBarButtonItem = bbi
+            let selectAllBBi = UIBarButtonItem(title: "Select All",
+                                               style: .plain,
+                                               target: self,
+                                               action: .selectAll)
+            navigationItem.leftBarButtonItem = selectAllBBi
         }
     }
     @objc func actionSelectAll(_ id: AnyObject) {
@@ -112,11 +115,11 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
         }
         realmView.tableView.reloadData()
     }
-    
+
     @objc func actionTogglePreview(_ id: AnyObject) {
-        
+
     }
-    
+
     private func deleteAllObjects() {
         if data().isNonEmpty {
             do {
@@ -130,13 +133,13 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
             }
         }
     }
-    
+
     private func resetData() {
         objects = []
         filteredObjects = []
         selectedObjects = []
     }
-    
+
     private func deleteObjects() {
         if selectedObjects.isNonEmpty {
             do {
@@ -147,25 +150,25 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
             } catch {
                 print("Could not perform deletion. Error \(error)")
             }
-            
+
         }
     }
-    
+
     // MARK: - UIViewControllerPreviewingDelegate
-    
+
     @available(iOS 9.0, *)
     public func previewingContext(_ previewingContext: UIViewControllerPreviewing,
                                   viewControllerForLocation location: CGPoint) -> UIViewController? {
         guard let indexPath = realmView.tableView.indexPathForRow(at:location) else { return nil }
         guard let cell = realmView.tableView.cellForRow(at:indexPath) else { return nil }
-        
+
         let detailVC =  RBSRealmPropertyBrowser(object: data()[indexPath.row], realm: realm)
         detailVC.preferredContentSize = CGSize(width: 0.0, height: 300.0)
         previewingContext.sourceRect = cell.frame
-        
+
         return detailVC
     }
-    
+
     @available(iOS 9.0, *)
     public func previewingContext(_ previewingContext: UIViewControllerPreviewing,
                                   commit viewControllerToCommit: UIViewController) {
@@ -190,7 +193,7 @@ extension RBSRealmObjectsBrowser: UITableViewDelegate {
         } else {
             tableView.deselectRow(at: indexPath, animated: true)
             let viewController = RBSRealmPropertyBrowser(object: data()[indexPath.row], realm: realm)
-            
+
             if let searchController = searchController {
                 if searchController.isActive {
                     searchController.dismiss(animated: true) { [weak self] in
@@ -204,7 +207,7 @@ extension RBSRealmObjectsBrowser: UITableViewDelegate {
             }
         }
     }
-    
+
     public func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         if isEditMode {
             tableView.cellForRow(at: indexPath)?.accessoryType = .none
@@ -223,7 +226,7 @@ extension RBSRealmObjectsBrowser: UITableViewDelegate {
             }
         }
     }
-    
+
     private func data() -> [Object] {
         if filteredObjects.isNonEmpty {
             return filteredObjects
@@ -259,7 +262,7 @@ extension RBSRealmObjectsBrowser: UITableViewDataSource {
     public  func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return data().count
     }
-    
+
     public  func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
     }
@@ -284,14 +287,14 @@ extension RBSRealmObjectsBrowser: UISearchResultsUpdating, UISearchBarDelegate, 
             }
         }
     }
-    
+
     func updateSearchResults(for searchController: UISearchController) {
         searchForText(searchController.searchBar.text)
         if filteredObjects.isNonEmpty {
             realmView.tableView.reloadData()
         }
     }
-    
+
     private func searchForText(_ searchText: String?) {
         if let searchText = searchText {
             if searchText.isNonEmpty {
@@ -299,29 +302,29 @@ extension RBSRealmObjectsBrowser: UISearchResultsUpdating, UISearchBarDelegate, 
             }
         }
     }
-    
+
     private func isIncluded(for searchText: String, concerning object: Object) -> Bool {
         return object.objectSchema.properties
             .filter({ "\($0.name.lowercased()) \(String(describing: object[$0.name]).lowercased()))"
             .contains(searchText.lowercased()) }).isNonEmpty
     }
-    
+
     func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
         guard let searchController = searchController else { return }
         updateSearchResults(for: searchController)
     }
-    
+
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         filteredObjects = []
     }
-    
+
     func willPresentSearchController(_ searchController: UISearchController) {
         searchController.searchBar.textField?.textColor = .white
         UIView.animate(withDuration: 0.2) {
             searchController.searchBar.showsCancelButton = true
         }
     }
-    
+
     func willDismissSearchController(_ searchController: UISearchController) {
         realmView.tableView.reloadData()
         UIView.animate(withDuration: 0.2) {
