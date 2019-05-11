@@ -163,8 +163,8 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
     /// Dismisses the browser
     ///
     /// - Parameter id: a UIBarButtonItem
-    @objc func dismissBrowser(_ id:UIBarButtonItem) {
-        self.dismiss(animated: true)
+    @objc fileprivate func dismissBrowser() {
+        dismiss(animated: true)
     }
 
     /// Sorts the objects classes by name
@@ -307,7 +307,7 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
 
 // MARK: - Just a more beautiful way of working with selectors
 fileprivate extension Selector {
-    static let dismissBrowser = #selector(RBSRealmBrowser.dismissBrowser(_:))
+    static let dismissBrowser = #selector(RBSRealmBrowser.dismissBrowser)
     static let sortObjects = #selector(RBSRealmBrowser.sortObjects(_:))
     static let filterBaseModels = #selector(RBSRealmBrowser.filterBaseModels(_:))
 }
