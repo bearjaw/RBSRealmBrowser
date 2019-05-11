@@ -11,12 +11,10 @@ import RealmSwift
 
 final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDelegate {
     private var objects: Results<DynamicObject>?
-    private var properties: [Property] = []
-    private var filteredProperties: [Property] = []
-    private var filteredObjects: [Object] = []
     private var isEditMode: Bool = false
     private var selectAll: Bool = false
-    private var selectedObjects: [Object] = []
+    private var selectedIndexPaths: [IndexPath] = []
+    private var filteredObjects: LazyFilterSequence<Results<DynamicObject>>?
 
     private lazy var viewRealm: RBSRealmBrowserView = {
         let view = RBSRealmBrowserView()
@@ -33,10 +31,9 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
         super.init(nibName: nil, bundle: nil)
 
         title = className
-//        let bbi = UIBarButtonItem(title: "Select", style: .plain, target: self, action: .edit)
-//        navigationItem.rightBarButtonItem = bbi
-//        let bbiPreview = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: .togglePreview)
-//        navigationItem.rightBarButtonItems = [bbi, bbiPreview]
+        //        let bbi = UIBarButtonItem(title: "Select", style: .plain, target: self, action: .edit)
+        //        navigationItem.rightBarButtonItem = bbi
+        //        navigationItem.rightBarButtonItems = [bbi]
 
     }
 
@@ -87,42 +84,34 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
         engine.observe(className: className, onInitial: { [unowned self] objects in
             self.objects = objects
             self.viewRealm.tableView.reloadData()
-        }, onUpdate: { [unowned self] _, deletions, _, _ in
-            if #available(iOS 11.0, *) {
-                self.viewRealm.tableView.performBatchUpdates({
-                    self.viewRealm.tableView.deleteRows(at: deletions.map { IndexPath(row: $0, section: 0)}, with: .automatic)
-                })
-            } else {
-                self.viewRealm.tableView.beginUpdates()
-                self.viewRealm.tableView.deleteRows(at: deletions.map { IndexPath(row: $0, section: 0)}, with: .automatic)
-                self.viewRealm.tableView.insertRows(at: deletions.map { IndexPath(row: $0, section: 0)}, with: .automatic)
-                self.viewRealm.tableView.reloadRows(at: deletions.map { IndexPath(row: $0, section: 0)}, with: .automatic)
-                self.viewRealm.tableView.endUpdates()
-            }
+            }, onUpdate: { [unowned self] _, deletions, insertions, modifications in
+                if #available(iOS 11.0, *) {
+                    self.viewRealm.tableView.performBatchUpdates({
+                        self.updateRows(deletions, insertions, modifications)
+                    })
+                } else {
+                    self.viewRealm.tableView.beginUpdates()
+                    self.updateRows(deletions, insertions, modifications)
+                    self.viewRealm.tableView.endUpdates()
+                }
         })
     }
 
-    @objc func actionSelectAll(_ id: AnyObject) {
+    private func updateRows(_ deletions: [Int], _ insertions: [Int], _ modifications: [Int]) {
+        self.viewRealm.tableView.deleteRows(at: deletions.map { IndexPath(row: $0, section: 0)}, with: .automatic)
+        self.viewRealm.tableView.insertRows(at: insertions.map { IndexPath(row: $0, section: 0)}, with: .automatic)
+        self.viewRealm.tableView.reloadRows(at: modifications.map { IndexPath(row: $0, section: 0)}, with: .automatic)
+    }
+
+    @objc fileprivate func actionSelectAll() {
         selectAll.toggle()
         if selectAll {
             navigationItem.leftBarButtonItem?.title = "Unselect all"
         } else {
-            selectedObjects.removeAll()
+            selectedIndexPaths.removeAll()
             navigationItem.leftBarButtonItem?.title = "Select all"
         }
         viewRealm.tableView.reloadData()
-    }
-
-    @objc func actionTogglePreview(_ id: AnyObject) {
-
-    }
-
-    private func deleteAllObjects() {
-
-    }
-
-    private func deleteObjects() {
-
     }
 
     // MARK: - UIViewControllerPreviewingDelegate
@@ -147,55 +136,19 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
 }
 
 internal extension Selector {
-    static let selectAll = #selector(RBSRealmObjectsBrowser.actionSelectAll(_:))
-    static let togglePreview = #selector(RBSRealmObjectsBrowser.actionTogglePreview(_:))
-//    static let edit = #selector(RBSRealmObjectsBrowser.actionToggleEdit(_:))
+    static let selectAll = #selector(RBSRealmObjectsBrowser.actionSelectAll)
+    //    static let edit = #selector(RBSRealmObjectsBrowser.actionToggleEdit(_:))
 }
 
 extension RBSRealmObjectsBrowser: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        if isEditMode && !selectAll {
-//            if let cell = tableView.cellForRow(at: indexPath) {
-//                cell.accessoryType = .checkmark
-//                cell.tintColor = RealmStyle.tintColor
-//            }
-//            selectedObjects.append(data()[indexPath.row])
-//        } else {
-//            tableView.deselectRow(at: indexPath, animated: true)
-//            let viewController = RealmPropertyBrowser(object: data()[indexPath.row], engine: engine)
-//
-//            if let searchController = searchController {
-//                if searchController.isActive {
-//                    searchController.dismiss(animated: true) { [weak self] in
-//                        self?.navigationController?.pushViewController(viewController, animated: true)
-//                    }
-//                } else {
-//                    navigationController?.pushViewController(viewController, animated: true)
-//                }
-//            } else {
-//                navigationController?.pushViewController(viewController, animated: true)
-//            }
-//        }
+        guard isEditMode else { return }
+        selectedIndexPaths.append(indexPath)
     }
 
     public func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        if isEditMode {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-            var index = 0
-            for object in selectedObjects {
-                var hasFoundObject = false
-                guard let objects = objects else { return }
-                if object == objects[indexPath.row] {
-                    hasFoundObject = true
-                    selectedObjects.remove(at: index)
-                }
-                if hasFoundObject {
-                    index = 0
-                } else {
-                    index += 1
-                }
-            }
-        }
+        guard isEditMode else { return }
+        selectedIndexPaths.removeAll(where: { $0.row == indexPath.row})
     }
 }
 
@@ -206,22 +159,11 @@ extension RBSRealmObjectsBrowser: UITableViewDataSource {
             fatalError("Error: Invalid cell passed. Expected \(RealmObjectBrowserCell.self). Cot: \(dequeue)")
         }
         guard let objects = objects else { fatalError("Error") }
-            let object = objects[indexPath.row]
-            if !object.isInvalidated {
-                let detailText = filteredProperties.map { property -> String in
-                    return "\(property.name): \(BrowserTools.stringForProperty(property, object: object))\n\n"
-                    }.reduce("", +)
-                if selectAll {
-                    cell.accessoryType = .checkmark
-                    tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
-                    selectedObjects.append(objects[indexPath.row])
-                } else {
-                    cell.isSelected = false
-                    cell.accessoryType = .none
-                }
-                cell.updateWith(title: object.objectSchema.className, detailText: detailText)
-            }
-            return cell
+        let object = objects[indexPath.row]
+        let properties = object.objectSchema.properties
+        let detail = properties.map ({ BrowserTools.stringForProperty($0, object: object) }).reduce("", +)
+        cell.updateWith(title: object.objectSchema.className, detailText: detail)
+        return cell
     }
 
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -241,6 +183,7 @@ extension RBSRealmObjectsBrowser: UISearchResultsUpdating, UISearchBarDelegate, 
             searchController.searchResultsUpdater = self
             searchController.searchBar.delegate = self
             searchController.delegate = self
+            self.definesPresentationContext = true
             searchController.hidesNavigationBarDuringPresentation = false
             searchController.definesPresentationContext = true
             searchController.dimsBackgroundDuringPresentation = false
@@ -256,22 +199,20 @@ extension RBSRealmObjectsBrowser: UISearchResultsUpdating, UISearchBarDelegate, 
 
     func updateSearchResults(for searchController: UISearchController) {
         searchForText(searchController.searchBar.text)
-        if filteredObjects.isNonEmpty {
-            viewRealm.tableView.reloadData()
-        }
     }
 
     private func searchForText(_ searchText: String?) {
         guard let searchText = searchText,
-        searchText.isNonEmpty,
-        let objects = objects else { return }
-        filteredObjects = objects.filter({ isIncluded(for: searchText, concerning: $0) })
+            searchText.isNonEmpty,
+            let objects = objects else { return }
+        filteredObjects = objects.filter { self.isIncluded(for: searchText, concerning: $0) }
     }
 
-    private func isIncluded(for searchText: String, concerning object: Object) -> Bool {
-        return object.objectSchema.properties
+    private func isIncluded(for searchText: String, concerning object: DynamicObject) -> Bool {
+        let isIncluded = object.objectSchema.properties
             .filter({ "\($0.name.lowercased()) \(String(describing: object[$0.name]).lowercased()))"
-            .contains(searchText.lowercased()) }).isNonEmpty
+                .contains(searchText.lowercased()) }).isNonEmpty
+        return isIncluded
     }
 
     func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
@@ -280,7 +221,7 @@ extension RBSRealmObjectsBrowser: UISearchResultsUpdating, UISearchBarDelegate, 
     }
 
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        filteredObjects = []
+        filteredObjects = nil
     }
 
     func willPresentSearchController(_ searchController: UISearchController) {
@@ -291,6 +232,7 @@ extension RBSRealmObjectsBrowser: UISearchResultsUpdating, UISearchBarDelegate, 
     }
 
     func willDismissSearchController(_ searchController: UISearchController) {
+        filteredObjects = nil
         viewRealm.tableView.reloadData()
         UIView.animate(withDuration: 0.2) {
             searchController.searchBar.showsCancelButton = false
