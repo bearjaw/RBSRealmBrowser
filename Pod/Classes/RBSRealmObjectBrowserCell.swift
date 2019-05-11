@@ -8,7 +8,8 @@
 
 import UIKit
 
-final class RBSRealmObjectBrowserCell: UITableViewCell {
+final class RealmObjectBrowserCell: UITableViewCell {
+    static var identifier: String { return "RealmObjectBrowserCell"  }
     private var labelTitle = UILabel()
     private var labelDetailText = UILabel()
     private let maxHeight: CGFloat = 2000.0
@@ -25,6 +26,7 @@ final class RBSRealmObjectBrowserCell: UITableViewCell {
         labelTitle.font = UIFont.preferredFont(forTextStyle: .title2)
         contentView.addSubview(labelTitle)
         labelDetailText.numberOfLines = 10
+        labelDetailText.font = .systemFont(ofSize: 11)
         contentView.addSubview(circleView)
         contentView.addSubview(labelDetailText)
     }
@@ -33,10 +35,10 @@ final class RBSRealmObjectBrowserCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func realmBrowserObjectAttributes(_ objectTitle: String, detailText: String) {
-        labelTitle.text = objectTitle
+    func updateWith(title: String, detailText: String) {
+        labelTitle.text = title
         labelDetailText.text = detailText
-        labelDetailText.font = .systemFont(ofSize: 11)
+
     }
 
     override func prepareForReuse() {
