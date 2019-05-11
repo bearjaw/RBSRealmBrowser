@@ -23,15 +23,11 @@ import RealmSwift
 ///
 /// - warning: This browser only works with RealmSwift because Realm (Objective-C) and RealmSwift
 /// 'are not interoperable and using them together is not supported.'
-public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITableViewDataSource {
+public final class RBSRealmBrowser: UIViewController {
 
     private var ascending: Bool = false
-    private let cellIdentifier: String = "RBSREALMBROWSERCELL"
-    private var realmBrowserView:RBSRealmBrowserView = RBSRealmBrowserView()
-
-    private var realm: Realm
-    private var objects: [ObjectSchema] = []
-    private var filteredClasses: [String]?
+    private var realmBrowserView: RBSRealmBrowserView = RBSRealmBrowserView()
+    private var engine: BrowserEngine
 
     private var filterOptions:UISegmentedControl = {
         let segmentedControl = UISegmentedControl(items: ["All", "Hide base Realm models"])
@@ -45,8 +41,7 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
     ///
     /// - Parameter realm: a realm instance
     private init(realm: Realm, filteredClasses: [String]?) {
-        self.realm = realm
-        self.filteredClasses = filteredClasses
+        engine = BrowserEngine(realm: realm, filter: filteredClasses)
         super.init(nibName: nil, bundle: nil)
         title = "Realm Browser"
         filterOptions.selectedSegmentIndex = 0
@@ -60,7 +55,7 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
         super.viewDidLoad()
         configureNavigationBar()
         configureTableView()
-        fetchObjects()
+//        fetchObjects()
         BrowserTools.checkForUpdates()
     }
 
@@ -83,22 +78,22 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
         return realmBrowser(showing: nil)
     }
 
-    public static func realmBrowser(showing classes:[String]?, aURL URL:URL) -> UINavigationController? {
+    public static func realmBrowser(showing classes: [String]?, aURL URL: URL) -> UINavigationController? {
         do {
             let realm = try Realm(fileURL: URL)
             return realmBrowserForRealm(realm, showing: classes)
         } catch {
-            print("realm instance at url not found.")
+            NSLog("Error occured: \(error)")
             return nil
         }
     }
 
-    public static func realmBrowser(showing classes:[String]?) -> UINavigationController? {
+    public static func realmBrowser(showing classes: [String]?) -> UINavigationController? {
         do {
             let realm = try Realm()
             return realmBrowserForRealm(realm, showing: classes)
         } catch {
-            print("realm init failed")
+            NSLog("Error occured: \(error)")
             return nil
         }
     }
@@ -174,95 +169,30 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
         id.title = ascending == false ? RBSSortStyle.descending.rawValue: RBSSortStyle.ascending.rawValue
         ascending.toggle()
         if ascending {
-            objects = objects.sorted { $0.className > $1.className }
+//            objects = objects.sorted { $0.className > $1.className }
         } else {
-            objects = objects.sorted { $0.className < $1.className }
+//            objects = objects.sorted { $0.className < $1.className }
         }
         realmBrowserView.tableView.reloadData()
     }
 
-    @objc public func filterBaseModels(_ id:UISegmentedControl) {
+    @objc public func filterBaseModels(_ id: UISegmentedControl) {
         let segmentedControl = id
         switch segmentedControl.selectedSegmentIndex {
         case 0:
-            fetchObjects()
+//            fetchObjects()
             realmBrowserView.tableView.reloadData()
         case 1:
-            objects = objects.filter({
-                !$0.className.hasPrefix("RLM") &&
-                    !$0.className.hasPrefix("RealmSwift") })
+//            objects = objects.filter({
+//                !$0.className.hasPrefix("RLM") &&
+//                    !$0.className.hasPrefix("RealmSwift") })
             realmBrowserView.tableView.reloadData()
         default:
             return
         }
     }
 
-    // MARK: - TableView Datasource & Delegate
-
-    /// TableView DataSource method
-    /// Asks the data source for a cell to insert in a particular location of the table view.
-    /// - Parameters:
-    ///   - tableView: UITableView
-    ///   - indexPath: NSIndexPath
-    /// - Returns: a UITableViewCell
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier) else {
-            fatalError("Could not configure cell.")
-        }
-        if let cell = cell as? RBSRealmObjectBrowserCell {
-            let title = objects[indexPath.row].className
-            let count = elementCount(named: title)
-
-            cell.realmBrowserObjectAttributes(title,
-                                              detailText: "Objects in Realm = \(count)")
-        }
-        return cell
-    }
-
-    /// TableView DataSource method
-    /// Tells the data source to return the number of rows in a given section of a table view.
-    ///
-    /// - Parameters:
-    ///   - tableView: UITableView
-    ///   - section: Int
-    /// - Returns: number of cells per section
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return objects.count
-    }
-
-    /// TableView Delegate method
-    ///
-    /// Asks the delegate for the height to use for a row in a specified location.
-    /// A nonnegative floating-point value that specifies the height (in points) that row should be.
-    ///
-    /// - Parameters:
-    ///   - tableView: UITableView
-    ///   - indexPath: NSIndexPath
-    /// - Returns: height of a single tableView row
-    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableView.automaticDimension
-    }
-
-    /// TableView Delegate method to handle cell selection
-    ///
-    /// - Parameters:
-    ///   - tableView: UITableView
-    ///   - indexPath: NSIndexPath
-    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        let object = objects[indexPath.row]
-        let results = realm.dynamicObjects(object.className)
-        if results.isNonEmpty {
-            let viewController = RBSRealmObjectsBrowser(objects: Array(results), realm: realm)
-            navigationController?.pushViewController(viewController, animated: true)
-        }
-    }
-
-    // MARK: - private Methods
-
-    private func elementCount(named name: String) -> Int {
-        return realm.dynamicObjects(name).count
-    }
+    // MARK: - private Methods RealmObjectBrowserCell
 
     private func configureNavigationBar() {
         navigationItem.titleView = filterOptions
@@ -276,32 +206,13 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
         realmBrowserView.tableView.delegate = self
         realmBrowserView.tableView.dataSource = self
         realmBrowserView.tableView.tableFooterView = UIView()
-        realmBrowserView.tableView.register(RBSRealmObjectBrowserCell.self,
-                                            forCellReuseIdentifier: cellIdentifier)
+        realmBrowserView.tableView.register(RealmObjectBrowserCell.self,
+                                            forCellReuseIdentifier: RealmObjectBrowserCell.identifier)
         filterOptions.addTarget(self, action: .filterBaseModels, for: .valueChanged)
 
     }
 
     private func filterObjects() {
-        if let classFilters = filteredClasses {
-            objects = objects.filter({ classFilters.contains($0.className) })
-        }
-    }
-
-    private func fetchObjects() {
-        var objectSchema = realm.schema.objectSchema
-
-        if let classFilter = filteredClasses {
-            if classFilter.isNonEmpty {
-                objectSchema = objectSchema
-                    .filter({ classFilter
-                        .contains($0.className) })
-            }
-            if objectSchema.isEmpty {
-                objectSchema = realm.schema.objectSchema
-            }
-        }
-        objects = objectSchema
     }
 }
 
@@ -317,8 +228,8 @@ private enum RBSSortStyle: String {
     case descending = "Z-A"
 }
 
-internal final class RBSRealmBrowserView: UIView {
-    public var tableView: UITableView
+final class RBSRealmBrowserView: UIView {
+    var tableView: UITableView
     init() {
         tableView = UITableView(frame: .zero, style: .plain)
         super.init(frame: .zero)
@@ -341,5 +252,66 @@ internal final class RBSRealmBrowserView: UIView {
         }
         let origin = (CGPoint(x: xPos, y: 0.0))
         tableView.frame = (CGRect(origin: origin, size: size))
+    }
+}
+
+// MARK: - TableView Datasource & Delegate
+
+extension RBSRealmBrowser: UITableViewDelegate {
+    /// TableView Delegate method to handle cell selection
+    ///
+    /// - Parameters:
+    ///   - tableView: UITableView
+    ///   - indexPath: NSIndexPath
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        let objectSchema = engine.objectSchema(at: indexPath.row)
+        let viewController = RBSRealmObjectsBrowser(className: objectSchema.className, engine: engine)
+        navigationController?.pushViewController(viewController, animated: true)
+    }
+
+    /// TableView Delegate method
+    ///
+    /// Asks the delegate for the height to use for a row in a specified location.
+    /// A nonnegative floating-point value that specifies the height (in points) that row should be.
+    ///
+    /// - Parameters:
+    ///   - tableView: UITableView
+    ///   - indexPath: NSIndexPath
+    /// - Returns: height of a single tableView row
+    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableView.automaticDimension
+    }
+}
+
+extension RBSRealmBrowser: UITableViewDataSource {
+    /// TableView DataSource method
+    /// Tells the data source to return the number of rows in a given section of a table view.
+    ///
+    /// - Parameters:
+    ///   - tableView: UITableView
+    ///   - section: Int
+    /// - Returns: number of cells per section
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return engine.objectSchemas.count
+    }
+
+    /// TableView DataSource method
+    /// Asks the data source for a cell to insert in a particular location of the table view.
+    /// - Parameters:
+    ///   - tableView: UITableView
+    ///   - indexPath: NSIndexPath
+    /// - Returns: a UITableViewCell
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: RealmObjectBrowserCell.identifier) else {
+            fatalError("Error: Could dequeue tableViewCell as \(RealmObjectBrowserCell.self)")
+        }
+        if let cell = cell as? RealmObjectBrowserCell {
+            let objectSchema = engine.objectSchema(at: indexPath.row)
+            let className = engine.className(for: objectSchema)
+            let count = engine.objectCount(for: objectSchema)
+            cell.updateWith(title: className, detailText: "Objects in Realm = \(count)")
+        }
+        return cell
     }
 }
