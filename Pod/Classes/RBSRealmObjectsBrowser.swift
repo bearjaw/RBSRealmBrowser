@@ -15,13 +15,13 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
     private var selectAll: Bool = false
     private var selectedIndexPaths: [IndexPath] = []
     private var filteredObjects: LazyFilterSequence<Results<DynamicObject>>?
+    private var engine: BrowserEngine
+    private var className: String
 
     private lazy var viewRealm: RBSRealmBrowserView = {
         let view = RBSRealmBrowserView()
         return view
     }()
-    private var engine: BrowserEngine
-    private var className: String
 
     fileprivate var searchController : UISearchController?
 
@@ -31,9 +31,8 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
         super.init(nibName: nil, bundle: nil)
 
         title = className
-        //        let bbi = UIBarButtonItem(title: "Select", style: .plain, target: self, action: .edit)
-        //        navigationItem.rightBarButtonItem = bbi
-        //        navigationItem.rightBarButtonItems = [bbi]
+        let bbi = UIBarButtonItem(title: "Select", style: .plain, target: self, action: .edit)
+        navigationItem.rightBarButtonItem = bbi
 
     }
 
@@ -55,6 +54,13 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
 
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: - View setup
+
+    private func addToolBarItems() {
+        let trash = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: .deleteObjects)
+        navigationController?.toolbarItems = [trash]
     }
 
     private func configureTableView() {
@@ -103,6 +109,8 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
         self.viewRealm.tableView.reloadRows(at: modifications.map { IndexPath(row: $0, section: 0)}, with: .automatic)
     }
 
+    // MARK: - Actions
+
     @objc fileprivate func actionSelectAll() {
         selectAll.toggle()
         if selectAll {
@@ -112,6 +120,14 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
             navigationItem.leftBarButtonItem?.title = "Select all"
         }
         viewRealm.tableView.reloadData()
+    }
+
+    @objc fileprivate func toggleEditMode(_ sender: UIBarButtonItem) {
+        isEditMode.toggle()
+    }
+
+    @objc fileprivate func toggleDelete() {
+
     }
 
     // MARK: - UIViewControllerPreviewingDelegate
@@ -133,11 +149,6 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
                                   commit viewControllerToCommit: UIViewController) {
         navigationController?.pushViewController(viewControllerToCommit, animated: true)
     }
-}
-
-internal extension Selector {
-    static let selectAll = #selector(RBSRealmObjectsBrowser.actionSelectAll)
-    //    static let edit = #selector(RBSRealmObjectsBrowser.actionToggleEdit(_:))
 }
 
 extension RBSRealmObjectsBrowser: UITableViewDelegate {
@@ -238,4 +249,10 @@ extension RBSRealmObjectsBrowser: UISearchResultsUpdating, UISearchBarDelegate, 
             searchController.searchBar.showsCancelButton = false
         }
     }
+}
+
+private extension Selector {
+    static let selectAll = #selector(RBSRealmObjectsBrowser.actionSelectAll)
+    static let edit = #selector(RBSRealmObjectsBrowser.toggleEditMode(_:))
+    static let deleteObjects = #selector(RBSRealmObjectsBrowser.toggleDelete)
 }
