@@ -56,6 +56,8 @@ final class BrowserEngine {
     }
 }
 
+
+// MARK: - Observing
 extension BrowserEngine {
     func observe(className: String, onInitial: @escaping (Results<DynamicObject>) -> Void, onUpdate: @escaping  (Results<DynamicObject>, [Int], [Int], [Int]) -> Void) {
         
@@ -82,6 +84,28 @@ extension BrowserEngine {
             case .error(let error):
                 fatalError("Error: Encountered error while observing collection. Was \(error)")
             }
+        }
+    }
+}
+
+extension BrowserEngine {
+    func deleteObjects(objects: [DynamicObject], completed: @escaping () -> Void) {
+        do {
+            try realm.write {
+                realm.delete(objects)
+            }
+        } catch {
+            fatalError("Error: Could not access realm. \(error)")
+        }
+    }
+    
+    func addObjects(objects: [DynamicObject], completed: @escaping () -> Void) {
+        do {
+            try realm.write {
+                realm.add(objects)
+            }
+        } catch {
+            fatalError("Error: Could not access realm. \(error)")
         }
     }
 }
