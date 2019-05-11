@@ -306,7 +306,7 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
 }
 
 // MARK: - Just a more beautiful way of working with selectors
-fileprivate extension Selector {
+private extension Selector {
     static let dismissBrowser = #selector(RBSRealmBrowser.dismissBrowser)
     static let sortObjects = #selector(RBSRealmBrowser.sortObjects(_:))
     static let filterBaseModels = #selector(RBSRealmBrowser.filterBaseModels(_:))
@@ -334,8 +334,8 @@ internal final class RBSRealmBrowserView: UIView {
     override public func layoutSubviews() {
         super.layoutSubviews()
         let maxWidth: CGFloat = 414.0
-        let size = (CGSize(width: min(maxWidth, bounds.size.width), height: bounds.size.height))
-        var xPos:Double = 0.0
+        let size = CGSize(width: min(maxWidth, bounds.size.width), height: bounds.size.height)
+        var xPos: Double = 0.0
         if Double(size.width) == 414.0 {
             xPos = Double((bounds.size.width - size.width))/2.0
         }

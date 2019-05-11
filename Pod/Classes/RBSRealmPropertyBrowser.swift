@@ -63,11 +63,11 @@ final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDeleg
     @objc func showPostOption() {
         let postController = UIAlertController(title: "Post Object", message: nil, preferredStyle: .alert)
 
-        postController.addTextField { (aTextField) in
+        postController.addTextField { aTextField in
             aTextField.placeholder = "Enter a request URL"
             aTextField.textColor = .black
         }
-        let alertAction  = UIAlertAction(title: "POST", style: .default) { [unowned self](_) in
+        let alertAction  = UIAlertAction(title: "POST", style: .default) { [unowned self] _ in
             if let textField = postController.textFields?.first {
                 if let text = textField.text {
                     self.handlePOST(urlString: text)

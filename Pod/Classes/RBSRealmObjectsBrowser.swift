@@ -241,7 +241,7 @@ extension RBSRealmObjectsBrowser: UITableViewDataSource {
         if let cell = cell as? RBSRealmObjectBrowserCell {
             let object = data()[indexPath.row]
             if !object.isInvalidated {
-                let detailText = filteredProperties.map { (property) -> String in
+                let detailText = filteredProperties.map { property -> String in
                     return "\(property.name): \(BrowserTools.stringForProperty(property, object: object))\n\n"
                     }.reduce("", +)
                 if selectAll {

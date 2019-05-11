@@ -66,11 +66,12 @@ internal final class RBSRealmPropertyCell: UITableViewCell {
         contentView.addSubview(labelPropertyType)
         toggle.frame = .zero
         disposables.append(
-            toggle.observe(\.isHidden, onChange: { [weak self] (value) in
-            self?.textFieldPropValue.isHidden = !value
-        }))
+            toggle.observe(\.isHidden, onChange: { [weak self] value in
+                guard let self = self else { return }
+                self.textFieldPropValue.isHidden = !value
+            }))
         disposables.append(
-            observe(\.isEditingAllowed, onChange: { [weak self] (value) in
+            observe(\.isEditingAllowed, onChange: { [weak self] value in
                 self?.textFieldPropValue.isUserInteractionEnabled = value
                 self?.setTextFieldBorders(for: value)
                 self?.toggle.isEnabled = value
@@ -150,9 +151,9 @@ internal final class RBSRealmPropertyCell: UITableViewCell {
         labelPropertyType.frame = (CGRect(origin: originDetail, size: sizeDetail))
 
         let usableTextFieldWidth = contentView.bounds.size.width
-                                    - sizeCircle.width
-                                    - labelPropertyTitle.bounds.size.width
-                                    - 3*margin
+            - sizeCircle.width
+            - labelPropertyTitle.bounds.size.width
+            - 3*margin
 
         let usableTextFieldSize = (CGSize(width: usableTextFieldWidth,
                                           height: .greatestFiniteMagnitude))

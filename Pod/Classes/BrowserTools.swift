@@ -33,7 +33,7 @@ final class BrowserTools {
         var request = URLRequest(url: URL(string: url)!)
         request.httpMethod = "GET"
         URLSession.shared.dataTask(with: request,
-                                   completionHandler: { (data, response, _) in
+                                   completionHandler: { data, response, _ in
                                     guard let callback = response as? HTTPURLResponse else {
                                         return
                                     }
