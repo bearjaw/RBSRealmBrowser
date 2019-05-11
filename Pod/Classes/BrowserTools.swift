@@ -15,16 +15,16 @@ public struct RBSRequestConfig {
 }
 
 final class BrowserTools {
-    
+
     private static let localVersion = "v0.2.9"
-    
+
     static func stringForProperty(_ property: Property, object: Object) -> String {
         if property.isArray || property.type == .linkingObjects {
             return arrayString(for: property, object: object)
         }
         return handleSupportedTypes(for: property, object: object)
     }
-    
+
     static func checkForUpdates() {
         if isPlayground() {
             return
@@ -42,7 +42,7 @@ final class BrowserTools {
                                     guard let gitVersion = websiteData?.contains(localVersion) else {
                                         return
                                     }
-                                    if (!gitVersion) {
+                                    if !gitVersion {
                                         print("""
                         🚀 A new version of RBSRealmBrowser is now available:
                         https://github.com/bearjaw/RBSRealmBrowser/blob/master/CHANGELOG.md
@@ -50,18 +50,18 @@ final class BrowserTools {
                                     }
         }).resume()
     }
-    
+
     public static func postObject(object: Object, atURL URL: URL) {
         print("Worked")
     }
-    
+
     private static func isPlayground() -> Bool {
         guard let isInPlayground = (Bundle.main.bundleIdentifier?.hasPrefix("com.apple.dt.playground")) else {
             return false
         }
         return isInPlayground
     }
-    
+
     private static func arrayString(for property: Property, object: Object) -> String {
         if property.isArray || property.type == .linkingObjects {
             let array = object.dynamicList(property.name)
@@ -69,7 +69,7 @@ final class BrowserTools {
         }
         return ""
     }
-    
+
     // Disabled 
     // swiftlint:disable cyclomatic_complexity
     private static func handleSupportedTypes(for property: Property, object: Object) -> String {

@@ -24,15 +24,15 @@ import RealmSwift
 /// - warning: This browser only works with RealmSwift because Realm (Objective-C) and RealmSwift
 /// 'are not interoperable and using them together is not supported.'
 public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    
+
     private var ascending: Bool = false
     private let cellIdentifier: String = "RBSREALMBROWSERCELL"
     private var realmBrowserView:RBSRealmBrowserView = RBSRealmBrowserView()
-    
+
     private var realm: Realm
     private var objects: [ObjectSchema] = []
     private var filteredClasses: [String]?
-    
+
     private var filterOptions:UISegmentedControl = {
         let segmentedControl = UISegmentedControl(items: ["All", "Hide base Realm models"])
         segmentedControl.tintColor =  .white
@@ -40,7 +40,7 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
         segmentedControl.setTitleTextAttributes(attributes, for: .selected)
         return segmentedControl
     }()
-    
+
     /// Initialises the UITableViewController, sets title, registers datasource & delegates & cells
     ///
     /// - Parameter realm: a realm instance
@@ -51,11 +51,11 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
         title = "Realm Browser"
         filterOptions.selectedSegmentIndex = 0
     }
-    
+
     public override func loadView() {
         view = realmBrowserView
     }
-    
+
     public override func viewDidLoad() {
         super.viewDidLoad()
         configureNavigationBar()
@@ -63,27 +63,27 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
         fetchObjects()
         BrowserTools.checkForUpdates()
     }
-    
+
     public override func viewWillTransition(to size: CGSize,
                                             with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         realmBrowserView.tableView.reloadData()
     }
-    
+
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     // MARK: - Realm browser convenience method(s)
-    
+
     /// Instantiate the browser using default Realm.
     ///
     /// - Returns: UINavigationController with an instance of realmBrowser
     public static func realmBrowser() -> UINavigationController? {
         return realmBrowser(showing: nil)
     }
-    
-    public static func realmBrowser(showing classes:[String]?,aURL URL:URL) -> UINavigationController? {
+
+    public static func realmBrowser(showing classes:[String]?, aURL URL:URL) -> UINavigationController? {
         do {
             let realm = try Realm(fileURL: URL)
             return realmBrowserForRealm(realm, showing: classes)
@@ -92,7 +92,7 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
             return nil
         }
     }
-    
+
     public static func realmBrowser(showing classes:[String]?) -> UINavigationController? {
         do {
             let realm = try Realm()
@@ -102,7 +102,7 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
             return nil
         }
     }
-    
+
     /// Instantiate the browser using a specific version of Realm.
     ///
     /// - Parameter realm: A realm custom realm
@@ -122,7 +122,7 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
         }
         return navigationController
     }
-    
+
     /// Instantiate the browser using a specific version of Realm and
     /// use no pre-filtering
     ///
@@ -132,7 +132,7 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
         let rbsRealmBrowser = realmBrowserForRealm(realm, showing: nil)
         return rbsRealmBrowser
     }
-    
+
     ///  Instantiate the browser using a specific version of Realm at a specific path.
     ///init(path: String) is deprecated.
     ///
@@ -141,9 +141,9 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
     /// - Parameter url: URL to realm file
     /// - Returns: UINavigationController with an instance of realmBrowser
     public static func realmBroswerForRealmURL(_ url: URL) -> UINavigationController? {
-        return realmBrowser(showing:nil , aURL: url)
+        return realmBrowser(showing:nil, aURL: url)
     }
-    
+
     /// Use this function to add the browser quick action to your shortcut
     /// items array. This is a dynamic shortcut and can be added at runtime.
     /// Use in AppDelegate
@@ -156,17 +156,17 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
                                                         icon: UIApplicationShortcutIcon(type: .search),
                                                         userInfo: nil
         )
-        
+
         return browserShortcut
     }
-    
+
     /// Dismisses the browser
     ///
     /// - Parameter id: a UIBarButtonItem
     @objc func dismissBrowser(_ id:UIBarButtonItem) {
         self.dismiss(animated: true)
     }
-    
+
     /// Sorts the objects classes by name
     ///
     /// - Parameter id: a UIBarButtonItem
@@ -180,7 +180,7 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
         }
         realmBrowserView.tableView.reloadData()
     }
-    
+
     @objc public func filterBaseModels(_ id:UISegmentedControl) {
         let segmentedControl = id
         switch segmentedControl.selectedSegmentIndex {
@@ -196,9 +196,9 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
             return
         }
     }
-    
+
     // MARK: - TableView Datasource & Delegate
-    
+
     /// TableView DataSource method
     /// Asks the data source for a cell to insert in a particular location of the table view.
     /// - Parameters:
@@ -212,13 +212,13 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
         if let cell = cell as? RBSRealmObjectBrowserCell {
             let title = objects[indexPath.row].className
             let count = elementCount(named: title)
-            
+
             cell.realmBrowserObjectAttributes(title,
                                               detailText: "Objects in Realm = \(count)")
         }
         return cell
     }
-    
+
     /// TableView DataSource method
     /// Tells the data source to return the number of rows in a given section of a table view.
     ///
@@ -229,7 +229,7 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return objects.count
     }
-    
+
     /// TableView Delegate method
     ///
     /// Asks the delegate for the height to use for a row in a specified location.
@@ -242,7 +242,7 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
     }
-    
+
     /// TableView Delegate method to handle cell selection
     ///
     /// - Parameters:
@@ -257,13 +257,13 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
             navigationController?.pushViewController(viewController, animated: true)
         }
     }
-    
+
     // MARK: - private Methods
-    
+
     private func elementCount(named name: String) -> Int {
         return realm.dynamicObjects(name).count
     }
-    
+
     private func configureNavigationBar() {
         navigationItem.titleView = filterOptions
         let bbiDismiss = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: .dismissBrowser)
@@ -271,7 +271,7 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
         let bbiSort = UIBarButtonItem(title: title, style: .plain, target: self, action: .sortObjects)
         self.navigationItem.rightBarButtonItems = [bbiDismiss, bbiSort]
     }
-    
+
     private func configureTableView() {
         realmBrowserView.tableView.delegate = self
         realmBrowserView.tableView.dataSource = self
@@ -279,18 +279,18 @@ public final class RBSRealmBrowser: UIViewController, UITableViewDelegate, UITab
         realmBrowserView.tableView.register(RBSRealmObjectBrowserCell.self,
                                             forCellReuseIdentifier: cellIdentifier)
         filterOptions.addTarget(self, action: .filterBaseModels, for: .valueChanged)
-        
+
     }
-    
+
     private func filterObjects() {
         if let classFilters = filteredClasses {
             objects = objects.filter({ classFilters.contains($0.className) })
         }
     }
-    
+
     private func fetchObjects() {
         var objectSchema = realm.schema.objectSchema
-        
+
         if let classFilter = filteredClasses {
             if classFilter.isNonEmpty {
                 objectSchema = objectSchema
@@ -318,7 +318,7 @@ private enum RBSSortStyle: String {
 }
 
 internal final class RBSRealmBrowserView: UIView {
-    public var tableView:UITableView
+    public var tableView: UITableView
     init() {
         tableView = UITableView(frame: .zero, style: .plain)
         super.init(frame: .zero)
@@ -326,11 +326,11 @@ internal final class RBSRealmBrowserView: UIView {
         addSubview(tableView)
         backgroundColor = .white
     }
-    
+
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override public func layoutSubviews() {
         super.layoutSubviews()
         let maxWidth: CGFloat = 414.0

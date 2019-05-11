@@ -18,15 +18,15 @@ internal extension CGSize {
     static func + (lhs: CGSize, rhs: CGSize) -> CGSize {
         return (CGSize(width: lhs.width + rhs.width, height: lhs.height + rhs.height))
     }
-    
+
     static func - (lhs: CGSize, rhs: CGSize) -> CGSize {
-        return (CGSize(width: min(lhs.width - rhs.width, 0.0), height: min(lhs.height - rhs.height,0)))
+        return (CGSize(width: min(lhs.width - rhs.width, 0.0), height: min(lhs.height - rhs.height, 0)))
     }
-    
+
     static func > (lhs: CGSize, rhs: CGSize) -> CGSize {
         return lhs.width > rhs.width ? lhs: rhs
     }
-    
+
     static func < (lhs: CGSize, rhs: CGSize) -> CGSize {
         return lhs.height > rhs.height ? lhs: rhs
     }
@@ -65,7 +65,7 @@ internal protocol HumanReadable {
 }
 
 internal extension UIView {
-    
+
     var bottomRight: CGPoint {
         return (CGPoint(x: frame.origin.x + bounds.size.width, y: frame.origin.y + bounds.size.height))
     }

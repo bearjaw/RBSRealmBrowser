@@ -19,7 +19,7 @@ final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDeleg
     private var isEditMode: Bool = false
     private var realm: Realm
     private var realmView: RBSRealmBrowserView = RBSRealmBrowserView()
-    
+
     init(object: Object, realm: Realm) {
         self.object = object
         self.realm = realm
@@ -30,24 +30,24 @@ final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDeleg
         super.init(nibName: nil, bundle: nil)
         title =  schema.className
     }
-    
+
     override public func viewDidLoad() {
         super.viewDidLoad()
         configureTableView()
         configureBarButtonItems()
     }
-    
+
     public override func loadView() {
         view = realmView
     }
-    
+
     private func configureTableView() {
         realmView.tableView.delegate = self
         realmView.tableView.dataSource = self
         realmView.tableView.tableFooterView = UIView()
         realmView.tableView.register(RBSRealmPropertyCell.self, forCellReuseIdentifier: cellIdentifier)
     }
-    
+
     private func configureBarButtonItems() {
         let editButton = UIBarButtonItem(title: "Edit",
                                          style: .plain,
@@ -55,14 +55,14 @@ final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDeleg
                                          action: .toggleEdit)
         navigationItem.rightBarButtonItems = [editButton]
     }
-    
+
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     @objc func showPostOption() {
         let postController = UIAlertController(title: "Post Object", message: nil, preferredStyle: .alert)
-        
+
         postController.addTextField { (aTextField) in
             aTextField.placeholder = "Enter a request URL"
             aTextField.textColor = .black
@@ -79,19 +79,19 @@ final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDeleg
         postController.addAction(cancel)
         present(postController, animated: true, completion: nil)
     }
-    
+
     private func handlePOST(urlString: String) {
         if let url:URL = URL(string: urlString) {
             BrowserTools.postObject(object: object, atURL: url)
         }
     }
-    
+
     // MARK: - TableView Datasource & Delegate
-    
+
     public func tableView(_ tableView: UITableView,
                           willDisplay cell: UITableViewCell,
                           forRowAt indexPath: IndexPath) {
-        let property = properties[indexPath.row] 
+        let property = properties[indexPath.row]
         let stringvalue = BrowserTools.stringForProperty(property, object: object)
         if let cell = cell as? RBSRealmPropertyCell {
             cell.cellWithAttributes(propertyTitle: property.name,
@@ -100,16 +100,16 @@ final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDeleg
                                     property:property)
         }
     }
-    
+
     func textFieldDidFinishEdit(_ input: String, property: Property) {
         savePropertyChangesInRealm(input, property: property)
     }
-    
+
     // MARK: - private methods
-    
+
     private func savePropertyChangesInRealm(_ newValue: String, property: Property) {
         let letters = CharacterSet.letters
-        
+
         switch property.type {
         case .bool:
             let propertyValue = Bool(newValue)!
@@ -130,14 +130,14 @@ final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDeleg
         case .string:
             let propertyValue: String = newValue as String
             saveValueForProperty(value: propertyValue, propertyName: property.name)
-        case .linkingObjects,.object:
+        case .linkingObjects, .object:
             break
         default:
             break
         }
-        
+
     }
-    
+
     private func saveValueForProperty(value: Any, propertyName: String) {
         do {
             try realm.write {
@@ -147,12 +147,12 @@ final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDeleg
             print("saving failed")
         }
     }
-    
+
     private func fetchObjects(for propertyName:String) -> [Object] {
         let results = object.dynamicList(propertyName)
         return Array(results)
     }
-    
+
     @objc func actionToggleEdit(_ id: UIBarButtonItem) {
         isEditMode.toggle()
         if isEditMode {
@@ -162,7 +162,7 @@ final class RBSRealmPropertyBrowser: UIViewController, RBSRealmPropertyCellDeleg
         }
         realmView.tableView.reloadData()
     }
-    
+
 }
 
 extension RBSRealmPropertyBrowser: UITableViewDelegate {
@@ -185,7 +185,7 @@ extension RBSRealmPropertyBrowser: UITableViewDelegate {
                 navigationController?.pushViewController(objectsViewController, animated: true)
             }
         }
-        
+
     }
 }
 
@@ -197,13 +197,13 @@ extension RBSRealmPropertyBrowser: UITableViewDataSource {
         if let cell = cell as? RBSRealmPropertyCell {
             cell.delegate = self
         }
-        
+
         return cell
     }
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return properties.count
     }
-    
+
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
     }
