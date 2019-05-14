@@ -47,7 +47,7 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
     override func viewDidLoad() {
         super.viewDidLoad()
         configureTableView()
-        setupSearch()
+//        setupSearch()
         subscribeToCollectionChanges()
         addToolBarItems()
     }
