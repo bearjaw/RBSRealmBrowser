@@ -11,7 +11,11 @@ import RealmSwift
 
 final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDelegate {
     private var objects: Results<DynamicObject>?
-    private var isEditMode: Bool = false
+    private var isEditMode: Bool = false {
+        willSet {
+            viewRealm.tableView.allowsMultipleSelection = newValue
+        }
+    }
     private var selectAll: Bool = false
     private var selectedIndexPaths: [IndexPath] = []
     private var filteredObjects: LazyFilterSequence<Results<DynamicObject>>?
@@ -31,9 +35,8 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
         super.init(nibName: nil, bundle: nil)
 
         title = className
-        let bbi = UIBarButtonItem(title: "Select", style: .plain, target: self, action: .edit)
-        navigationItem.rightBarButtonItem = bbi
-
+        let editBbi = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: .edit)
+        navigationItem.rightBarButtonItem = editBbi
     }
 
     override func loadView() {
@@ -45,6 +48,7 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
         configureTableView()
         setupSearch()
         subscribeToCollectionChanges()
+        addToolBarItems()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -59,8 +63,10 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
     // MARK: - View setup
 
     private func addToolBarItems() {
-        let trash = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: .deleteObjects)
-        navigationController?.toolbarItems = [trash]
+        let trash = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: .deleteSelected)
+        let menu = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: .actionMenu)
+        navigationController?.toolbar.barStyle = .default
+        toolbarItems = [menu, trash]
     }
 
     private func configureTableView() {
@@ -112,22 +118,72 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
     // MARK: - Actions
 
     @objc fileprivate func actionSelectAll() {
+        guard let objects = objects else { return }
         selectAll.toggle()
+
+        let range: Range<Int>
+        let modifications: [Int]
         if selectAll {
-            navigationItem.leftBarButtonItem?.title = "Unselect all"
+            range = (0..<objects.count)
+            modifications = range.map { $0 }
+            selectedIndexPaths = range.map { IndexPath(row: $0, section: 0) }
         } else {
-            selectedIndexPaths.removeAll()
-            navigationItem.leftBarButtonItem?.title = "Select all"
+            range = (0..<objects.count)
+            modifications = range.map { $0 }
+            selectedIndexPaths = []
         }
-        viewRealm.tableView.reloadData()
+
+        if #available(iOS 11.0, *) {
+            viewRealm.tableView.performBatchUpdates({
+                self.updateRows([], [], modifications)
+            })
+        } else {
+            viewRealm.tableView.beginUpdates()
+            self.selectedIndexPaths.forEach { self.viewRealm.tableView.selectRow(at: $0, animated: true, scrollPosition: .none) }
+            viewRealm.tableView.endUpdates()
+        }
     }
 
     @objc fileprivate func toggleEditMode(_ sender: UIBarButtonItem) {
         isEditMode.toggle()
+
     }
 
-    @objc fileprivate func toggleDelete() {
+    private func deleteAll() {
+        guard let objects = objects else { return }
+        engine.deleteObjects(objects: objects) {
 
+        }
+    }
+
+    private func deleteSelected() {
+
+    }
+
+    @objc fileprivate func toggleMenu(sender: UIBarButtonItem) {
+        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let actionSelect = UIAlertAction(title: "Select all", style: .default) { [unowned self] _ in
+            self.selectAll = true
+        }
+        let actionDelete = UIAlertAction(title: "Delete all", style: .destructive) { [unowned self] _ in
+            self.deleteAll()
+        }
+        let actionDeleteSelected = UIAlertAction(title: "Delete selected", style: .destructive) { [unowned self] _ in
+            self.deleteSelected()
+        }
+        let cancel = UIAlertAction(title: "Delete selected", style: .cancel)
+        alertController.addAction(actionSelect)
+        alertController.addAction(actionDelete)
+        alertController.addAction(actionDeleteSelected)
+        alertController.addAction(cancel)
+
+        if let popover = alertController.popoverPresentationController {
+            popover.barButtonItem = sender
+            popover.permittedArrowDirections = [.down, .up]
+            popover.canOverlapSourceViewRect = false
+        }
+
+        present(alertController, animated: true)
     }
 
     // MARK: - UIViewControllerPreviewingDelegate
@@ -154,11 +210,15 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
 extension RBSRealmObjectsBrowser: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard isEditMode else { return }
+        let cell = tableView.cellForRow(at: indexPath)
+        cell?.accessoryType = .checkmark
         selectedIndexPaths.append(indexPath)
     }
 
     public func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         guard isEditMode else { return }
+        let cell = tableView.cellForRow(at: indexPath)
+        cell?.accessoryType = .none
         selectedIndexPaths.removeAll(where: { $0.row == indexPath.row})
     }
 }
@@ -254,5 +314,6 @@ extension RBSRealmObjectsBrowser: UISearchResultsUpdating, UISearchBarDelegate, 
 private extension Selector {
     static let selectAll = #selector(RBSRealmObjectsBrowser.actionSelectAll)
     static let edit = #selector(RBSRealmObjectsBrowser.toggleEditMode(_:))
-    static let deleteObjects = #selector(RBSRealmObjectsBrowser.toggleDelete)
+    static let actionMenu = #selector(RBSRealmObjectsBrowser.toggleMenu(sender:))
+    static let deleteSelected = #selector(RBSRealmObjectsBrowser.toggleMenu(sender:))
 }
