@@ -218,17 +218,27 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
 
 extension RBSRealmObjectsBrowser: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard isEditMode else { return }
-        let cell = tableView.cellForRow(at: indexPath)
-        cell?.accessoryType = .checkmark
-        selectedIndexPaths.append(indexPath)
+        if isEditMode {
+            let cell = tableView.cellForRow(at: indexPath)
+            cell?.accessoryType = .checkmark
+            selectedIndexPaths.append(indexPath)
+        } else {
+            tableView.deselectRow(at: indexPath, animated: true)
+            guard let objects = objects else { return }
+            let object = objects[indexPath.row]
+            let propertyBrowser = RealmPropertyBrowser(object: object, engine: engine)
+            show(propertyBrowser, sender: self)
+        }
     }
 
     public func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        guard isEditMode else { return }
-        let cell = tableView.cellForRow(at: indexPath)
-        cell?.accessoryType = .none
-        selectedIndexPaths.removeAll(where: { $0.row == indexPath.row})
+        if isEditMode {
+            let cell = tableView.cellForRow(at: indexPath)
+            cell?.accessoryType = .none
+            selectedIndexPaths.removeAll(where: { $0.row == indexPath.row})
+        } else {
+            
+        }
     }
 }
 
