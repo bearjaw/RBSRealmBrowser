@@ -36,6 +36,7 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
 
         title = className
         let editBbi = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: .edit)
+        editBbi.style = .done
         navigationItem.rightBarButtonItem = editBbi
     }
 
@@ -65,8 +66,11 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
     private func addToolBarItems() {
         let trash = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: .deleteSelected)
         let menu = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: .actionMenu)
-        navigationController?.toolbar.barStyle = .default
-        toolbarItems = [menu, trash]
+        let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let items: [UIBarButtonItem] = [trash, space, menu]
+        setToolbarItems(items, animated: true)
+        navigationController?.setToolbarHidden(false, animated: true)
+        navigationController?.toolbar.tintColor = RealmStyle.tintColor
     }
 
     private func configureTableView() {
@@ -146,14 +150,16 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
 
     @objc fileprivate func toggleEditMode(_ sender: UIBarButtonItem) {
         isEditMode.toggle()
-
+        if isEditMode {
+            navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: .edit)
+        } else {
+            navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: .edit)
+        }
     }
 
     private func deleteAll() {
         guard let objects = objects else { return }
-        engine.deleteObjects(objects: objects) {
-
-        }
+        engine.deleteObjects(objects: objects) {}
     }
 
     private func deleteSelected() {
@@ -171,11 +177,12 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
         let actionDeleteSelected = UIAlertAction(title: "Delete selected", style: .destructive) { [unowned self] _ in
             self.deleteSelected()
         }
-        let cancel = UIAlertAction(title: "Delete selected", style: .cancel)
+        let cancel = UIAlertAction(title: nil, style: .cancel)
         alertController.addAction(actionSelect)
         alertController.addAction(actionDelete)
         alertController.addAction(actionDeleteSelected)
         alertController.addAction(cancel)
+        alertController.view.tintColor = .black
 
         if let popover = alertController.popoverPresentationController {
             popover.barButtonItem = sender
