@@ -89,7 +89,7 @@ extension BrowserEngine {
 }
 
 extension BrowserEngine {
-    func deleteObjects(objects: [DynamicObject], completed: @escaping () -> Void) {
+    func deleteObjects(objects: Results<DynamicObject>, completed: @escaping () -> Void) {
         do {
             try realm.write {
                 realm.delete(objects)
@@ -99,7 +99,7 @@ extension BrowserEngine {
         }
     }
     
-    func addObjects(objects: [DynamicObject], completed: @escaping () -> Void) {
+    func addObjects(objects: Results<DynamicObject>, completed: @escaping () -> Void) {
         do {
             try realm.write {
                 realm.add(objects)
