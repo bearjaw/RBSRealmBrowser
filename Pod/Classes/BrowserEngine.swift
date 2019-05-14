@@ -12,10 +12,9 @@ final class BrowserEngine {
     
     private var realm: Realm
     private(set) var objectSchemas: [ObjectSchema] = []
-    private var filter: [String]? = nil
+    private var filter: [String]?
     private var tokenObjects: NotificationToken?
     private var tokenObject: NotificationToken?
-    
     
     init(realm: Realm, filter: [String]? = nil) {
         self.realm = realm
@@ -41,7 +40,6 @@ final class BrowserEngine {
         return objectSchema.className
     }
     
-    
     /// Fetch object schemas from realm.
     /// Optionally pass in an array of strings
     /// to filter out classes
@@ -55,7 +53,6 @@ final class BrowserEngine {
         }
     }
 }
-
 
 // MARK: - Observing
 extension BrowserEngine {
