@@ -177,20 +177,22 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
         let actionDeleteSelected = UIAlertAction(title: "Delete selected", style: .destructive) { [unowned self] _ in
             self.deleteSelected()
         }
-        let cancel = UIAlertAction(title: nil, style: .cancel)
+        
         alertController.addAction(actionSelect)
         alertController.addAction(actionDelete)
         alertController.addAction(actionDeleteSelected)
-        alertController.addAction(cancel)
         alertController.view.tintColor = .black
 
         if let popover = alertController.popoverPresentationController {
             popover.barButtonItem = sender
             popover.permittedArrowDirections = [.down, .up]
             popover.canOverlapSourceViewRect = false
+        } else {
+            let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+            alertController.addAction(cancel)
         }
 
-        present(alertController, animated: true)
+        show(alertController, sender: self)
     }
 
     // MARK: - UIViewControllerPreviewingDelegate
