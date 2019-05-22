@@ -105,4 +105,26 @@ extension BrowserEngine {
             fatalError("Error: Could not access realm. \(error)")
         }
     }
+    
+    func addObjects(object: DynamicObject, completed: @escaping () -> Void) {
+        do {
+            try realm.write {
+                realm.add(object)
+            }
+        } catch {
+            fatalError("Error: Could not access realm. \(error)")
+        }
+    }
+    
+    func create(named className: String) -> DynamicObject {
+        do {
+            realm.beginWrite()
+            let object = realm.dynamicCreate(className)
+            realm.add(object)
+            try realm.commitWrite()
+            return object
+        } catch {
+            fatalError("Error: Could not commit write transaction. \(error)")
+        }
+    }
 }
