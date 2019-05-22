@@ -134,3 +134,17 @@ internal extension NSObjectProtocol where Self: NSObject {
         return observe(sourceKeyPath) { target[keyPath: targetKeyPath] = $0 }
     }
 }
+
+extension UIViewController {
+    func showAlert(alertController: UIAlertController, source viewController: UIViewController, barButtonItem: UIBarButtonItem? = nil) {
+        if let popover = alertController.popoverPresentationController, let sender = barButtonItem {
+            popover.barButtonItem = sender
+            popover.permittedArrowDirections = [.down, .up]
+            popover.canOverlapSourceViewRect = false
+        } else {
+            let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+            alertController.addAction(cancel)
+        }
+        present(alertController, animated: true)
+    }
+}
