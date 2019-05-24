@@ -11,20 +11,22 @@ import RealmSwift
 
 final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDelegate {
     private var objects: Results<DynamicObject>?
-    private var isEditMode: Bool = false {
-        willSet {
-            viewRealm.tableView.allowsMultipleSelection = newValue
-        }
-    }
     private var selectAll: Bool = false
     private var filteredObjects: LazyFilterSequence<Results<DynamicObject>>?
     private var engine: BrowserEngine
     private var className: String
+    private var disposable: NSKeyValueObservation?
     
     private lazy var viewRealm: RBSRealmBrowserView = {
         let view = RBSRealmBrowserView()
         return view
     }()
+    
+    @objc dynamic private var isEditMode: Bool = false {
+        willSet {
+            viewRealm.tableView.allowsMultipleSelection = newValue
+        }
+    }
     
     fileprivate var searchController : UISearchController?
     
@@ -43,8 +45,8 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
         super.viewDidLoad()
         configureTableView()
         subscribeToCollectionChanges()
-        configureNavigationBar()
-        configureToolBar(showTrash: false)
+        configureBarButtonItems()
+        observeEditMode()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -57,6 +59,17 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
     }
     
     // MARK: - View setup
+    
+    private func observeEditMode() {
+        disposable = observe(\.isEditMode, onChange: { [unowned self] isEditMode in
+            self.configureBarButtonItems()
+        })
+    }
+    
+    private func configureBarButtonItems() {
+        configureNavigationBar()
+        configureToolBar(showTrash: false)
+    }
     
     private func configureToolBar(showTrash: Bool) {
         let menu = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: .actionMenu)
@@ -135,20 +148,17 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
     
     // MARK: - Actions
     
-    @objc fileprivate func actionSelectAll() {
+    private func toggleSelectAll() {
         guard objects?.isNonEmpty == true else { return }
         selectAll.toggle()
+        isEditMode = true
         let last = viewRealm.tableView.numberOfRows(inSection: 0)-1
         let range = Range(uncheckedBounds: (0, last))
         let selectedRows = range.map { IndexPath(item: $0, section: 0) }
-        if #available(iOS 11.0, *) {
-            viewRealm.tableView.performBatchUpdates({
-                self.viewRealm.tableView.reloadRows(at: selectedRows, with: .automatic)
-            })
+        if selectAll {
+            selectedRows.forEach { self.viewRealm.tableView.selectRow(at: $0, animated: true, scrollPosition: .none) }
         } else {
-            viewRealm.tableView.beginUpdates()
-            viewRealm.tableView.reloadRows(at: selectedRows, with: .automatic)
-            viewRealm.tableView.endUpdates()
+            selectedRows.forEach { self.viewRealm.tableView.deselectRow(at: $0, animated: true) }
         }
     }
     
@@ -179,7 +189,7 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
     @objc fileprivate func toggleMenu(sender: UIBarButtonItem) {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let actionSelect = UIAlertAction(title: "Select all", style: .default) { [unowned self] _ in
-            self.selectAll = true
+            self.toggleSelectAll()
         }
         alertController.addAction(actionSelect)
         alertController.view.tintColor = .black
@@ -325,7 +335,6 @@ extension RBSRealmObjectsBrowser: UISearchResultsUpdating, UISearchBarDelegate, 
 }
 
 private extension Selector {
-    static let actionSelectAll = #selector(RBSRealmObjectsBrowser.actionSelectAll)
     static let actionEdit = #selector(RBSRealmObjectsBrowser.toggleEditMode(_:))
     static let actionMenu = #selector(RBSRealmObjectsBrowser.toggleMenu(sender:))
     static let actionTrash = #selector(RBSRealmObjectsBrowser.toggleDelete(sender:))
