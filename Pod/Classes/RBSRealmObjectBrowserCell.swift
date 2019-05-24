@@ -56,6 +56,15 @@ final class RealmObjectBrowserCell: UITableViewCell {
         let height = [sizeTitle, sizeDetail].reduce(.zero, +).height
         return (CGSize(width: size.width, height: height + 5*margin))
     }
+    
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: true)
+        if selected {
+            accessoryType = .checkmark
+        } else {
+            accessoryType = .none
+        }
+    }
 
     override func layoutSubviews() {
         super.layoutSubviews()
