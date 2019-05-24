@@ -61,7 +61,7 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
     // MARK: - View setup
     
     private func observeEditMode() {
-        disposable = observe(\.isEditMode, onChange: { [unowned self] isEditMode in
+        disposable = observe(\.isEditMode, onChange: { [unowned self] _ in
             self.configureBarButtonItems()
         })
     }
