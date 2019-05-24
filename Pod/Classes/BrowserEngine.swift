@@ -48,18 +48,34 @@ final class BrowserEngine {
     private func fetchObjects(_ filter: [String]?) {
         self.filter = filter
         objectSchemas = realm.schema.objectSchema
-        if let filter = filter, filter.isNonEmpty {
-            objectSchemas = objectSchemas.filter { filter.contains($0.className) }
-        }
+        guard let filter = filter, filter.isNonEmpty else { return }
+        objectSchemas = objectSchemas.filter { filter.contains($0.className) }
+    }
+    
+    private func firstSortableProperty(for properties: [Property]) -> String? {
+        guard let property = properties.first(where: { $0.type == .string
+            || $0.type == .int
+            || $0.type == .bool
+            || $0.type == .float
+            || $0.type == .date
+            || $0.type == .double }) else { return nil }
+        return property.name
     }
 }
 
 // MARK: - Observing
 extension BrowserEngine {
     func observe(className: String, onInitial: @escaping (Results<DynamicObject>) -> Void, onUpdate: @escaping  (Results<DynamicObject>, [Int], [Int], [Int]) -> Void) {
-        
         let results = realm.dynamicObjects(className)
-        tokenObjects = results.observe { updateCallback in
+        // try and find a sortable keypath & sort Results
+        let objects: Results<DynamicObject>
+        if let object = results.first, let keypath = firstSortableProperty(for: object.objectSchema.properties) {
+            objects = results.sorted(byKeyPath: keypath)
+        } else {
+            // couldn't find a keypath, so we can't sort the collection
+            objects = results
+        }
+        tokenObjects = objects.observe { updateCallback in
             switch updateCallback {
             case .initial(let collecttion):
                 onInitial(collecttion)
