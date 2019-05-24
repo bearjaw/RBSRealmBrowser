@@ -136,7 +136,7 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
     // MARK: - Actions
     
     @objc fileprivate func actionSelectAll() {
-        guard let objects = objects else { return }
+        guard objects?.isNonEmpty == true else { return }
         selectAll.toggle()
         let last = viewRealm.tableView.numberOfRows(inSection: 0)-1
         let range = Range(uncheckedBounds: (0, last))
@@ -155,7 +155,7 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
     @objc fileprivate func toggleEditMode(_ sender: UIBarButtonItem) {
         isEditMode.toggle()
         configureNavigationBar()
-        configureToolBar(showTrash: false)
+        configureToolBar(showTrash: true)
     }
     
     private func deleteAll() {
@@ -219,7 +219,6 @@ extension RBSRealmObjectsBrowser: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
         if isEditMode {
-            cell.isSelected.toggle()
             cell.accessoryType = cell.isSelected ? .checkmark : .none
         } else {
             tableView.deselectRow(at: indexPath, animated: true)
@@ -229,6 +228,11 @@ extension RBSRealmObjectsBrowser: UITableViewDelegate {
             let propertyBrowser = RealmPropertyBrowser(object: object, engine: engine)
             show(propertyBrowser, sender: self)
         }
+    }
+    
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        guard let cell = tableView.cellForRow(at: indexPath) else { return }
+        cell.accessoryType = cell.isSelected ? .checkmark : .none
     }
 }
 
