@@ -17,7 +17,6 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
         }
     }
     private var selectAll: Bool = false
-    private var selectedIndexPaths: [IndexPath] = []
     private var filteredObjects: LazyFilterSequence<Results<DynamicObject>>?
     private var engine: BrowserEngine
     private var className: String
@@ -33,12 +32,7 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
         self.engine = engine
         self.className = className
         super.init(nibName: nil, bundle: nil)
-        
         title = className
-        let editBbi = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: .actionEdit)
-        let addBBi = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: .actionAdd)
-        editBbi.style = .done
-        navigationItem.rightBarButtonItems = [addBBi, editBbi]
     }
     
     override func loadView() {
@@ -48,9 +42,9 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
     override func viewDidLoad() {
         super.viewDidLoad()
         configureTableView()
-        //        setupSearch()
         subscribeToCollectionChanges()
-        addToolBarItems(showTrash: false)
+        configureNavigationBar()
+        configureToolBar(showTrash: false)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -64,8 +58,7 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
     
     // MARK: - View setup
     
-    private func addToolBarItems(showTrash: Bool) {
-        
+    private func configureToolBar(showTrash: Bool) {
         let menu = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: .actionMenu)
         let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         let items: [UIBarButtonItem]
@@ -79,6 +72,19 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
         setToolbarItems(items, animated: true)
         navigationController?.setToolbarHidden(false, animated: true)
         navigationController?.toolbar.tintColor = RealmStyle.tintColor
+    }
+    
+    private func configureNavigationBar() {
+        //        setupSearch()
+        let editMode: UIBarButtonItem
+        if isEditMode {
+            editMode = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: .actionEdit)
+        } else {
+            editMode = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: .actionEdit)
+        }
+        let addBBi = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: .actionAdd)
+        editMode.style = .done
+        navigationItem.rightBarButtonItems = [addBBi, editMode]
     }
     
     private func configureTableView() {
@@ -132,39 +138,24 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
     @objc fileprivate func actionSelectAll() {
         guard let objects = objects else { return }
         selectAll.toggle()
-        
-        let range: Range<Int>
-        let modifications: [Int]
-        if selectAll {
-            range = (0..<objects.count)
-            modifications = range.map { $0 }
-            selectedIndexPaths = range.map { IndexPath(row: $0, section: 0) }
-        } else {
-            range = (0..<objects.count)
-            modifications = range.map { $0 }
-            selectedIndexPaths = []
-        }
-        
+        let last = viewRealm.tableView.numberOfRows(inSection: 0)-1
+        let range = Range(uncheckedBounds: (0, last))
+        let selectedRows = range.map { IndexPath(item: $0, section: 0) }
         if #available(iOS 11.0, *) {
             viewRealm.tableView.performBatchUpdates({
-                self.updateRows([], [], modifications)
+                self.viewRealm.tableView.reloadRows(at: selectedRows, with: .automatic)
             })
         } else {
             viewRealm.tableView.beginUpdates()
-            self.selectedIndexPaths.forEach { self.viewRealm.tableView.selectRow(at: $0, animated: true, scrollPosition: .none) }
+            viewRealm.tableView.reloadRows(at: selectedRows, with: .automatic)
             viewRealm.tableView.endUpdates()
         }
     }
     
     @objc fileprivate func toggleEditMode(_ sender: UIBarButtonItem) {
         isEditMode.toggle()
-        if isEditMode {
-            navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: .actionEdit)
-            addToolBarItems(showTrash: true)
-        } else {
-            navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: .actionEdit)
-            addToolBarItems(showTrash: false)
-        }
+        configureNavigationBar()
+        configureToolBar(showTrash: false)
     }
     
     private func deleteAll() {
@@ -191,7 +182,6 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
             self.selectAll = true
         }
         alertController.addAction(actionSelect)
-        
         alertController.view.tintColor = .black
         showAlert(alertController: alertController, source: self, barButtonItem: sender)
     }
@@ -227,26 +217,17 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
 
 extension RBSRealmObjectsBrowser: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let cell = tableView.cellForRow(at: indexPath) else { return }
         if isEditMode {
-            let cell = tableView.cellForRow(at: indexPath)
-            cell?.accessoryType = .checkmark
-            selectedIndexPaths.append(indexPath)
+            cell.isSelected.toggle()
+            cell.accessoryType = cell.isSelected ? .checkmark : .none
         } else {
             tableView.deselectRow(at: indexPath, animated: true)
+            cell.accessoryType = .none
             guard let objects = objects else { return }
             let object = objects[indexPath.row]
             let propertyBrowser = RealmPropertyBrowser(object: object, engine: engine)
             show(propertyBrowser, sender: self)
-        }
-    }
-    
-    public func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        if isEditMode {
-            let cell = tableView.cellForRow(at: indexPath)
-            cell?.accessoryType = .none
-            selectedIndexPaths.removeAll(where: { $0.row == indexPath.row})
-        } else {
-            
         }
     }
 }
