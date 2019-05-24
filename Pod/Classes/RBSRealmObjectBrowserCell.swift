@@ -81,5 +81,4 @@ final class RealmObjectBrowserCell: UITableViewCell {
                                     y: labelTitle.bottomRight.y+labelOffset))
         labelDetailText.frame = (CGRect(origin: originDetail, size: sizeDetail))
     }
-
 }
