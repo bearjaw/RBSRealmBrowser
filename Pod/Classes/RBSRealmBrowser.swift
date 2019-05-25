@@ -211,9 +211,6 @@ public final class RBSRealmBrowser: UIViewController {
         filterOptions.addTarget(self, action: .filterBaseModels, for: .valueChanged)
 
     }
-
-    private func filterObjects() {
-    }
 }
 
 // MARK: - Just a more beautiful way of working with selectors
