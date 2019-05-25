@@ -71,7 +71,7 @@ public final class RBSRealmBrowser: UIViewController {
     }
     
     deinit {
-        NSLog("deinit \(self)")
+//        NSLog("deinit \(self)")
     }
 
     // MARK: - Realm browser convenience method(s)

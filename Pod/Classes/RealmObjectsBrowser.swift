@@ -59,7 +59,7 @@ final class RealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDel
     }
     
     deinit {
-        NSLog("deinit \(self)")
+//        NSLog("deinit \(self)")
     }
     
     // MARK: - View setup

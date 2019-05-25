@@ -11,7 +11,7 @@ import RealmSwift
 import Realm
 
 final class RealmPropertyBrowser: UIViewController {
-    private var object: DynamicObject
+    private var object: Object
     private var properties: [Property] = []
     private var filteredProperties: [Property] = []
     @objc dynamic private var isEditMode: Bool = false
@@ -24,7 +24,7 @@ final class RealmPropertyBrowser: UIViewController {
     
     // MARK: - Lifetime begin
 
-    init(object: DynamicObject, engine: BrowserEngine) {
+    init(object: Object, engine: BrowserEngine) {
         self.object = object
         self.engine = engine
         properties = object.objectSchema.properties
@@ -61,7 +61,7 @@ final class RealmPropertyBrowser: UIViewController {
     }
 
     deinit {
-        NSLog("deinit \(self)")
+//        NSLog("deinit \(self)")
     }
     
     // MARK: Lifetime end
@@ -146,10 +146,7 @@ extension RealmPropertyBrowser: UITableViewDelegate {
                     navigationController?.pushViewController(objectsViewController, animated: true)
                 }
             } else if property.type == .object {
-                guard let object = object[property.name] as? DynamicObject else {
-                    print("failed getting object for property")
-                    return
-                }
+                guard let object = object[property.name] as? Object else { return }
                 let objectsViewController = RealmPropertyBrowser(object: object, engine: engine)
                 navigationController?.pushViewController(objectsViewController, animated: true)
             }
