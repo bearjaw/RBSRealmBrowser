@@ -131,7 +131,7 @@ extension RealmPropertyBrowser: UITableViewDelegate {
             if property.isArray {
                 let objects = fetchObjects(for: property.name)
                 if objects.isNonEmpty {
-                    let objectsViewController = RBSRealmObjectsBrowser(className: "", engine: engine)
+                    let objectsViewController = RealmObjectsBrowser(className: "", engine: engine)
                     navigationController?.pushViewController(objectsViewController, animated: true)
                 }
             } else if property.type == .object {

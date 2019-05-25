@@ -243,9 +243,9 @@ final class RBSRealmBrowserView: UIView {
         super.layoutSubviews()
         let maxWidth: CGFloat = 414.0
         let size = CGSize(width: min(maxWidth, bounds.size.width), height: bounds.size.height)
-        var xPos: Double = 0.0
-        if Double(size.width) == 414.0 {
-            xPos = Double((bounds.size.width - size.width))/2.0
+        var xPos: CGFloat = 0.0
+        if size.width >= 414.0 {
+            xPos = (bounds.size.width - size.width)/2.0
         }
         let origin = (CGPoint(x: xPos, y: 0.0))
         tableView.frame = (CGRect(origin: origin, size: size))
@@ -263,7 +263,7 @@ extension RBSRealmBrowser: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let objectSchema = engine.objectSchema(at: indexPath.row)
-        let viewController = RBSRealmObjectsBrowser(className: objectSchema.className, engine: engine)
+        let viewController = RealmObjectsBrowser(className: objectSchema.className, engine: engine)
         navigationController?.pushViewController(viewController, animated: true)
     }
 
