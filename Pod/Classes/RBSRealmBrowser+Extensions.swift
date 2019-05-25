@@ -65,7 +65,6 @@ internal protocol HumanReadable {
 }
 
 internal extension UIView {
-
     var bottomRight: CGPoint {
         return (CGPoint(x: frame.origin.x + bounds.size.width, y: frame.origin.y + bounds.size.height))
     }
@@ -146,5 +145,17 @@ extension UIViewController {
             alertController.addAction(cancel)
         }
         present(alertController, animated: true)
+    }
+    
+   static func configureNavigationBar(_ navigationController: UINavigationController?) {
+        guard let navigationController = navigationController else { return }
+        navigationController.navigationBar.barTintColor = RealmStyle.tintColor
+        navigationController.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
+        navigationController.navigationBar.tintColor = .white
+        navigationController.navigationBar.isTranslucent = false
+        if #available(iOS 11.0, *) {
+            navigationController.navigationBar.prefersLargeTitles = true
+            navigationController.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+        }
     }
 }
