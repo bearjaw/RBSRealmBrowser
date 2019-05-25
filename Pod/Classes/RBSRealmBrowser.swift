@@ -25,9 +25,10 @@ import RealmSwift
 /// 'are not interoperable and using them together is not supported.'
 public final class RBSRealmBrowser: UIViewController {
 
-    private var ascending: Bool = false
+    @objc dynamic private var ascending: Bool = true
     private var realmBrowserView: RBSRealmBrowserView = RBSRealmBrowserView()
     private var engine: BrowserEngine
+    private var disposable: NSKeyValueObservation?
 
     private var filterOptions: UISegmentedControl = {
         let segmentedControl = UISegmentedControl(items: ["All", "Hide base Realm models"])
@@ -56,6 +57,7 @@ public final class RBSRealmBrowser: UIViewController {
         configureNavigationBar()
         configureTableView()
         BrowserTools.checkForUpdates()
+        observeSortSetting()
     }
 
     public override func viewWillTransition(to size: CGSize,
@@ -151,36 +153,12 @@ public final class RBSRealmBrowser: UIViewController {
         return browserShortcut
     }
 
-    /// Dismisses the browser
-    ///
-    /// - Parameter id: a UIBarButtonItem
-    @objc fileprivate func dismissBrowser() {
-        dismiss(animated: true)
-    }
-
-    @objc fileprivate func toggleFilter() {
-        switch filterOptions.selectedSegmentIndex {
-        case 0:
-            engine.filterBaseModels(false)
-            realmBrowserView.tableView.reloadData()
-        case 1:
-            engine.filterBaseModels(true)
-            realmBrowserView.tableView.reloadData()
-        default:
-            return
-        }
-    }
-    
-    @objc fileprivate func toggleSort() {
-        
-    }
-
     // MARK: - View setup
 
     private func configureNavigationBar() {
         navigationItem.titleView = filterOptions
         let bbiDismiss = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: .actionDismiss)
-        let title = RBSSortStyle.ascending.rawValue
+        let title = ascending ? RBSSortStyle.ascending.rawValue : RBSSortStyle.descending.rawValue
         let bbiSort = UIBarButtonItem(title: title, style: .plain, target: self, action: .actionSort)
         self.navigationItem.rightBarButtonItems = [bbiDismiss, bbiSort]
     }
@@ -194,6 +172,38 @@ public final class RBSRealmBrowser: UIViewController {
         filterOptions.addTarget(self, action: .actionFilter, for: .valueChanged)
 
     }
+    
+    // MARK: - Observing
+    
+    private func observeSortSetting() {
+        disposable = observe(\.ascending) { [unowned self] newValue in
+            self.engine.sort(ascending: newValue)
+            self.configureNavigationBar()
+            self.realmBrowserView.tableView.reloadData()
+        }
+    }
+    
+    // MARK: - Actions
+    
+    @objc fileprivate func dismissBrowser() {
+        dismiss(animated: true)
+    }
+    
+    @objc fileprivate func toggleFilter() {
+        switch filterOptions.selectedSegmentIndex {
+        case 0:
+            engine.filterBaseModels(false)
+        case 1:
+            engine.filterBaseModels(true)
+        default:
+            return
+        }
+        realmBrowserView.tableView.reloadData()
+    }
+    
+    @objc fileprivate func toggleSort() {
+        ascending.toggle()
+    }
 }
 
 private enum RBSSortStyle: String {
@@ -202,7 +212,7 @@ private enum RBSSortStyle: String {
 }
 
 final class RBSRealmBrowserView: UIView {
-    var tableView: UITableView
+    private(set) var tableView: UITableView
     init() {
         tableView = UITableView(frame: .zero, style: .plain)
         super.init(frame: .zero)
