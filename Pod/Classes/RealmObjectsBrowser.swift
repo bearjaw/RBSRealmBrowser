@@ -16,6 +16,7 @@ final class RealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDel
     private var engine: BrowserEngine
     private var className: String
     private var disposable: NSKeyValueObservation?
+    fileprivate var searchController : UISearchController?
     
     private lazy var viewRealm: RBSRealmBrowserView = {
         let view = RBSRealmBrowserView()
@@ -28,13 +29,15 @@ final class RealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDel
         }
     }
     
-    fileprivate var searchController : UISearchController?
-    
     init(className: String, engine: BrowserEngine) {
         self.engine = engine
         self.className = className
         super.init(nibName: nil, bundle: nil)
         title = className
+    }
+    
+    public required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func loadView() {
@@ -55,8 +58,8 @@ final class RealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDel
         viewRealm.tableView.reloadData()
     }
     
-    public required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    deinit {
+        NSLog("deinit \(self)")
     }
     
     // MARK: - View setup
@@ -240,7 +243,7 @@ extension RealmObjectsBrowser: UITableViewDelegate {
         if !isEditMode {
             tableView.deselectRow(at: indexPath, animated: true)
             cell.accessoryType = .none
-            guard let objects = objects else { return }
+            guard let objects = objects, objects.isNonEmpty else { return }
             let object = objects[indexPath.row]
             let propertyBrowser = RealmPropertyBrowser(object: object, engine: engine)
             show(propertyBrowser, sender: self)
@@ -263,7 +266,7 @@ extension RealmObjectsBrowser: UITableViewDataSource {
         guard let objects = objects else { fatalError("Error") }
         let object = objects[indexPath.row]
         let properties = object.objectSchema.properties
-        let detail = properties.map ({ BrowserTools.stringForProperty($0, object: object) }).reduce("", +)
+        let detail = BrowserTools.previewText(for: properties, object: object)
         cell.updateWith(title: object.objectSchema.className, detailText: detail)
         return cell
     }
