@@ -20,6 +20,20 @@ final class BrowserTools {
         return handleSupportedTypes(for: property, object: object)
     }
     
+    static func previewText(for properties: [Property], object: Object) -> String {
+        return properties.prefix(2).reduce("", { (result, property) -> String in
+            return result + previewText(for: property, object: object)
+        })
+    }
+    
+    static func previewText(for property: Property, object: Object) -> String {
+        guard property.type != .object, property.type != .data else { return "\(property.name):          Value not supported" }
+        return """
+        \(property.name):        \(handleSupportedTypes(for: property, object: object))
+        
+        """
+    }
+    
     static func checkForUpdates() {
         guard !isPlayground() else { return }
         let url = "https://img.shields.io/cocoapods/v/RBSRealmBrowser.svg"
