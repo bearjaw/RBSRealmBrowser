@@ -29,7 +29,7 @@ public final class RBSRealmBrowser: UIViewController {
     private var realmBrowserView: RBSRealmBrowserView = RBSRealmBrowserView()
     private var engine: BrowserEngine
 
-    private var filterOptions:UISegmentedControl = {
+    private var filterOptions: UISegmentedControl = {
         let segmentedControl = UISegmentedControl(items: ["All", "Hide base Realm models"])
         segmentedControl.tintColor =  .white
         let attributes = [NSAttributedString.Key.foregroundColor: RealmStyle.tintColor]
@@ -55,7 +55,6 @@ public final class RBSRealmBrowser: UIViewController {
         super.viewDidLoad()
         configureNavigationBar()
         configureTableView()
-//        fetchObjects()
         BrowserTools.checkForUpdates()
     }
 
@@ -67,6 +66,10 @@ public final class RBSRealmBrowser: UIViewController {
 
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    deinit {
+        NSLog("deinit \(self)")
     }
 
     // MARK: - Realm browser convenience method(s)
@@ -155,43 +158,30 @@ public final class RBSRealmBrowser: UIViewController {
         dismiss(animated: true)
     }
 
-    /// Sorts the objects classes by name
-    ///
-    /// - Parameter id: a UIBarButtonItem
-    @objc func sortObjects(_ id:UIBarButtonItem) {
-        id.title = ascending == false ? RBSSortStyle.descending.rawValue: RBSSortStyle.ascending.rawValue
-        ascending.toggle()
-        if ascending {
-//            objects = objects.sorted { $0.className > $1.className }
-        } else {
-//            objects = objects.sorted { $0.className < $1.className }
-        }
-        realmBrowserView.tableView.reloadData()
-    }
-
-    @objc public func filterBaseModels(_ id: UISegmentedControl) {
-        let segmentedControl = id
-        switch segmentedControl.selectedSegmentIndex {
+    @objc fileprivate func toggleFilter() {
+        switch filterOptions.selectedSegmentIndex {
         case 0:
-//            fetchObjects()
+            engine.filterBaseModels(false)
             realmBrowserView.tableView.reloadData()
         case 1:
-//            objects = objects.filter({
-//                !$0.className.hasPrefix("RLM") &&
-//                    !$0.className.hasPrefix("RealmSwift") })
+            engine.filterBaseModels(true)
             realmBrowserView.tableView.reloadData()
         default:
             return
         }
     }
+    
+    @objc fileprivate func toggleSort() {
+        
+    }
 
-    // MARK: - private Methods RealmObjectBrowserCell
+    // MARK: - View setup
 
     private func configureNavigationBar() {
         navigationItem.titleView = filterOptions
-        let bbiDismiss = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: .dismissBrowser)
+        let bbiDismiss = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: .actionDismiss)
         let title = RBSSortStyle.ascending.rawValue
-        let bbiSort = UIBarButtonItem(title: title, style: .plain, target: self, action: .sortObjects)
+        let bbiSort = UIBarButtonItem(title: title, style: .plain, target: self, action: .actionSort)
         self.navigationItem.rightBarButtonItems = [bbiDismiss, bbiSort]
     }
 
@@ -201,16 +191,9 @@ public final class RBSRealmBrowser: UIViewController {
         realmBrowserView.tableView.tableFooterView = UIView()
         realmBrowserView.tableView.register(RealmObjectBrowserCell.self,
                                             forCellReuseIdentifier: RealmObjectBrowserCell.identifier)
-        filterOptions.addTarget(self, action: .filterBaseModels, for: .valueChanged)
+        filterOptions.addTarget(self, action: .actionFilter, for: .valueChanged)
 
     }
-}
-
-// MARK: - Just a more beautiful way of working with selectors
-private extension Selector {
-    static let dismissBrowser = #selector(RBSRealmBrowser.dismissBrowser)
-    static let sortObjects = #selector(RBSRealmBrowser.sortObjects(_:))
-    static let filterBaseModels = #selector(RBSRealmBrowser.filterBaseModels(_:))
 }
 
 private enum RBSSortStyle: String {
@@ -304,4 +287,10 @@ extension RBSRealmBrowser: UITableViewDataSource {
         }
         return cell
     }
+}
+
+private extension Selector {
+    static let actionDismiss = #selector(RBSRealmBrowser.dismissBrowser)
+    static let actionFilter = #selector(RBSRealmBrowser.toggleFilter)
+    static let actionSort = #selector(RBSRealmBrowser.toggleSort)
 }
