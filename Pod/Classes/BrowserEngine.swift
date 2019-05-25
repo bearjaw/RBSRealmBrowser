@@ -102,31 +102,49 @@ extension BrowserEngine {
 }
 
 extension BrowserEngine {
-    func deleteObjects(objects: Results<DynamicObject>, completed: @escaping () -> Void) {
+    func deleteObjects(objects: Results<DynamicObject>, completed: (() -> Void)? = nil) {
         do {
             try realm.write {
                 realm.delete(objects)
             }
+            guard let completed = completed else { return }
+            completed()
         } catch {
             fatalError("Error: Could not access realm. \(error)")
         }
     }
     
-    func addObjects(objects: Results<DynamicObject>, completed: @escaping () -> Void) {
+    func deleteObjects(objects: [DynamicObject], completed: (() -> Void)? = nil) {
+        do {
+            try realm.write {
+                realm.delete(objects)
+            }
+            guard let completed = completed else { return }
+            completed()
+        } catch {
+            fatalError("Error: Could not access realm. \(error)")
+        }
+    }
+    
+    func addObjects(objects: Results<DynamicObject>, completed: (() -> Void)? = nil) {
         do {
             try realm.write {
                 realm.add(objects)
             }
+            guard let completed = completed else { return }
+            completed()
         } catch {
             fatalError("Error: Could not access realm. \(error)")
         }
     }
     
-    func addObjects(object: DynamicObject, completed: @escaping () -> Void) {
+    func addObjects(object: DynamicObject, completed: (() -> Void)? = nil) {
         do {
             try realm.write {
                 realm.add(object)
             }
+            guard let completed = completed else { return }
+            completed()
         } catch {
             fatalError("Error: Could not access realm. \(error)")
         }
