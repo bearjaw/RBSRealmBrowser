@@ -21,7 +21,7 @@ final class BrowserTools {
     }
     
     static func previewText(for properties: [Property], object: Object) -> String {
-        return properties.prefix(2).reduce("", { (result, property) -> String in
+        return properties.prefix(2).reduce("", { result, property -> String in
             return result + previewText(for: property, object: object)
         })
     }
