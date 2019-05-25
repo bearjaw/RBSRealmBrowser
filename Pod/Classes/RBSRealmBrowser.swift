@@ -107,14 +107,7 @@ public final class RBSRealmBrowser: UIViewController {
                                             showing classes:[String]?) -> UINavigationController? {
         let rbsRealmBrowser = RBSRealmBrowser(realm:realm, filteredClasses: classes)
         let navigationController = UINavigationController(rootViewController: rbsRealmBrowser)
-        navigationController.navigationBar.barTintColor = RealmStyle.tintColor
-        navigationController.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
-        navigationController.navigationBar.tintColor = .white
-        navigationController.navigationBar.isTranslucent = false
-        if #available(iOS 11.0, *) {
-            navigationController.navigationBar.prefersLargeTitles = true
-            navigationController.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
-        }
+        configureNavigationBar(navigationController)
         return navigationController
     }
 
@@ -244,7 +237,7 @@ final class RBSRealmBrowserView: UIView {
         let maxWidth: CGFloat = 414.0
         let size = CGSize(width: min(maxWidth, bounds.size.width), height: bounds.size.height)
         var xPos: CGFloat = 0.0
-        if size.width >= 414.0 {
+        if size.width >= maxWidth {
             xPos = (bounds.size.width - size.width)/2.0
         }
         let origin = (CGPoint(x: xPos, y: 0.0))
