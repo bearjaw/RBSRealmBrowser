@@ -65,7 +65,6 @@ internal protocol HumanReadable {
 }
 
 internal extension UIView {
-
     var bottomRight: CGPoint {
         return (CGPoint(x: frame.origin.x + bounds.size.width, y: frame.origin.y + bounds.size.height))
     }
@@ -132,5 +131,31 @@ internal extension NSObjectProtocol where Self: NSObject {
                              at targetKeyPath: ReferenceWritableKeyPath<Target, Value>)
         -> NSKeyValueObservation {
         return observe(sourceKeyPath) { target[keyPath: targetKeyPath] = $0 }
+    }
+}
+
+extension UIViewController {
+    func showAlert(alertController: UIAlertController, source viewController: UIViewController, barButtonItem: UIBarButtonItem? = nil) {
+        if let popover = alertController.popoverPresentationController, let sender = barButtonItem {
+            popover.barButtonItem = sender
+            popover.permittedArrowDirections = [.down, .up]
+            popover.canOverlapSourceViewRect = false
+        } else {
+            let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+            alertController.addAction(cancel)
+        }
+        present(alertController, animated: true)
+    }
+    
+   static func configureNavigationBar(_ navigationController: UINavigationController?) {
+        guard let navigationController = navigationController else { return }
+        navigationController.navigationBar.barTintColor = RealmStyle.tintColor
+        navigationController.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
+        navigationController.navigationBar.tintColor = .white
+        navigationController.navigationBar.isTranslucent = false
+        if #available(iOS 11.0, *) {
+            navigationController.navigationBar.prefersLargeTitles = true
+            navigationController.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+        }
     }
 }

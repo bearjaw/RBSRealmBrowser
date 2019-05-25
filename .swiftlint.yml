@@ -1,19 +1,21 @@
 disabled_rules: # rule identifiers to exclude from running
   - colon
-  - comma
-  - control_statement
-  - trailing_whitespace
 opt_in_rules: # some rules are only opt-in
   - empty_count
-  - first_where
   - toggle_bool
+  - last_where
+  - first_where
+  - unused_private_declaration
+  - unneeded_parentheses_in_closure_argument
   # Find all the available rules by running:
   # swiftlint rules
 included: # paths to include during linting. `--path` is ignored if present.
-  - ../Pod
-  - RBSRealmBrowser
+  - ../../Pod
+  # - Example
 excluded: # paths to ignore during linting. Takes precedence over `included`.
-  - Pods
+  - Example/Pods
+analyzer_rules: # Rules run by `swiftlint analyze` (experimental)
+  - explicit_self
 
 # configurable rules can be customized from this configuration file
 # binary rules can set their severity level
@@ -22,7 +24,7 @@ force_try:
   severity: warning # explicitly
 # rules that have both warning and error levels, can set just the warning level
 # implicitly
-line_length: 170
+line_length: 110
 # they can set both implicitly with an array
 type_body_length:
   - 300 # warning
@@ -34,16 +36,16 @@ file_length:
 # naming rules can set warnings/errors for min_length and max_length
 # additionally they can set excluded names
 type_name:
-  min_length: 3 # only warning
+  min_length: 4 # only warning
   max_length: # warning and error
     warning: 40
     error: 50
   excluded: iPhone # excluded via string
 identifier_name:
   min_length: # only min_length
-    error: 3 # only error
+    error: 2 # only error
   excluded: # excluded via string array
     - id
     - URL
     - GlobalAPIKey
-reporter: "xcode"
+reporter: "xcode" #

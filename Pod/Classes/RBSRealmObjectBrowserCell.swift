@@ -8,78 +8,83 @@
 
 import UIKit
 
-final class RBSRealmObjectBrowserCell: UITableViewCell {
+final class RealmObjectBrowserCell: UITableViewCell {
+    static var identifier: String { return "RealmObjectBrowserCell"  }
     private var labelTitle = UILabel()
     private var labelDetailText = UILabel()
-    private let maxHeight: CGFloat = 2000.0
     private let margin: CGFloat = 20.0
-
+    
     private lazy var circleView: UIView = {
         let view = UIView()
         view.backgroundColor = .random
         return view
     }()
-
+    
     override init(style: CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        labelTitle.font = UIFont.preferredFont(forTextStyle: .title2)
+        labelTitle.font = UIFont.preferredFont(forTextStyle: .headline)
+        labelTitle.backgroundColor = .white
         contentView.addSubview(labelTitle)
         labelDetailText.numberOfLines = 10
+        labelDetailText.font = .preferredFont(forTextStyle: .body)
+        labelDetailText.backgroundColor = .white
+        labelDetailText.textColor = .darkGray
         contentView.addSubview(circleView)
         contentView.addSubview(labelDetailText)
     }
-
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
-    func realmBrowserObjectAttributes(_ objectTitle: String, detailText: String) {
-        labelTitle.text = objectTitle
+    
+    func updateWith(title: String, detailText: String) {
+        labelTitle.text = title
         labelDetailText.text = detailText
-        labelDetailText.font = .systemFont(ofSize: 11)
     }
-
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         labelTitle.text = ""
         labelDetailText.text = ""
     }
-
+    
     override func sizeThatFits(_ size: CGSize) -> CGSize {
         let screenWidth: CGFloat = size.width
-        let usableSize = CGSize(width: screenWidth-2*margin,
-                                 height: maxHeight)
+        let usableSize = CGSize(width: screenWidth-2*margin, height: .greatestFiniteMagnitude)
         let sizeTitle = labelTitle.sizeThatFits(usableSize)
-        let labelDetailWidth = usableSize.width - labelTitle.bounds.size.width
-        let sizeDetail = labelDetailText.sizeThatFits(CGSize(width: labelDetailWidth,
-                                                             height: usableSize.height) )
+        let sizeDetail = labelDetailText.sizeThatFits(usableSize)
         let height = [sizeTitle, sizeDetail].reduce(.zero, +).height
-        return (CGSize(width: size.width, height: height + 5*margin))
+        return CGSize(width: size.width, height: height + 2*margin)
     }
-
+    
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: true)
+        if selected {
+            accessoryType = .checkmark
+        } else {
+            accessoryType = .none
+        }
+    }
+    
     override func layoutSubviews() {
         super.layoutSubviews()
-
+        
         let labelOffset: CGFloat = 5.0
         let screenWidth: CGFloat = bounds.size.width
         let usableSize = CGSize(width: screenWidth-2*margin,
-                                height: maxHeight)
-
+                                height: .greatestFiniteMagnitude)
+        
         let sizeTitle = labelTitle.sizeThatFits(usableSize)
-
-        let sizeCircle = (CGSize(width: sizeTitle.height/2, height: sizeTitle.height/2))
-        let originCircle = (CGPoint(x: margin, y: margin + (sizeTitle.height-sizeCircle.height)/2))
-        circleView.frame = (CGRect(origin: originCircle, size: sizeCircle))
+        
+        let sizeCircle = CGSize(width: sizeTitle.height/2, height: sizeTitle.height/2)
+        let originCircle = CGPoint(x: margin, y: margin + (sizeTitle.height-sizeCircle.height)/2)
+        circleView.frame = CGRect(origin: originCircle, size: sizeCircle)
         circleView.layer.cornerRadius = sizeCircle.height/2
-        let originTitle = (CGPoint(x: margin + sizeCircle.width + margin/2, y: margin))
-        labelTitle.frame = (CGRect(origin: originTitle, size: sizeTitle))
-
-        let labelDetailWidth = usableSize.width - labelTitle.bounds.size.width
-        let sizeDetail = labelDetailText.sizeThatFits(CGSize(width: labelDetailWidth,
-                                                             height: usableSize.height))
-        let originDetail = (CGPoint(x: margin + sizeCircle.width + margin/2,
-                                    y: labelTitle.bottomRight.y+labelOffset))
-        labelDetailText.frame = (CGRect(origin: originDetail, size: sizeDetail))
+        let originTitle = CGPoint(x: margin + sizeCircle.width + margin/2, y: margin)
+        labelTitle.frame = CGRect(origin: originTitle, size: sizeTitle)
+        
+        let sizeDetail = labelDetailText.sizeThatFits(usableSize)
+        let originDetail = CGPoint(x: margin + sizeCircle.width + margin/2, y: labelTitle.bottomRight.y+labelOffset)
+        labelDetailText.frame = CGRect(origin: originDetail, size: sizeDetail)
     }
-
 }

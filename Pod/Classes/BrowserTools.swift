@@ -9,31 +9,38 @@
 import RealmSwift
 import AVFoundation
 
-public struct RBSRequestConfig {
-    public let header: [String:Any]?
-    public let body: [String:Any]?
-}
-
 final class BrowserTools {
-
-    private static let localVersion = "v0.2.9"
-
+    
+    private static let localVersion = "v0.3.0"
+    
     static func stringForProperty(_ property: Property, object: Object) -> String {
         if property.isArray || property.type == .linkingObjects {
             return arrayString(for: property, object: object)
         }
         return handleSupportedTypes(for: property, object: object)
     }
-
+    
+    static func previewText(for properties: [Property], object: Object) -> String {
+        return properties.prefix(2).reduce("", { result, property -> String in
+            return result + previewText(for: property, object: object)
+        })
+    }
+    
+    static func previewText(for property: Property, object: Object) -> String {
+        guard property.type != .object, property.type != .data else { return "\(property.name):          Value not supported" }
+        return """
+        \(property.name):        \(handleSupportedTypes(for: property, object: object))
+        
+        """
+    }
+    
     static func checkForUpdates() {
-        if isPlayground() {
-            return
-        }
+        guard !isPlayground() else { return }
         let url = "https://img.shields.io/cocoapods/v/RBSRealmBrowser.svg"
         var request = URLRequest(url: URL(string: url)!)
         request.httpMethod = "GET"
         URLSession.shared.dataTask(with: request,
-                                   completionHandler: { (data, response, _) in
+                                   completionHandler: { data, response, _ in
                                     guard let callback = response as? HTTPURLResponse else {
                                         return
                                     }
@@ -50,18 +57,14 @@ final class BrowserTools {
                                     }
         }).resume()
     }
-
-    public static func postObject(object: Object, atURL URL: URL) {
-        print("Worked")
-    }
-
+    
     private static func isPlayground() -> Bool {
         guard let isInPlayground = (Bundle.main.bundleIdentifier?.hasPrefix("com.apple.dt.playground")) else {
             return false
         }
         return isInPlayground
     }
-
+    
     private static func arrayString(for property: Property, object: Object) -> String {
         if property.isArray || property.type == .linkingObjects {
             let array = object.dynamicList(property.name)
@@ -69,7 +72,7 @@ final class BrowserTools {
         }
         return ""
     }
-
+    
     // Disabled 
     // swiftlint:disable cyclomatic_complexity
     private static func handleSupportedTypes(for property: Property, object: Object) -> String {
@@ -102,6 +105,6 @@ final class BrowserTools {
     }
 }
 
-public struct RealmStyle {
+struct RealmStyle {
     public static let tintColor: UIColor =  UIColor(red:0.35, green:0.34, blue:0.62, alpha:1.0)
 }
