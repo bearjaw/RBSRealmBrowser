@@ -31,6 +31,10 @@ final class RealmPropertyBrowser: UIViewController {
         super.init(nibName: nil, bundle: nil)
         title =  object.objectSchema.className
     }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     public override func loadView() {
         view = viewRealm
@@ -51,13 +55,13 @@ final class RealmPropertyBrowser: UIViewController {
         } else {
             navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: .actionEdit)
         }
-        if isBeingPresented {
+        if navigationController?.viewControllers.count == 1 {
             navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: .actionDismiss)
         }
     }
 
-    required public init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    deinit {
+        NSLog("deinit \(self)")
     }
     
     // MARK: Lifetime end
