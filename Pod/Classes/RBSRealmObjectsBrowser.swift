@@ -68,14 +68,14 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
     
     private func configureBarButtonItems() {
         configureNavigationBar()
-        configureToolBar(showTrash: false)
+        configureToolBar()
     }
     
-    private func configureToolBar(showTrash: Bool) {
+    private func configureToolBar() {
         let menu = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: .actionMenu)
         let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         let items: [UIBarButtonItem]
-        if showTrash {
+        if isEditMode {
             let trash = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: .actionTrash)
             items = [menu, space, trash]
         } else {
@@ -164,13 +164,11 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
     
     @objc fileprivate func toggleEditMode(_ sender: UIBarButtonItem) {
         isEditMode.toggle()
-        configureNavigationBar()
-        configureToolBar(showTrash: true)
     }
     
     private func deleteAll() {
         guard let objects = objects else { return }
-        engine.deleteObjects(objects: objects) {}
+        engine.deleteObjects(objects: objects)
     }
     
     @objc fileprivate func toggleDelete(sender: UIBarButtonItem) {
@@ -179,7 +177,10 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
             self.deleteAll()
         }
         let actionDeleteSelected = UIAlertAction(title: "Delete selected", style: .destructive) { [unowned self] _ in
-            
+            guard let selectedRows = self.viewRealm.tableView.indexPathsForSelectedRows,
+                let objects = self.objects, objects.isNonEmpty else { return }
+            let results = selectedRows.map { objects[$0.row] }
+            self.engine.deleteObjects(objects: results)
         }
         alertController.addAction(actionDelete)
         alertController.addAction(actionDeleteSelected)
