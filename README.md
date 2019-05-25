@@ -136,7 +136,8 @@ RBSRealmBrowser is available through [CocoaPods](http://cocoapods.org). To insta
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod 'RBSRealmBrowser'
+pod 'RBSRealmBrowser', :configurations => ['Debug']
+
 ```
 ## Future features
 What's on the roadmap... 🚀
