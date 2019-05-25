@@ -50,6 +50,14 @@ final class BrowserEngine {
         }
     }
     
+    func sort(ascending: Bool) {
+        if ascending {
+            objectSchemas.sort(by: { $0.className < $1.className })
+        } else {
+            objectSchemas.sort(by: { $0.className > $1.className })
+        }
+    }
+    
     /// Fetch object schemas from realm.
     /// Optionally pass in an array of strings
     /// to filter out classes
