@@ -48,7 +48,7 @@ class ViewController: UIViewController {
         return person
     }
     
-    private  func createMockCat(named name: String) -> Cat {
+    private func createMockCat(named name: String) -> Cat {
         let aCat = Cat()
         aCat.catName = name
         aCat.isTired = true

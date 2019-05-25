@@ -1,3 +1,18 @@
+## RBSRealmBrowser v 0.3.0
+### New
+- Create objects of a given type
+- Add observing for realm objects 
+- Add swipe to delete
+
+### Improvements
+- Use a toolbar to place common actions
+- Add observation for certain properties
+- Generate a preview string based on the first 2 properties
+- Improve tableView cell layout
+
+### Removed
+- Search was removed in 0.3.0. Will be added in the next version again
+
 ## RBSRealmBrowser v 0.2.9
 
 ### Improvements
