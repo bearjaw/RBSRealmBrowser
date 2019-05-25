@@ -141,11 +141,11 @@ pod 'RBSRealmBrowser'
 ## Future features
 What's on the roadmap... 🚀
 - [ ] Tests
-- [ ] Be able to create objects
+- [x] Be able to create objects
 - [x] Clean up
-- [ ] Live reload the browser if updates happen in the background
+- [x] Live reload the browser if updates happen in the background
 - [x] Layout improvements
-- [x] Basic search 
+- [ ] Basic search 
 - [ ] Better search
 
 ## Documentation
