@@ -82,7 +82,6 @@ final class RealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDel
     }
     
     private func configureNavigationBar() {
-        //        setupSearch()
         let editMode: UIBarButtonItem
         if isEditMode {
             editMode = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: .actionEdit)
@@ -99,6 +98,14 @@ final class RealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDel
         viewRealm.tableView.dataSource = self
         viewRealm.tableView.tableFooterView = UIView()
         viewRealm.tableView.register(RealmObjectBrowserCell.self, forCellReuseIdentifier: RealmObjectBrowserCell.identifier)
+    }
+    
+    private func showEmptyView(_ show: Bool) {
+        if show {
+            viewRealm.tableView.backgroundView?.alpha = 1.0
+        } else {
+            viewRealm.tableView.backgroundView?.alpha = 0.0
+        }
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -200,11 +207,10 @@ final class RealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDel
     }
     
     @objc fileprivate func toggleAdd() {
-        guard let objects = objects else { return }
-        let object = objects[0]
-        let result = engine.create(named: object.objectSchema.className)
+        let result = engine.create(named: className)
         let propertyBrowser = RealmPropertyBrowser(object: result, engine: engine)
-        present(propertyBrowser, animated: true)
+        let navCon = UINavigationController(rootViewController: propertyBrowser)
+        present(navCon, animated: true)
     }
     
     // MARK: - UIViewControllerPreviewingDelegate
@@ -231,9 +237,7 @@ final class RealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDel
 extension RealmObjectsBrowser: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
-        if isEditMode {
-            cell.accessoryType = cell.isSelected ? .checkmark : .none
-        } else {
+        if !isEditMode {
             tableView.deselectRow(at: indexPath, animated: true)
             cell.accessoryType = .none
             guard let objects = objects else { return }
@@ -241,11 +245,6 @@ extension RealmObjectsBrowser: UITableViewDelegate {
             let propertyBrowser = RealmPropertyBrowser(object: object, engine: engine)
             show(propertyBrowser, sender: self)
         }
-    }
-    
-    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        guard let cell = tableView.cellForRow(at: indexPath) else { return }
-        cell.accessoryType = cell.isSelected ? .checkmark : .none
     }
 }
 
