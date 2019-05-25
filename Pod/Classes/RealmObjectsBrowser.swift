@@ -47,6 +47,7 @@ final class RealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDel
         subscribeToCollectionChanges()
         configureBarButtonItems()
         observeEditMode()
+        UIViewController.configureNavigationBar(navigationController)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -75,7 +76,6 @@ final class RealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDel
         } else {
             items = [menu, space]
         }
-        
         setToolbarItems(items, animated: true)
         navigationController?.setToolbarHidden(false, animated: true)
         navigationController?.toolbar.tintColor = RealmStyle.tintColor
@@ -245,6 +245,12 @@ extension RealmObjectsBrowser: UITableViewDelegate {
             let propertyBrowser = RealmPropertyBrowser(object: object, engine: engine)
             show(propertyBrowser, sender: self)
         }
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        guard let objects = objects, objects.isNonEmpty, editingStyle == .delete else { return }
+        let object = objects[indexPath.row]
+        engine.deleteObjects(objects: [object])
     }
 }
 
