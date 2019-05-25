@@ -126,6 +126,7 @@ final class RealmPropertyBrowser: UIViewController {
     private func observeEditMode() {
         disposable = observe(\.isEditMode, onChange: { [unowned self] _ in
             self.configureBarButtonItems()
+            self.viewRealm.tableView.reloadData()
         })
     }
     
