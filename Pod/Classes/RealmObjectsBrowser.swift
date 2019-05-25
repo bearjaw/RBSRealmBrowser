@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDelegate {
+final class RealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDelegate {
     private var objects: Results<DynamicObject>?
     private var selectAll: Bool = false
     private var filteredObjects: LazyFilterSequence<Results<DynamicObject>>?
@@ -59,12 +59,6 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
     }
     
     // MARK: - View setup
-    
-    private func observeEditMode() {
-        disposable = observe(\.isEditMode, onChange: { [unowned self] _ in
-            self.configureBarButtonItems()
-        })
-    }
     
     private func configureBarButtonItems() {
         configureNavigationBar()
@@ -121,7 +115,7 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
         }
     }
     
-    // MARK: - private Methods
+    // MARK: - Observing
     
     private func subscribeToCollectionChanges() {
         engine.observe(className: className, onInitial: { [unowned self] objects in
@@ -140,10 +134,18 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
         })
     }
     
+    private func observeEditMode() {
+        disposable = observe(\.isEditMode, onChange: { [unowned self] _ in
+            self.configureBarButtonItems()
+        })
+    }
+    
+    // MARK: - TableView reload
+    
     private func updateRows(_ deletions: [Int], _ insertions: [Int], _ modifications: [Int]) {
-        self.viewRealm.tableView.deleteRows(at: deletions.map { IndexPath(row: $0, section: 0)}, with: .automatic)
-        self.viewRealm.tableView.insertRows(at: insertions.map { IndexPath(row: $0, section: 0)}, with: .automatic)
-        self.viewRealm.tableView.reloadRows(at: modifications.map { IndexPath(row: $0, section: 0)}, with: .automatic)
+        viewRealm.tableView.deleteRows(at: deletions.map { IndexPath(row: $0, section: 0)}, with: .automatic)
+        viewRealm.tableView.insertRows(at: insertions.map { IndexPath(row: $0, section: 0)}, with: .automatic)
+        viewRealm.tableView.reloadRows(at: modifications.map { IndexPath(row: $0, section: 0)}, with: .automatic)
     }
     
     // MARK: - Actions
@@ -226,7 +228,7 @@ final class RBSRealmObjectsBrowser: UIViewController, UIViewControllerPreviewing
     }
 }
 
-extension RBSRealmObjectsBrowser: UITableViewDelegate {
+extension RealmObjectsBrowser: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
         if isEditMode {
@@ -247,7 +249,7 @@ extension RBSRealmObjectsBrowser: UITableViewDelegate {
     }
 }
 
-extension RBSRealmObjectsBrowser: UITableViewDataSource {
+extension RealmObjectsBrowser: UITableViewDataSource {
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let dequeue = tableView.dequeueReusableCell(withIdentifier: RealmObjectBrowserCell.identifier, for: indexPath)
         guard let cell = dequeue as? RealmObjectBrowserCell else {
@@ -271,7 +273,7 @@ extension RBSRealmObjectsBrowser: UITableViewDataSource {
     }
 }
 
-extension RBSRealmObjectsBrowser: UISearchResultsUpdating, UISearchBarDelegate, UISearchControllerDelegate {
+extension RealmObjectsBrowser: UISearchResultsUpdating, UISearchBarDelegate, UISearchControllerDelegate {
     private func setupSearch() {
         searchController = UISearchController(searchResultsController: nil)
         if let searchController = searchController {
@@ -336,8 +338,8 @@ extension RBSRealmObjectsBrowser: UISearchResultsUpdating, UISearchBarDelegate, 
 }
 
 private extension Selector {
-    static let actionEdit = #selector(RBSRealmObjectsBrowser.toggleEditMode(_:))
-    static let actionMenu = #selector(RBSRealmObjectsBrowser.toggleMenu(sender:))
-    static let actionTrash = #selector(RBSRealmObjectsBrowser.toggleDelete(sender:))
-    static let actionAdd = #selector(RBSRealmObjectsBrowser.toggleAdd)
+    static let actionEdit = #selector(RealmObjectsBrowser.toggleEditMode(_:))
+    static let actionMenu = #selector(RealmObjectsBrowser.toggleMenu(sender:))
+    static let actionTrash = #selector(RealmObjectsBrowser.toggleDelete(sender:))
+    static let actionAdd = #selector(RealmObjectsBrowser.toggleAdd)
 }
