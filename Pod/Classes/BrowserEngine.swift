@@ -81,7 +81,7 @@ final class BrowserEngine {
     }
     
     deinit {
-        NSLog("deinit \(self)")
+//        NSLog("deinit \(self)")
     }
 }
 
@@ -109,7 +109,7 @@ extension BrowserEngine {
         }
     }
     
-    func observe(object: DynamicObject, onUpdate: @escaping  () -> Void) {
+    func observe(object: Object, onUpdate: @escaping  () -> Void) {
         tokenObject = object.observe { updateCallback in
             switch updateCallback {
             case .change:
@@ -136,7 +136,7 @@ extension BrowserEngine {
         }
     }
     
-    func deleteObjects(objects: [DynamicObject], completed: (() -> Void)? = nil) {
+    func deleteObjects(objects: [Object], completed: (() -> Void)? = nil) {
         do {
             try realm.write {
                 realm.delete(objects)
