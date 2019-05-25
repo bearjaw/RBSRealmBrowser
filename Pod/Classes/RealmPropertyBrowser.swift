@@ -14,12 +14,13 @@ final class RealmPropertyBrowser: UIViewController {
     private var object: DynamicObject
     private var properties: [Property] = []
     private var filteredProperties: [Property] = []
-    private var isEditMode: Bool = false
+    @objc dynamic private var isEditMode: Bool = false
     private var viewRealm: RBSRealmBrowserView = {
         let view = RBSRealmBrowserView()
         return view
     }()
     private var engine: BrowserEngine
+    private var disposable: NSKeyValueObservation?
     
     // MARK: - Lifetime begin
 
@@ -40,19 +41,26 @@ final class RealmPropertyBrowser: UIViewController {
         configureTableView()
         configureBarButtonItems()
         subscribeToChanges()
+        UIViewController.configureNavigationBar(navigationController)
+        observeEditMode()
     }
 
     private func configureBarButtonItems() {
-        let editButton = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: .toggleEdit)
-        editButton.style = .done
-        navigationItem.rightBarButtonItems = [editButton]
+        if isEditMode {
+            navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: .actionEdit)
+        } else {
+            navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: .actionEdit)
+        }
+        if isBeingPresented {
+            navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: .actionDismiss)
+        }
     }
 
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: Lifetime begin
+    // MARK: Lifetime end
     // MARK: - View Setup
     
     private func subscribeToChanges() {
@@ -109,18 +117,25 @@ final class RealmPropertyBrowser: UIViewController {
         return Array(results)
     }
     
+    // MARK: - Observing
+    
+    private func observeEditMode() {
+        disposable = observe(\.isEditMode, onChange: { [unowned self] _ in
+            self.configureBarButtonItems()
+        })
+    }
+    
     // MARK: - Actions
 
-    @objc func actionToggleEdit(_ id: UIBarButtonItem) {
+    @objc fileprivate func toggleEdit() {
         isEditMode.toggle()
-        if isEditMode {
-            navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: .toggleEdit)
-        } else {
-            navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: .toggleEdit)
-        }
-        viewRealm.tableView.reloadData()
     }
-
+    
+    @objc fileprivate func toggleDismiss() {
+        engine.deleteObjects(objects: [object]) {
+            self.dismiss(animated: true)
+        }
+    }
 }
 
 extension RealmPropertyBrowser: UITableViewDelegate {
@@ -178,7 +193,8 @@ extension RealmPropertyBrowser: UITableViewDataSource {
 }
 
 private extension Selector {
-    static let toggleEdit = #selector(RealmPropertyBrowser.actionToggleEdit(_:))
+    static let actionEdit = #selector(RealmPropertyBrowser.toggleEdit)
+    static let actionDismiss = #selector(RealmPropertyBrowser.toggleDismiss)
 }
 
 extension RealmPropertyBrowser: RBSRealmPropertyCellDelegate {

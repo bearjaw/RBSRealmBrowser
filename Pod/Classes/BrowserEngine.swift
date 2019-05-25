@@ -40,6 +40,16 @@ final class BrowserEngine {
         return objectSchema.className
     }
     
+    func filterBaseModels(_ value: Bool) {
+        if value {
+            objectSchemas = objectSchemas.filter({
+                !$0.className.hasPrefix("RLM") &&
+                    !$0.className.hasPrefix("RealmSwift") })
+        } else {
+            fetchObjects(filter)
+        }
+    }
+    
     /// Fetch object schemas from realm.
     /// Optionally pass in an array of strings
     /// to filter out classes
@@ -60,6 +70,10 @@ final class BrowserEngine {
             || $0.type == .date
             || $0.type == .double }) else { return nil }
         return property.name
+    }
+    
+    deinit {
+        NSLog("deinit \(self)")
     }
 }
 
@@ -93,7 +107,7 @@ extension BrowserEngine {
             case .change:
                 onUpdate()
             case .deleted:
-                dump("Object delete")
+                break
             case .error(let error):
                 fatalError("Error: Encountered error while observing collection. Was \(error)")
             }
