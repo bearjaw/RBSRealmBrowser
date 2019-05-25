@@ -26,7 +26,7 @@ import RealmSwift
 public final class RBSRealmBrowser: UIViewController {
 
     @objc dynamic private var ascending: Bool = true
-    private var realmBrowserView: RBSRealmBrowserView = RBSRealmBrowserView()
+    private var viewRealm: RBSRealmBrowserView = RBSRealmBrowserView()
     private var engine: BrowserEngine
     private var disposable: NSKeyValueObservation?
 
@@ -49,7 +49,7 @@ public final class RBSRealmBrowser: UIViewController {
     }
 
     public override func loadView() {
-        view = realmBrowserView
+        view = viewRealm
     }
 
     public override func viewDidLoad() {
@@ -63,7 +63,7 @@ public final class RBSRealmBrowser: UIViewController {
     public override func viewWillTransition(to size: CGSize,
                                             with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        realmBrowserView.tableView.reloadData()
+        viewRealm.tableView.reloadData()
     }
 
     required public init?(coder aDecoder: NSCoder) {
@@ -164,10 +164,10 @@ public final class RBSRealmBrowser: UIViewController {
     }
 
     private func configureTableView() {
-        realmBrowserView.tableView.delegate = self
-        realmBrowserView.tableView.dataSource = self
-        realmBrowserView.tableView.tableFooterView = UIView()
-        realmBrowserView.tableView.register(RealmObjectBrowserCell.self,
+        viewRealm.tableView.delegate = self
+        viewRealm.tableView.dataSource = self
+        viewRealm.tableView.tableFooterView = UIView()
+        viewRealm.tableView.register(RealmObjectBrowserCell.self,
                                             forCellReuseIdentifier: RealmObjectBrowserCell.identifier)
         filterOptions.addTarget(self, action: .actionFilter, for: .valueChanged)
 
@@ -179,7 +179,7 @@ public final class RBSRealmBrowser: UIViewController {
         disposable = observe(\.ascending) { [unowned self] newValue in
             self.engine.sort(ascending: newValue)
             self.configureNavigationBar()
-            self.realmBrowserView.tableView.reloadData()
+            self.viewRealm.tableView.reloadData()
         }
     }
     
@@ -198,7 +198,7 @@ public final class RBSRealmBrowser: UIViewController {
         default:
             return
         }
-        realmBrowserView.tableView.reloadData()
+        viewRealm.tableView.reloadData()
     }
     
     @objc fileprivate func toggleSort() {
