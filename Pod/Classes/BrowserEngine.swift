@@ -183,4 +183,14 @@ extension BrowserEngine {
             fatalError("Error: Could not commit write transaction. \(error)")
         }
     }
+    
+    func saveValueForProperty(value: Any, propertyName: String, object: Object) {
+        do {
+            try realm.write {
+                object[propertyName] = value
+            }
+        } catch {
+            fatalError("Error: Could not commit write transaction. \(error)")
+        }
+    }
 }

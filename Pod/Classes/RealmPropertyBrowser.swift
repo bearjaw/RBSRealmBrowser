@@ -81,42 +81,32 @@ final class RealmPropertyBrowser: UIViewController {
     }
 
     // MARK: - private methods
-
+    // Disabled
+    // swiftlint:disable cyclomatic_complexity
     private func savePropertyChangesInRealm(_ newValue: String, property: Property) {
-        let letters = CharacterSet.letters
         switch property.type {
         case .bool:
-            let propertyValue = Bool(newValue)!
-            saveValueForProperty(value: propertyValue, propertyName: property.name)
+            guard let propertyValue = Bool(newValue) else { return }
+            engine.saveValueForProperty(value: propertyValue, propertyName: property.name, object: object)
         case .int:
-            let range = newValue.rangeOfCharacter(from: letters)
-            if  range == nil {
-                let propertyValue = Int(newValue)!
-                saveValueForProperty(value: propertyValue, propertyName: property.name)
-            }
+            guard let propertyValue = Int(newValue) else { return }
+            engine.saveValueForProperty(value: propertyValue, propertyName: property.name, object: object)
         case .float:
-            if let propertyValue = Float(newValue) {
-                saveValueForProperty(value: propertyValue, propertyName: property.name)
-            }
+            guard let propertyValue = Float(newValue) else { return }
+            engine.saveValueForProperty(value: propertyValue, propertyName: property.name, object: object)
         case .double:
-            let propertyValue: Double = Double(newValue)!
-            saveValueForProperty(value: propertyValue, propertyName: property.name)
+            guard let propertyValue = Double(newValue) else { return }
+            engine.saveValueForProperty(value: propertyValue, propertyName: property.name, object: object)
         case .string:
-            let propertyValue: String = newValue as String
-            saveValueForProperty(value: propertyValue, propertyName: property.name)
+            engine.saveValueForProperty(value: newValue, propertyName: property.name, object: object)
         case .linkingObjects, .object:
             break
         default:
             break
         }
-
     }
 
-    private func saveValueForProperty(value: Any, propertyName: String) {
-
-    }
-
-    private func fetchObjects(for propertyName:String) -> [Object] {
+    private func fetchObjects(for propertyName: String) -> [Object] {
         let results = object.dynamicList(propertyName)
         return Array(results)
     }
@@ -151,7 +141,8 @@ extension RealmPropertyBrowser: UITableViewDelegate {
             if property.isArray {
                 let objects = fetchObjects(for: property.name)
                 if objects.isNonEmpty {
-                    let objectsViewController = RealmObjectsBrowser(className: "", engine: engine)
+                    let object = objects[0]
+                    let objectsViewController = RealmObjectsBrowser(className: object.objectSchema.className, engine: engine)
                     navigationController?.pushViewController(objectsViewController, animated: true)
                 }
             } else if property.type == .object {
