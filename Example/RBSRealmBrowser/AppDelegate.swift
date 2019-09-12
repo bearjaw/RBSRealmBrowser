@@ -31,7 +31,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         navigationController.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.black]
         
         window.rootViewController = navigationController
-        window.tintColor = UIColor(red: 0.714, green: 0.039, blue: 0.204, alpha: 1.0)
         // add the realmbrowser quick action to your shortcut items array
         if #available(iOS 9.0, *) {
             application.shortcutItems = [RBSRealmBrowser.addBrowserQuickAction()]
