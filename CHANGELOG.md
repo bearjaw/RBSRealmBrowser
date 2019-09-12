@@ -1,3 +1,9 @@
+## RBSRealmBrowser v 0.4.0
+### New
+- Add support for iOS 13
+- Add support for Dark Mode
+- Layout improvements
+
 ## RBSRealmBrowser v 0.3.0
 ### New
 - Create objects of a given type

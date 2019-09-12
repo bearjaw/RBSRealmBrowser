@@ -1,5 +1,5 @@
 PODS:
-  - RBSRealmBrowser (0.3.0):
+  - RBSRealmBrowser (0.4.0):
     - RealmSwift
   - Realm (3.17.3):
     - Realm/Headers (= 3.17.3)
@@ -23,7 +23,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  RBSRealmBrowser: 34593550973874b43d51b89c4b94d455a63313fa
+  RBSRealmBrowser: d74ea8d237bc2729bc3398afa99ce7b479059b37
   Realm: 5a1d9d47bfc101dd597668b1a8af4288a2557f6d
   RealmSwift: b7fdc2d18616621c31df5c7a398a45a2163f8eb0
   SwiftLint: 5553187048b900c91aa03552807681bb6b027846
