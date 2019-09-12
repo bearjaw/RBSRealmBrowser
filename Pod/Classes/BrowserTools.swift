@@ -11,7 +11,7 @@ import AVFoundation
 
 final class BrowserTools {
     
-    private static let localVersion = "v0.3.0"
+    private static let localVersion = "v0.4.0"
     
     static func stringForProperty(_ property: Property, object: Object) -> String {
         if property.isArray || property.type == .linkingObjects {
