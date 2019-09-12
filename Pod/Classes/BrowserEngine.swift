@@ -174,10 +174,10 @@ extension BrowserEngine {
     
     func create(named className: String) -> DynamicObject {
         do {
-            realm.beginWrite()
-            let object = realm.dynamicCreate(className)
-            realm.add(object)
-            try realm.commitWrite()
+            let object = realm.dynamicCreate(className, update: .all)
+            try realm.write {
+                realm.add(object)
+            }
             return object
         } catch {
             fatalError("Error: Could not commit write transaction. \(error)")
