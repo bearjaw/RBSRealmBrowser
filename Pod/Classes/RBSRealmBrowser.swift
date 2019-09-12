@@ -8,6 +8,7 @@
 
 import UIKit
 import RealmSwift
+import os
 
 /// RBSRealmBrowser is a lightweight database browser for RealmSwift based on
 /// NBNRealmBrowser by Nerdish by Nature.
@@ -58,6 +59,7 @@ public final class RBSRealmBrowser: UIViewController {
         configureTableView()
         BrowserTools.checkForUpdates()
         observeSortSetting()
+        configureColors()
     }
 
     public override func viewWillTransition(to size: CGSize,
@@ -68,10 +70,6 @@ public final class RBSRealmBrowser: UIViewController {
 
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    deinit {
-//        NSLog("deinit \(self)")
     }
 
     // MARK: - Realm browser convenience method(s)
@@ -93,12 +91,16 @@ public final class RBSRealmBrowser: UIViewController {
         }
     }
 
-    public static func realmBrowser(showing classes: [String]?) -> UINavigationController? {
+    public static func realmBrowser(showing classes: [String]? = nil) -> UINavigationController? {
         do {
             let realm = try Realm()
             return realmBrowserForRealm(realm, showing: classes)
         } catch {
-            NSLog("Error occured: \(error)")
+            if #available(iOS 12.0, *) {
+                    os_log(.error, "%@", error.localizedDescription)
+            } else {
+                dump(error.localizedDescription)
+            }
             return nil
         }
     }
@@ -122,8 +124,7 @@ public final class RBSRealmBrowser: UIViewController {
     /// - Parameter realm: a realm instance
     /// - Returns: an instance of UINavigationController containing a browser
     public static func realmBrowserForRealm(_ realm: Realm ) -> UINavigationController? {
-        let rbsRealmBrowser = realmBrowserForRealm(realm, showing: nil)
-        return rbsRealmBrowser
+        return realmBrowserForRealm(realm, showing: nil)
     }
 
     ///  Instantiate the browser using a specific version of Realm at a specific path.
