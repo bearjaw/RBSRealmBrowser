@@ -14,15 +14,19 @@ protocol RBSRealmPropertyCellDelegate: class {
 }
 
 internal final class RealmPropertyCell: UITableViewCell {
+    
     static var identifier: String { return "RealmPropertyCell" }
+    
     private lazy var circleView: UIView = {
         let view = UIView()
         view.backgroundColor = .random
         return view
     }()
+    
     private lazy var labelPropertyTitle = {
         return labelWithAttributes(fontSize: 16, weight:0.3, text: "")
     }()
+    
     private var textFieldPropValue: UITextField = {
         let textField  = UITextField()
         let spacing = UIView(frame:CGRect(x: 0.0, y: 0.0, width: 10.0, height: 0.0))
@@ -37,12 +41,14 @@ internal final class RealmPropertyCell: UITableViewCell {
         textField.autocorrectionType = .no
         return textField
     }()
+    
     private lazy var labelPropertyType: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14.0)
         label.textColor = .lightGray
         return label
     }()
+    
     private lazy var toggle: UISwitch = {
         let toggle = UISwitch()
         toggle.addTarget(self, action: .toggleSwitch, for: .valueChanged)
