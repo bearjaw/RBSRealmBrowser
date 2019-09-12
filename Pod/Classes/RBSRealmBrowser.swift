@@ -170,7 +170,7 @@ public final class RBSRealmBrowser: UIViewController {
             viewRealm.backgroundColor = .systemBackground
             let navBarAppearance = UINavigationBarAppearance()
             navBarAppearance.backgroundColor = RealmStyle.tintColor
-            navBarAppearance.largeTitleTextAttributes = [.foregroundColor: .white]
+            navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
             navigationController?.navigationBar.standardAppearance = navBarAppearance
             navigationController?.navigationBar.compactAppearance = navBarAppearance
             navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
