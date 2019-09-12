@@ -263,7 +263,7 @@ extension RealmObjectsBrowser: UITableViewDataSource {
         guard let cell = dequeue as? RealmObjectBrowserCell else {
             fatalError("Error: Invalid cell passed. Expected \(RealmObjectBrowserCell.self). Cot: \(dequeue)")
         }
-        guard let objects = objects else { fatalError("Error") }
+        guard let objects = objects else { fatalError("Error: Objects Array was nil. This should not happen") }
         let object = objects[indexPath.row]
         let properties = object.objectSchema.properties
         let detail = BrowserTools.previewText(for: properties, object: object)
