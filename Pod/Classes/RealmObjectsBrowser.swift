@@ -50,16 +50,18 @@ final class RealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDel
         subscribeToCollectionChanges()
         configureBarButtonItems()
         observeEditMode()
-        UIViewController.configureNavigationBar(navigationController)
+        configureColors()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         viewRealm.tableView.reloadData()
+        navigationController?.setToolbarHidden(false, animated: animated)
     }
     
-    deinit {
-//        NSLog("deinit \(self)")
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setToolbarHidden(true, animated: animated)
     }
     
     // MARK: - View setup
@@ -85,6 +87,7 @@ final class RealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDel
     }
     
     private func configureNavigationBar() {
+        UIViewController.configureNavigationBar(navigationController)
         let editMode: UIBarButtonItem
         if isEditMode {
             editMode = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: .actionEdit)
@@ -101,6 +104,18 @@ final class RealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDel
         viewRealm.tableView.dataSource = self
         viewRealm.tableView.tableFooterView = UIView()
         viewRealm.tableView.register(RealmObjectBrowserCell.self, forCellReuseIdentifier: RealmObjectBrowserCell.identifier)
+    }
+    
+    private func configureColors() {
+        if #available(iOS 13.0, *) {
+            viewRealm.tableView.backgroundColor = .systemBackground
+            viewRealm.tableView.tintColor = .label
+            navigationController?.toolbar.backgroundColor = .secondarySystemBackground
+        } else {
+            viewRealm.tableView.backgroundColor = .white
+            viewRealm.tableView.tintColor = RealmStyle.tintColor
+            navigationController?.toolbar.backgroundColor = .white
+        }
     }
     
     private func showEmptyView(_ show: Bool) {
@@ -211,8 +226,14 @@ final class RealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDel
     
     @objc fileprivate func toggleAdd() {
         let result = engine.create(named: className)
-        let propertyBrowser = RealmPropertyBrowser(object: result, engine: engine)
+        let propertyBrowser = RealmPropertyBrowser(object: result, engine: engine, inEditMode: true)
         let navCon = UINavigationController(rootViewController: propertyBrowser)
+        
+        if #available(iOS 13.0, *) {
+            navCon.navigationBar.compactAppearance = navigationController!.navigationBar.standardAppearance
+            navCon.navigationBar.scrollEdgeAppearance = navigationController!.navigationBar.standardAppearance
+            navCon.navigationBar.standardAppearance = navigationController!.navigationBar.standardAppearance
+        }
         present(navCon, animated: true)
     }
     
@@ -238,6 +259,7 @@ final class RealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDel
 }
 
 extension RealmObjectsBrowser: UITableViewDelegate {
+    
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
         if !isEditMode {
@@ -255,15 +277,17 @@ extension RealmObjectsBrowser: UITableViewDelegate {
         let object = objects[indexPath.row]
         engine.deleteObjects(objects: [object])
     }
+    
 }
 
 extension RealmObjectsBrowser: UITableViewDataSource {
+    
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let dequeue = tableView.dequeueReusableCell(withIdentifier: RealmObjectBrowserCell.identifier, for: indexPath)
         guard let cell = dequeue as? RealmObjectBrowserCell else {
             fatalError("Error: Invalid cell passed. Expected \(RealmObjectBrowserCell.self). Cot: \(dequeue)")
         }
-        guard let objects = objects else { fatalError("Error") }
+        guard let objects = objects else { fatalError("Error: Objects Array was nil. This should not happen") }
         let object = objects[indexPath.row]
         let properties = object.objectSchema.properties
         let detail = BrowserTools.previewText(for: properties, object: object)
@@ -279,6 +303,7 @@ extension RealmObjectsBrowser: UITableViewDataSource {
     public  func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
     }
+    
 }
 
 extension RealmObjectsBrowser: UISearchResultsUpdating, UISearchBarDelegate, UISearchControllerDelegate {
