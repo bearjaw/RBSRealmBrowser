@@ -14,7 +14,7 @@ final class RealmPropertyBrowser: UIViewController {
     private var object: Object
     private var properties: [Property] = []
     private var filteredProperties: [Property] = []
-    @objc dynamic private var isEditMode: Bool = false
+    @objc dynamic private var isEditMode: Bool
     private var viewRealm: RBSRealmBrowserView = {
         let view = RBSRealmBrowserView()
         return view
@@ -24,10 +24,11 @@ final class RealmPropertyBrowser: UIViewController {
     
     // MARK: - Lifetime begin
 
-    init(object: Object, engine: BrowserEngine) {
+    init(object: Object, engine: BrowserEngine, inEditMode: Bool = false) {
         self.object = object
         self.engine = engine
         properties = object.objectSchema.properties
+        isEditMode = inEditMode
         super.init(nibName: nil, bundle: nil)
         title =  object.objectSchema.className
     }
@@ -60,6 +61,7 @@ final class RealmPropertyBrowser: UIViewController {
     
     private func configureBarButtonItems() {
         UIViewController.configureNavigationBar(navigationController)
+        navigationController?.setToolbarHidden(false, animated: false)
         if isEditMode {
             navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: .actionEdit)
         } else {
@@ -67,6 +69,11 @@ final class RealmPropertyBrowser: UIViewController {
         }
         if navigationController?.viewControllers.count == 1 {
             navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: .actionDismiss)
+            let save = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: .actionDone)
+            let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+            toolbarItems = [space, save]
+            navigationController?.toolbar.tintColor = RealmStyle.tintColor
+            navigationController?.toolbar.isTranslucent = false
         }
     }
     
@@ -136,6 +143,10 @@ final class RealmPropertyBrowser: UIViewController {
             self.dismiss(animated: true)
         }
     }
+    
+    @objc fileprivate func toggleDone() {
+        dismiss(animated: true)
+    }
 }
 
 extension RealmPropertyBrowser: UITableViewDelegate {
@@ -193,6 +204,7 @@ extension RealmPropertyBrowser: UITableViewDataSource {
 private extension Selector {
     static let actionEdit = #selector(RealmPropertyBrowser.toggleEdit)
     static let actionDismiss = #selector(RealmPropertyBrowser.toggleDismiss)
+    static let actionDone = #selector(RealmPropertyBrowser.toggleDone)
 }
 
 extension RealmPropertyBrowser: RBSRealmPropertyCellDelegate {

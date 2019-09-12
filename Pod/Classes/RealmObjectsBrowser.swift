@@ -56,10 +56,12 @@ final class RealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDel
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         viewRealm.tableView.reloadData()
+        navigationController?.setToolbarHidden(false, animated: animated)
     }
     
-    deinit {
-        navigationController?.setToolbarHidden(true, animated: true)
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setToolbarHidden(true, animated: animated)
     }
     
     // MARK: - View setup
@@ -222,7 +224,7 @@ final class RealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDel
     
     @objc fileprivate func toggleAdd() {
         let result = engine.create(named: className)
-        let propertyBrowser = RealmPropertyBrowser(object: result, engine: engine)
+        let propertyBrowser = RealmPropertyBrowser(object: result, engine: engine, inEditMode: true)
         let navCon = UINavigationController(rootViewController: propertyBrowser)
         
         if #available(iOS 13.0, *) {
