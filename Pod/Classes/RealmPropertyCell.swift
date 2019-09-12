@@ -210,6 +210,7 @@ internal final class RealmPropertyCell: UITableViewCell {
             labelPropertyType.backgroundColor = .white
             labelPropertyTitle.textColor = .black
             labelPropertyTitle.backgroundColor = .white
+            textFieldPropValue.backgroundColor = .white
         }
     }
 

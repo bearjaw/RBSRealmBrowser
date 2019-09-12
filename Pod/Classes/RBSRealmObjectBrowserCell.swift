@@ -113,8 +113,8 @@ final class RealmObjectBrowserCell: UITableViewCell {
         } else {
             labelTitle.textColor = .darkGray
             labelTitle.backgroundColor = .white
-            labelDetailText.backgroundColor = .darkGray
-            labelDetailText.textColor = .white
+            labelDetailText.backgroundColor = .white
+            labelDetailText.textColor = .darkGray
             backgroundColor = .white
             contentView.backgroundColor = .white
         }
