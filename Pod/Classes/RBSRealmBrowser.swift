@@ -161,6 +161,27 @@ public final class RBSRealmBrowser: UIViewController {
         let title = ascending ? RBSSortStyle.ascending.rawValue : RBSSortStyle.descending.rawValue
         let bbiSort = UIBarButtonItem(title: title, style: .plain, target: self, action: .actionSort)
         self.navigationItem.rightBarButtonItems = [bbiDismiss, bbiSort]
+        
+    }
+    
+    private func configureColors() {
+        if #available(iOS 13.0, *) {
+            viewRealm.backgroundColor = .systemBackground
+            let navBarAppearance = UINavigationBarAppearance()
+            navBarAppearance.backgroundColor = RealmStyle.tintColor
+            navBarAppearance.largeTitleTextAttributes = [.foregroundColor: .white]
+            navigationController?.navigationBar.standardAppearance = navBarAppearance
+            navigationController?.navigationBar.compactAppearance = navBarAppearance
+            navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
+            navigationController?.navigationBar.isTranslucent = false
+            navigationController?.navigationBar.compactAppearance?.backgroundColor = RealmStyle.tintColor
+            navigationController?.view.backgroundColor = .systemBackground
+            viewRealm.tableView.backgroundColor = .systemBackground
+        } else {
+            viewRealm.backgroundColor = .white
+            navigationController?.view.backgroundColor = .white
+            viewRealm.tableView.backgroundColor = .white
+        }
     }
 
     private func configureTableView() {
