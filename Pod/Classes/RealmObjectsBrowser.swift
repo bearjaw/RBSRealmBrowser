@@ -109,9 +109,11 @@ final class RealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDel
     private func configureColors() {
         if #available(iOS 13.0, *) {
             viewRealm.tableView.backgroundColor = .systemBackground
+            viewRealm.tableView.tintColor = .label
             navigationController?.toolbar.backgroundColor = .secondarySystemBackground
         } else {
             viewRealm.tableView.backgroundColor = .white
+            viewRealm.tableView.tintColor = RealmStyle.tintColor
             navigationController?.toolbar.backgroundColor = .white
         }
     }
