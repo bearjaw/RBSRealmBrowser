@@ -45,11 +45,21 @@ final class RealmPropertyBrowser: UIViewController {
         configureTableView()
         configureBarButtonItems()
         subscribeToChanges()
-        UIViewController.configureNavigationBar(navigationController)
         observeEditMode()
+        configureColors()
     }
-
+    
+    // MARK: Lifetime end
+    // MARK: - View Setup
+    
+    private func subscribeToChanges() {
+        engine.observe(object: object) { [unowned self] in
+            self.viewRealm.tableView.reloadData()
+        }
+    }
+    
     private func configureBarButtonItems() {
+        UIViewController.configureNavigationBar(navigationController)
         if isEditMode {
             navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: .actionEdit)
         } else {
@@ -59,17 +69,12 @@ final class RealmPropertyBrowser: UIViewController {
             navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: .actionDismiss)
         }
     }
-
-    deinit {
-//        NSLog("deinit \(self)")
-    }
     
-    // MARK: Lifetime end
-    // MARK: - View Setup
-    
-    private func subscribeToChanges() {
-        engine.observe(object: object) { [unowned self] in
-            self.viewRealm.tableView.reloadData()
+    private func configureColors() {
+        if #available(iOS 13.0, *) {
+            viewRealm.tableView.backgroundColor = .systemBackground
+        } else {
+            viewRealm.tableView.backgroundColor = .white
         }
     }
 
