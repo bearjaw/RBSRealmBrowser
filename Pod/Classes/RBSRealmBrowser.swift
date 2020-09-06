@@ -27,7 +27,7 @@ import os
 public final class RBSRealmBrowser: UIViewController {
     
     @objc dynamic private var ascending: Bool = true
-    private var viewRealm: RBSRealmBrowserView = RBSRealmBrowserView()
+    private lazy var viewRealm: RBSRealmBrowserView = RBSRealmBrowserView()
     private var engine: BrowserEngine
     private var disposable: NSKeyValueObservation?
     
