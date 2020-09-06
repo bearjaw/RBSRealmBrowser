@@ -66,33 +66,37 @@ internal protocol HumanReadable {
 
 internal extension UIView {
     var bottomRight: CGPoint {
-        return (CGPoint(x: frame.origin.x + bounds.size.width, y: frame.origin.y + bounds.size.height))
+        return CGPoint(x: frame.origin.x + bounds.width, y: frame.origin.y + bounds.height)
     }
 }
 
-extension PropertyType: HumanReadable {
+extension Property: HumanReadable {
     var humanReadable: String {
-        switch self {
+        let optional = self.isOptional ? "?" : ""
+        if self.isArray {
+            return "Array\(optional)"
+        }
+        switch self.type {
         case .bool:
-            return "Boolean"
+            return "Boolean\(optional)"
         case .float:
-            return "Float"
+            return "Float\(optional)"
         case .double:
-            return "Double"
+            return "Double\(optional)"
         case .string:
-            return "String"
+            return "String\(optional)"
         case .int:
-            return "Int"
+            return "Int\(optional)"
         case .data:
-            return "Data"
+            return "Data\(optional)"
         case .date:
-            return "Date"
+            return "Date\(optional)"
         case .linkingObjects:
-            return "Linking objects"
+            return "Linking objects\(optional)"
         case .object:
-            return "Object"
+            return "\(self.objectClassName ?? "Object")\(optional)"
         case .any:
-            return "Any"
+            return "Any\(optional)"
         }
     }
 }
@@ -158,4 +162,12 @@ extension UIViewController {
             navigationController.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
         }
     }
+}
+
+extension UIView {
+
+    static let margin16: CGFloat = 16
+
+    static let margin8: CGFloat = 8
+
 }
