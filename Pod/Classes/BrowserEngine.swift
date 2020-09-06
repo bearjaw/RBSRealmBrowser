@@ -80,9 +80,6 @@ final class BrowserEngine {
         return property.name
     }
     
-    deinit {
-//        NSLog("deinit \(self)")
-    }
 }
 
 // MARK: - Observing
@@ -99,11 +96,11 @@ extension BrowserEngine {
         }
         tokenObjects = objects.observe { updateCallback in
             switch updateCallback {
-            case .initial(let collecttion):
+            case let .initial(collecttion):
                 onInitial(collecttion)
-            case .update(let collection, let deletions, let insertions, let modifications):
+            case let .update(collection, deletions, insertions, modifications):
                 onUpdate(collection, deletions, insertions, modifications)
-            case .error(let error):
+            case let .error(error):
                 fatalError("Error: Encountered error while observing collection. Was \(error)")
             }
         }
