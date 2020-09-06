@@ -15,10 +15,7 @@ final class RealmPropertyBrowser: UIViewController {
     private var properties: [Property] = []
     private var filteredProperties: [Property] = []
     @objc dynamic private var isEditMode: Bool
-    private var viewRealm: RBSRealmBrowserView = {
-        let view = RBSRealmBrowserView()
-        return view
-    }()
+    private lazy var viewRealm: RBSRealmBrowserView = RBSRealmBrowserView()
     private var engine: BrowserEngine
     private var disposable: NSKeyValueObservation?
     
@@ -89,6 +86,8 @@ final class RealmPropertyBrowser: UIViewController {
         viewRealm.tableView.delegate = self
         viewRealm.tableView.dataSource = self
         viewRealm.tableView.tableFooterView = UIView()
+        viewRealm.tableView.estimatedRowHeight = 64
+        viewRealm.tableView.rowHeight = UITableView.automaticDimension
         viewRealm.tableView.register(RealmPropertyCell.self, forCellReuseIdentifier: RealmPropertyCell.identifier)
     }
 
@@ -173,31 +172,22 @@ extension RealmPropertyBrowser: UITableViewDelegate {
 
 extension RealmPropertyBrowser: UITableViewDataSource {
     
-    public func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        let property = properties[indexPath.row]
-        let stringvalue = BrowserTools.stringForProperty(property, object: object)
-        if let cell = cell as? RealmPropertyCell {
-            cell.cellWithAttributes(propertyTitle: property.name,
-                                    propertyValue: stringvalue,
-                                    editMode:isEditMode,
-                                    property:property)
-        }
-    }
-    
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let dequeued = tableView.dequeueReusableCell(withIdentifier: RealmPropertyCell.identifier),
             let cell = dequeued as? RealmPropertyCell else {
                 fatalError("Error: Cell dequeued did not match required type \(RealmPropertyCell.self)")
         }
         cell.delegate = self
+        let property = properties[indexPath.row]
+        let stringvalue = BrowserTools.stringForProperty(property, object: object)
+            cell.cellWithAttributes(propertyTitle: property.name,
+                                    propertyValue: stringvalue,
+                                    editMode:isEditMode,
+                                    property:property)
         return cell
     }
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return properties.count
-    }
-
-    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableView.automaticDimension
     }
 }
 
