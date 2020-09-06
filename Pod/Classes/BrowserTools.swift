@@ -93,6 +93,7 @@ final class BrowserTools {
             if let objectData = object[property.name] as? Object {
                 return objectData.humanReadable
             }
+            return "nil"
         case .any, .data, .linkingObjects:
             let data =  object[property.name]
             return "\(data.debugDescription)"
