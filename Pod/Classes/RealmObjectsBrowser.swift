@@ -18,10 +18,7 @@ final class RealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDel
     private var disposable: NSKeyValueObservation?
     fileprivate var searchController : UISearchController?
     
-    private lazy var viewRealm: RBSRealmBrowserView = {
-        let view = RBSRealmBrowserView()
-        return view
-    }()
+    private lazy var viewRealm: RBSRealmBrowserView = RBSRealmBrowserView()
     
     @objc dynamic private var isEditMode: Bool = false {
         willSet {
@@ -198,7 +195,8 @@ final class RealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDel
         engine.deleteObjects(objects: objects)
     }
     
-    @objc fileprivate func toggleDelete(sender: UIBarButtonItem) {
+    @objc
+    fileprivate func toggleDelete(sender: UIBarButtonItem) {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let actionDelete = UIAlertAction(title: "Delete all", style: .destructive) { [unowned self] _ in
             self.deleteAll()
@@ -238,8 +236,7 @@ final class RealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDel
     }
     
     // MARK: - UIViewControllerPreviewingDelegate
-    
-    @available(iOS 9.0, *)
+
     public func previewingContext(_ previewingContext: UIViewControllerPreviewing,
                                   viewControllerForLocation location: CGPoint) -> UIViewController? {
         guard let indexPath = viewRealm.tableView.indexPathForRow(at:location) else { return nil }
@@ -250,13 +247,14 @@ final class RealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDel
         previewingContext.sourceRect = cell.frame
         return detailVC
     }
-    
-    @available(iOS 9.0, *)
+
     public func previewingContext(_ previewingContext: UIViewControllerPreviewing,
                                   commit viewControllerToCommit: UIViewController) {
         navigationController?.pushViewController(viewControllerToCommit, animated: true)
     }
 }
+
+// MARK: - UITableViewDelegate
 
 extension RealmObjectsBrowser: UITableViewDelegate {
     
@@ -280,6 +278,8 @@ extension RealmObjectsBrowser: UITableViewDelegate {
     
 }
 
+// MARK: - UITableViewDelegate
+
 extension RealmObjectsBrowser: UITableViewDataSource {
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -291,7 +291,9 @@ extension RealmObjectsBrowser: UITableViewDataSource {
         let object = objects[indexPath.row]
         let properties = object.objectSchema.properties
         let detail = BrowserTools.previewText(for: properties, object: object)
-        cell.updateWith(title: object.objectSchema.className, detailText: detail)
+        if let superclass = object.superclass?.superclass() {
+            cell.updateWith(title: object.objectSchema.className, detailText: NSStringFromClass(superclass))
+        }
         return cell
     }
     
