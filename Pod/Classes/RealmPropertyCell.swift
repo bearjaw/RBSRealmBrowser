@@ -6,17 +6,17 @@
 //
 //
 
-import UIKit
 import RealmSwift
+import UIKit
 
-protocol RBSRealmPropertyCellDelegate: class {
+protocol RBSRealmPropertyCellDelegate: AnyObject {
     func textFieldDidFinishEdit(_ input: String, property: Property)
 }
 
-internal final class RealmPropertyCell: UITableViewCell {
+final class RealmPropertyCell: UITableViewCell {
     
     static let identifier = NSStringFromClass(RealmObjectBrowserCell.self)
-
+    
     private lazy var typeView: ObjectTypeView = {
         let view = ObjectTypeView()
         contentView.addSubview(view)
@@ -24,7 +24,7 @@ internal final class RealmPropertyCell: UITableViewCell {
     }()
     
     private lazy var textFieldPropValue: UITextField = {
-        let textField  = UITextField()
+        let textField = UITextField()
         let spacing = UIView(frame:CGRect(x: 0.0, y: 0.0, width: 10.0, height: 0.0))
         spacing.backgroundColor = .clear
         textField.leftViewMode = .always
@@ -44,16 +44,16 @@ internal final class RealmPropertyCell: UITableViewCell {
         contentView.addSubview(toggle)
         return toggle
     }()
-
+    
     private var property: Property?
     weak var delegate: RBSRealmPropertyCellDelegate?
-
+    
     private let margin16 = UIView.margin16
     private let margin8 = UIView.margin8
-
+    
     private var disposables: [NSKeyValueObservation] = []
     @objc private dynamic var isEditingAllowed = false
-
+    
     override init(style: CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .none
@@ -61,11 +61,12 @@ internal final class RealmPropertyCell: UITableViewCell {
         addObservers()
         configureColors()
     }
-
+    
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         textFieldPropValue.text = ""
@@ -74,7 +75,7 @@ internal final class RealmPropertyCell: UITableViewCell {
         toggle.frame = .zero
         toggle.isHidden = true
     }
-
+    
     func cellWithAttributes(propertyTitle: String,
                             propertyValue: String,
                             editMode: Bool,
@@ -88,60 +89,61 @@ internal final class RealmPropertyCell: UITableViewCell {
         configureKeyboard(for: property.type)
         configureTextField(for: editMode)
     }
-
+    
     func configureToggle(for property: Property, value: String) {
         if property.type == .bool {
             toggle.isOn = Bool(value)!
             toggle.isHidden = false
         }
     }
-
+    
     override func sizeThatFits(_ size: CGSize) -> CGSize {
-        let usableSize = CGSize(width: size.width - 2*margin16, height: .greatestFiniteMagnitude)
+        let usableSize = CGSize(width: size.width - 2 * margin16, height: .greatestFiniteMagnitude)
         let sizeTypeView = typeView.sizeThatFits(usableSize)
-        return CGSize(width: size.width, height: sizeTypeView.height + 2*margin16)
+        return CGSize(width: size.width, height: sizeTypeView.height + 2 * margin16)
     }
-
+    
     override func layoutSubviews() {
         super.layoutSubviews()
-
-        let usableSize = CGSize(width: contentView.bounds.width - 2*margin16,
-                                 height: .greatestFiniteMagnitude)
+        
+        let usableSize = CGSize(width: contentView.bounds.width - 2 * margin16,
+                                height: .greatestFiniteMagnitude)
         let sizeTypeView = typeView.sizeThatFits(usableSize)
         let originType = CGPoint(x: margin16, y: margin16)
         typeView.frame = CGRect(origin: originType, size: sizeTypeView)
-
+        
         let usableTextFieldWidth = contentView.bounds.width
             - typeView.bounds.width
-            - 3*margin16
-
+            - 3 * margin16
+        
         let usableTextFieldSize = CGSize(width: usableTextFieldWidth,
-                                          height: .greatestFiniteMagnitude)
+                                         height: .greatestFiniteMagnitude)
         let sizeTextField = textFieldPropValue.sizeThatFits(usableTextFieldSize)
         let minWidth = min(sizeTextField.width, usableTextFieldSize.width)
-        let originTextField = CGPoint(x: contentView.bounds.width-minWidth-margin16,
-                                       y: margin16)
+        
+        let originTextField = CGPoint(x: contentView.bounds.width - minWidth - margin16,
+                                      y: margin16)
         if let prop = property {
             if prop.type == .bool {
                 toggle.frame = CGRect(origin: originTextField,
-                                       size: (CGSize(width: minWidth,
-                                                     height: toggle.bounds.size.height)))
+                                      size: (CGSize(width: minWidth,
+                                                    height: toggle.bounds.size.height)))
             } else {
                 textFieldPropValue.frame = CGRect(origin: originTextField,
-                                                   size: CGSize(width: minWidth,
-                                                                 height: sizeTextField.height + 16))
+                                                  size: CGSize(width: minWidth,
+                                                               height: sizeTextField.height + 16))
                 let yPos = typeView.convert(typeView.titleCenter, to: self).y
                 textFieldPropValue.center = CGPoint(x: textFieldPropValue.center.x, y: yPos)
             }
         }
     }
-
+    
     @objc
     func toggleSwitch() {
         guard let delegate = delegate, let prop = property else { return }
         delegate.textFieldDidFinishEdit("\(toggle.isOn)", property: prop)
     }
-
+    
     // MARK: - Configureation
     
     private func addObservers() {
@@ -168,7 +170,7 @@ internal final class RealmPropertyCell: UITableViewCell {
             textFieldPropValue.backgroundColor = .white
         }
     }
-
+    
     private func configureKeyboard(for propertyType: PropertyType) {
         if propertyType == .float || propertyType == .double {
             textFieldPropValue.keyboardType = .decimalPad
@@ -178,7 +180,7 @@ internal final class RealmPropertyCell: UITableViewCell {
             textFieldPropValue.keyboardType = .alphabet
         }
     }
-
+    
     deinit {
         disposables.forEach({ $0.invalidate() })
         disposables = []
@@ -195,7 +197,7 @@ extension RealmPropertyCell: UITextFieldDelegate {
         textFieldPropValue.isUserInteractionEnabled = editMode
         textFieldPropValue.delegate = self
     }
-
+    
     private func setTextFieldBorders(for value: Bool) {
         if  isEditingAllowed {
             textFieldPropValue.layer.borderColor = RealmStyle.tintColor.cgColor
@@ -204,36 +206,36 @@ extension RealmPropertyCell: UITextFieldDelegate {
             textFieldPropValue.layer.borderWidth = 0.0
         }
     }
-
+    
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         guard let property = property else { print("No properzy set"); return false }
         return shouldAllowEditing(for: property.type)
     }
-
+    
     private func shouldAllowEditing(for propertyType: PropertyType) -> Bool {
         return !(propertyType == .linkingObjects ||
-            propertyType == .data ||
-            propertyType == .linkingObjects ||
-            propertyType == .object)
+                    propertyType == .data ||
+                    propertyType == .linkingObjects ||
+                    propertyType == .object)
     }
-
+    
     func textFieldDidBeginEditing(_ textField: UITextField) {
         guard let property = property, let delegate = delegate else { return }
         if property.type == .bool {
             let isEqual: Bool = (textField.text! as String == "false")
             textField.text = isEqual.humanReadable
-
+            
             delegate.textFieldDidFinishEdit("\(isEqual.rawValue)", property: property)
             setNeedsLayout()
             textField.resignFirstResponder()
         }
     }
-
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.isUserInteractionEnabled = false
         return true
     }
-
+    
     func textFieldDidEndEditing(_ textField: UITextField) {
         textField.resignFirstResponder()
         guard let property = property else { return }
