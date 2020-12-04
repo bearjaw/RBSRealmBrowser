@@ -16,6 +16,7 @@ final class RealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDel
     private var engine: BrowserEngine
     private var className: String
     private var disposable: NSKeyValueObservation?
+    private var pinnedProperty: Property?
     fileprivate var searchController : UISearchController?
     
     private lazy var viewRealm = RBSRealmBrowserView()
@@ -72,13 +73,14 @@ final class RealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDel
     
     private func configureToolBar() {
         let menu = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: .actionMenu)
+        let pinnedProperies = UIBarButtonItem(barButtonSystemItem: .organize, target: self, action: .selectPinnedProperties)
         let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         let items: [UIBarButtonItem]
         if isEditMode {
             let trash = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: .actionTrash)
-            items = [menu, space, trash]
+            items = [menu, space, trash, pinnedProperies]
         } else {
-            items = [menu, space]
+            items = [menu, space, pinnedProperies]
         }
         setToolbarItems(items, animated: true)
         navigationController?.setToolbarHidden(false, animated: true)
@@ -123,6 +125,12 @@ final class RealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDel
         } else {
             viewRealm.tableView.backgroundView?.alpha = 0.0
         }
+    }
+
+    private func createPinnedPropertyText(_ object: DynamicObject) -> String {
+        guard let pinnedProperty = pinnedProperty else { return "" }
+        let stringvalue = BrowserTools.stringForProperty(pinnedProperty, object: object)
+        return "\(pinnedProperty.name): \(stringvalue)"
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -187,15 +195,33 @@ final class RealmObjectsBrowser: UIViewController, UIViewControllerPreviewingDel
             selectedRows.forEach { self.viewRealm.tableView.deselectRow(at: $0, animated: true) }
         }
     }
+
+    private func deleteAll() {
+        guard let objects = objects else { return }
+        engine.deleteObjects(objects: objects)
+    }
+
+    @objc
+    fileprivate func showSelectPinnedProperties(sender: UIBarButtonItem) {
+        guard let object = objects?.first?.objectSchema, object.properties.isNonEmpty else { return }
+        let actionSheet = UIAlertController(title: "Select a pinned property",
+                                            message: nil,
+                                            preferredStyle: .actionSheet)
+        let actions = object.properties.map(createActionFromProperty)
+        actions.forEach(actionSheet.addAction)
+        showAlert(alertController: actionSheet, source: self, barButtonItem: sender)
+    }
+
+    private func createActionFromProperty(_ property: Property) -> UIAlertAction {
+        UIAlertAction(title: "\(property.name): \(property.humanReadable)", style: .default) { [weak self] _ in
+            self?.pinnedProperty = property
+            self?.viewRealm.tableView.reloadData()
+        }
+    }
     
     @objc
     fileprivate func toggleEditMode(_ sender: UIBarButtonItem) {
         isEditMode.toggle()
-    }
-    
-    private func deleteAll() {
-        guard let objects = objects else { return }
-        engine.deleteObjects(objects: objects)
     }
     
     @objc
@@ -283,7 +309,7 @@ extension RealmObjectsBrowser: UITableViewDelegate {
     
 }
 
-// MARK: - UITableViewDelegate
+// MARK: - UITableViewDataSource
 
 extension RealmObjectsBrowser: UITableViewDataSource {
     
@@ -295,7 +321,9 @@ extension RealmObjectsBrowser: UITableViewDataSource {
         guard let objects = objects else { fatalError("Error: Objects Array was nil. This should not happen") }
         let object = objects[indexPath.row]
         if let superclass = object.superclass?.superclass() {
-            cell.updateWith(title: object.objectSchema.className, detailText: NSStringFromClass(superclass))
+            let pinned = createPinnedPropertyText(object)
+            let composed = "\(object.objectSchema.className) \(pinned)"
+            cell.updateWith(title: composed, detailText: NSStringFromClass(superclass))
         }
         return cell
     }
@@ -380,4 +408,5 @@ private extension Selector {
     static let actionMenu = #selector(RealmObjectsBrowser.toggleMenu(sender:))
     static let actionTrash = #selector(RealmObjectsBrowser.toggleDelete(sender:))
     static let actionAdd = #selector(RealmObjectsBrowser.toggleAdd)
+    static let selectPinnedProperties = #selector(RealmObjectsBrowser.showSelectPinnedProperties(sender:))
 }
