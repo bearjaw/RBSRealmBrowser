@@ -6,12 +6,13 @@
 //  Copyright (c) 2016 Max Baumbach. All rights reserved.
 //
 
-import UIKit
 import RBSRealmBrowser
 import RealmSwift
+import UIKit
 
 class ViewController: UIViewController {
     private var sampleView = SampleView()
+
     override func loadView() {
         self.view = sampleView
     }

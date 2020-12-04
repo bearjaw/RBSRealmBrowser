@@ -6,38 +6,36 @@
 //
 //
 
-import UIKit
-import RealmSwift
 import Realm
+import RealmSwift
+import UIKit
 
 final class RealmPropertyBrowser: UIViewController {
     private var object: Object
     private var properties: [Property] = []
     private var filteredProperties: [Property] = []
-    @objc dynamic private var isEditMode: Bool
-    private var viewRealm: RBSRealmBrowserView = {
-        let view = RBSRealmBrowserView()
-        return view
-    }()
+    @objc private dynamic var isEditMode: Bool
+    private lazy var viewRealm = RBSRealmBrowserView()
     private var engine: BrowserEngine
     private var disposable: NSKeyValueObservation?
     
     // MARK: - Lifetime begin
-
+    
     init(object: Object, engine: BrowserEngine, inEditMode: Bool = false) {
         self.object = object
         self.engine = engine
         properties = object.objectSchema.properties
         isEditMode = inEditMode
         super.init(nibName: nil, bundle: nil)
-        title =  object.objectSchema.className
+        title = object.objectSchema.className
     }
     
-    required public init?(coder aDecoder: NSCoder) {
+    @available(*, unavailable)
+    public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
-    public override func loadView() {
+    
+    override public func loadView() {
         view = viewRealm
     }
     
@@ -54,8 +52,8 @@ final class RealmPropertyBrowser: UIViewController {
     // MARK: - View Setup
     
     private func subscribeToChanges() {
-        engine.observe(object: object) { [unowned self] in
-            self.viewRealm.tableView.reloadData()
+        engine.observe(object: object) { [weak self] in
+            self?.viewRealm.tableView.reloadData()
         }
     }
     
@@ -84,14 +82,16 @@ final class RealmPropertyBrowser: UIViewController {
             viewRealm.tableView.backgroundColor = .white
         }
     }
-
+    
     private func configureTableView() {
         viewRealm.tableView.delegate = self
         viewRealm.tableView.dataSource = self
         viewRealm.tableView.tableFooterView = UIView()
+        viewRealm.tableView.estimatedRowHeight = 64
+        viewRealm.tableView.rowHeight = UITableView.automaticDimension
         viewRealm.tableView.register(RealmPropertyCell.self, forCellReuseIdentifier: RealmPropertyCell.identifier)
     }
-
+    
     // MARK: - private methods
     // Disabled
     // swiftlint:disable cyclomatic_complexity
@@ -117,7 +117,7 @@ final class RealmPropertyBrowser: UIViewController {
             break
         }
     }
-
+    
     private func fetchObjects(for propertyName: String) -> [Object] {
         let results = object.dynamicList(propertyName)
         return Array(results)
@@ -126,14 +126,14 @@ final class RealmPropertyBrowser: UIViewController {
     // MARK: - Observing
     
     private func observeEditMode() {
-        disposable = observe(\.isEditMode, onChange: { [unowned self] _ in
-            self.configureBarButtonItems()
-            self.viewRealm.tableView.reloadData()
+        disposable = observe(\.isEditMode, onChange: { [weak self] _ in
+            self?.configureBarButtonItems()
+            self?.viewRealm.tableView.reloadData()
         })
     }
     
     // MARK: - Actions
-
+    
     @objc fileprivate func toggleEdit() {
         isEditMode.toggle()
     }
@@ -167,37 +167,28 @@ extension RealmPropertyBrowser: UITableViewDelegate {
                 navigationController?.pushViewController(objectsViewController, animated: true)
             }
         }
-
+        
     }
 }
 
 extension RealmPropertyBrowser: UITableViewDataSource {
     
-    public func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        let property = properties[indexPath.row]
-        let stringvalue = BrowserTools.stringForProperty(property, object: object)
-        if let cell = cell as? RealmPropertyCell {
-            cell.cellWithAttributes(propertyTitle: property.name,
-                                    propertyValue: stringvalue,
-                                    editMode:isEditMode,
-                                    property:property)
-        }
-    }
-    
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let dequeued = tableView.dequeueReusableCell(withIdentifier: RealmPropertyCell.identifier),
-            let cell = dequeued as? RealmPropertyCell else {
-                fatalError("Error: Cell dequeued did not match required type \(RealmPropertyCell.self)")
+              let cell = dequeued as? RealmPropertyCell else {
+            fatalError("Error: Cell dequeued did not match required type \(RealmPropertyCell.self)")
         }
         cell.delegate = self
+        let property = properties[indexPath.row]
+        let stringvalue = BrowserTools.stringForProperty(property, object: object)
+        cell.cellWithAttributes(propertyTitle: property.name,
+                                propertyValue: stringvalue,
+                                editMode:isEditMode,
+                                property:property)
         return cell
     }
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return properties.count
-    }
-
-    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableView.automaticDimension
     }
 }
 

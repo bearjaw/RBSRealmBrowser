@@ -1,3 +1,18 @@
+## RBSRealmBrowser v 0.5.0
+### Breaking
+- iOS 9 Support dropped 
+
+### New
+- Add support for iOS 14
+- Add support for Realm 10 and later
+- Display optional types
+- Display super class of Objects
+- Select a property to be pinned in the objects browser
+
+### Improvements
+- Clean up code
+- Layout improvements
+
 ## RBSRealmBrowser v 0.4.0
 ### New
 - Add support for iOS 13
