@@ -97,6 +97,12 @@ extension Property: HumanReadable {
             return "\(self.objectClassName ?? "Object")\(optional)"
         case .any:
             return "Any\(optional)"
+        case .objectId:
+            return "ObjectId\(optional)"
+        case .decimal128:
+            return "Decimal128\(optional)"
+        default:
+            return "Unknown type: \(self.type)"
         }
     }
 }

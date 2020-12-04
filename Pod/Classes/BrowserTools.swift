@@ -95,14 +95,25 @@ final class BrowserTools {
             }
             return "nil"
         case .any, .data, .linkingObjects:
-            let data =  object[property.name]
+            let data = object[property.name]
             return "\(data.debugDescription)"
         case .date:
             if let date = object[property.name] as? Date {
                 return "\(date)"
             }
+        case .objectId:
+            if let id = object[property.name] as? ObjectId {
+                return id.stringValue
+            }
+        case .decimal128:
+            if let decimal = object[property.name] as? Decimal128 {
+                return "\(decimal)"
+            }
+        default:
+            return "\(object[property.name] as Any)"
+
         }
-        return ""
+        return "Unsupported type"
     }
 }
 
