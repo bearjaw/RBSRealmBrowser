@@ -1,5 +1,5 @@
 //
-//  RBSRealmObjectBrowserCell.swift
+//  RealmObjectBrowserCell.swift
 //  Pods
 //
 //  Created by Max Baumbach on 31/03/16.
@@ -9,16 +9,15 @@
 import UIKit
 
 final class RealmObjectBrowserCell: UITableViewCell {
-    static var identifier: String { return "RealmObjectBrowserCell"  }
     
-    private let margin: CGFloat = 20.0
+    static let identifier = NSStringFromClass(RealmObjectBrowserCell.self)
     
-    private lazy var labelTitle: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.preferredFont(forTextStyle: .headline)
-        label.numberOfLines = 1
-        contentView.addSubview(label)
-        return label
+    let margin = UIView.margin16
+    
+    private lazy var typeView: ObjectTypeView = {
+        let view = ObjectTypeView()
+        contentView.addSubview(view)
+        return view
     }()
     
     private lazy var labelDetailText: UILabel = {
@@ -29,18 +28,12 @@ final class RealmObjectBrowserCell: UITableViewCell {
         return label
     }()
     
-    private lazy var circleView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .random
-        return view
-    }()
-    
     override init(style: CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        contentView.addSubview(circleView)
         configureColors()
     }
     
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -48,75 +41,155 @@ final class RealmObjectBrowserCell: UITableViewCell {
     // MARK: - Update
     
     func updateWith(title: String, detailText: String) {
-        labelTitle.text = title
-        labelDetailText.text = detailText
+        typeView.update(name: title, type: detailText)
     }
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        labelTitle.text = ""
-        labelDetailText.text = ""
+        typeView.update(name: "")
     }
     
     // MARK: - Layout
     
     override func sizeThatFits(_ size: CGSize) -> CGSize {
-        let screenWidth: CGFloat = size.width
-        let usableSize = CGSize(width: screenWidth-2*margin, height: .greatestFiniteMagnitude)
-        let sizeTitle = labelTitle.sizeThatFits(usableSize)
-        let sizeDetail = labelDetailText.sizeThatFits(usableSize)
-        let height = [sizeTitle, sizeDetail].reduce(.zero, +).height
-        return CGSize(width: size.width, height: height + 2*margin)
+        let screenWidth = size.width
+        let usableSize = CGSize(width: screenWidth - 2 * margin, height: .greatestFiniteMagnitude)
+        let sizeType = typeView.sizeThatFits(usableSize)
+        return CGSize(width: size.width, height: sizeType.height + 2 * margin)
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: true)
-        if selected {
-            accessoryType = .checkmark
-        } else {
-            accessoryType = .none
-        }
+        accessoryType = selected ? .checkmark : .none
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        let labelOffset: CGFloat = 5.0
-        let screenWidth: CGFloat = contentView.bounds.size.width
-        let usableSize = CGSize(width: screenWidth-2*margin,
+        let screenWidth = contentView.bounds.width
+        let usableSize = CGSize(width: screenWidth - 2 * margin,
                                 height: .greatestFiniteMagnitude)
         
-        let sizeTitle = labelTitle.sizeThatFits(usableSize)
+        let sizeTitle = typeView.sizeThatFits(usableSize)
         
-        let sizeCircle = CGSize(width: sizeTitle.height/2, height: sizeTitle.height/2)
-        let originCircle = CGPoint(x: margin, y: margin + (sizeTitle.height-sizeCircle.height)/2)
-        circleView.frame = CGRect(origin: originCircle, size: sizeCircle)
-        circleView.layer.cornerRadius = sizeCircle.height/2
-        let originTitle = CGPoint(x: margin + sizeCircle.width + margin/2, y: margin)
-        labelTitle.frame = CGRect(origin: originTitle, size: sizeTitle)
+        let originTitle = CGPoint(x: margin, y: margin)
+        typeView.frame = CGRect(origin: originTitle, size: sizeTitle)
         
-        let sizeDetail = labelDetailText.sizeThatFits(usableSize)
-        let originDetail = CGPoint(x: margin + sizeCircle.width + margin/2, y: labelTitle.bottomRight.y+labelOffset)
-        labelDetailText.frame = CGRect(origin: originDetail, size: sizeDetail)
+        //        let originDetail = CGPoint(x: originTitle.x, y: labelTitle.bottomRight.y + 10)
+        //        let sizeObjectType = labelObjectType.sizeThatFits(usableSize)
+        //        labelObjectType.frame = CGRect(origin: originDetail, size: sizeObjectType)
+        
+        //        let sizeDetail = labelDetailText.sizeThatFits(usableSize)
+        //        let originDetail = CGPoint(x: margin + sizeCircle.width + margin/2, y: labelTitle.bottomRight.y+labelOffset)
+        //        labelDetailText.frame = CGRect(origin: originDetail, size: sizeDetail)
     }
     
     // Configuration
     
     private func configureColors() {
         if #available(iOS 13.0, *) {
-            labelTitle.textColor = .label
-            labelTitle.backgroundColor = .systemBackground
             labelDetailText.backgroundColor = .systemBackground
-            labelDetailText.textColor = .label
+            labelDetailText.textColor = .secondaryLabel
             backgroundColor = .systemBackground
             contentView.backgroundColor = .systemBackground
         } else {
-            labelTitle.textColor = .darkGray
-            labelTitle.backgroundColor = .white
             labelDetailText.backgroundColor = .white
             labelDetailText.textColor = .darkGray
             backgroundColor = .white
             contentView.backgroundColor = .white
         }
     }
+}
+
+final class ObjectTypeView: UIView {
+    
+    let margin16 = UIView.margin16
+    let margin8 = UIView.margin8
+    
+    private lazy var circleView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .random
+        addSubview(view)
+        return view
+    }()
+    
+    private lazy var labelName: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.preferredFont(forTextStyle: .headline)
+        label.numberOfLines = 1
+        addSubview(label)
+        return label
+    }()
+    
+    private lazy var labelType: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.preferredFont(forTextStyle: .subheadline)
+        addSubview(label)
+        return label
+    }()
+    
+    var titleCenter: CGPoint { labelName.center }
+    
+    // MARK: - Setup
+    
+    func update(name: String, type: String? = nil) {
+        configureColors()
+        labelName.text = name
+        labelType.text = type
+        labelType.isHidden = type?.isEmpty == true ? true : false
+    }
+    
+    override func sizeThatFits(_ size: CGSize) -> CGSize {
+        let screenWidth: CGFloat = size.width
+        let usableSize = CGSize(width: screenWidth, height: .greatestFiniteMagnitude)
+        let sizeName = labelName.sizeThatFits(usableSize)
+        let sizeDetail = labelType.sizeThatFits(usableSize)
+        let height = [sizeName, sizeDetail].reduce(.zero, +).height
+        let maxWidth = [sizeName.width, sizeDetail.width].max() ?? (size.width / 2)
+        let width = maxWidth + margin8 + sizeName.height
+        return CGSize(width: width, height: height + margin8)
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        let screenWidth = bounds.width
+        let usableSize = CGSize(width: screenWidth - 2 * margin16,
+                                height: .greatestFiniteMagnitude)
+        
+        let sizeName = labelName.sizeThatFits(usableSize)
+        let originName = CGPoint(x: sizeName.height + margin8, y: 0)
+        labelName.frame = CGRect(origin: originName, size: sizeName)
+        
+        layoutCircleView(relattiveTo: labelName.bounds.height)
+        
+        let originType = CGPoint(x: originName.x, y: labelName.bottomRight.y + margin8)
+        let sizeType = labelType.sizeThatFits(usableSize)
+        
+        labelType.frame = CGRect(origin: originType, size: sizeType)
+    }
+    
+    private func layoutCircleView(relattiveTo dimension: CGFloat) {
+        let dim = dimension / 2
+        let sizeCircle = CGSize(width: dim, height: dim)
+        circleView.frame = CGRect(origin: .zero, size: sizeCircle)
+        circleView.center = CGPoint(x: circleView.center.x, y: labelName.center.y)
+        circleView.layer.cornerRadius = sizeCircle.height / 2
+    }
+    
+    private func configureColors() {
+        if #available(iOS 13.0, *) {
+            labelName.textColor = .label
+            labelName.backgroundColor = .systemBackground
+            labelType.backgroundColor = .systemBackground
+            labelType.textColor = .secondaryLabel
+            backgroundColor = .systemBackground
+        } else {
+            labelName.textColor = .darkGray
+            labelName.backgroundColor = .white
+            labelType.backgroundColor = .white
+            labelType.textColor = .darkGray
+            backgroundColor = .white
+        }
+    }
+    
 }

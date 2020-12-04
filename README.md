@@ -43,7 +43,8 @@ class ViewController: UIViewController {
         navigationItem.rightBarButtonItem = bbi
     }
 
-    @objc func openBrowser() {
+    @objc 
+    func openBrowser() {
         guard let realmBrowser = RBSRealmBrowser.realmBrowser(showing: ["Person"]) else { return }
         present(realmBrowser, animated: true, completion: nil)
     }
@@ -122,12 +123,13 @@ To try the example project, clone the repo, and run `pod try` from the Example d
 ## Requirements
 
 - Xcode 8
-- iOS 9.0+
+- iOS 10.0 and later for versions 0.5.0 and after
 - Swift 3.0 for any release after 0.1.4
 - Swift 4.0 for any release after 0.1.9
 - Swift 4.1 for any release after 0.2.2
 - Swift 4.2 for any release after 0.2.4
 - Swift 5.0 for any release after 0.2.9
+- Swift 5.3 for any release after 0.5.0
 
 
 ## Installation

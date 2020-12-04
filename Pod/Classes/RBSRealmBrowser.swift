@@ -6,9 +6,9 @@
 //
 //
 
-import UIKit
-import RealmSwift
 import os
+import RealmSwift
+import UIKit
 
 /// RBSRealmBrowser is a lightweight database browser for RealmSwift based on
 /// NBNRealmBrowser by Nerdish by Nature.
@@ -26,8 +26,8 @@ import os
 /// 'are not interoperable and using them together is not supported.'
 public final class RBSRealmBrowser: UIViewController {
     
-    @objc dynamic private var ascending: Bool = true
-    private var viewRealm: RBSRealmBrowserView = RBSRealmBrowserView()
+    @objc private dynamic var ascending = true
+    private lazy var viewRealm = RBSRealmBrowserView()
     private var engine: BrowserEngine
     private var disposable: NSKeyValueObservation?
     
@@ -49,11 +49,11 @@ public final class RBSRealmBrowser: UIViewController {
         filterOptions.selectedSegmentIndex = 0
     }
     
-    public override func loadView() {
+    override public func loadView() {
         view = viewRealm
     }
     
-    public override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
         configureNavigationBar()
         configureTableView()
@@ -62,13 +62,14 @@ public final class RBSRealmBrowser: UIViewController {
         configureColors()
     }
     
-    public override func viewWillTransition(to size: CGSize,
+    override public func viewWillTransition(to size: CGSize,
                                             with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         viewRealm.tableView.reloadData()
     }
     
-    required public init?(coder aDecoder: NSCoder) {
+    @available(*, unavailable)
+    public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -200,10 +201,10 @@ public final class RBSRealmBrowser: UIViewController {
     // MARK: - Observing
     
     private func observeSortSetting() {
-        disposable = observe(\.ascending) { [unowned self] newValue in
-            self.engine.sort(ascending: newValue)
-            self.configureNavigationBar()
-            self.viewRealm.tableView.reloadData()
+        disposable = observe(\.ascending) { [weak self] newValue in
+            self?.engine.sort(ascending: newValue)
+            self?.configureNavigationBar()
+            self?.viewRealm.tableView.reloadData()
         }
     }
     
@@ -225,7 +226,8 @@ public final class RBSRealmBrowser: UIViewController {
         viewRealm.tableView.reloadData()
     }
     
-    @objc fileprivate func toggleSort() {
+    @objc
+    fileprivate func toggleSort() {
         ascending.toggle()
     }
 }
@@ -237,6 +239,7 @@ private enum RBSSortStyle: String {
 
 final class RBSRealmBrowserView: UIView {
     private(set) var tableView: UITableView
+    
     init() {
         tableView = UITableView(frame: .zero, style: .plain)
         super.init(frame: .zero)
@@ -245,7 +248,8 @@ final class RBSRealmBrowserView: UIView {
         backgroundColor = .white
     }
     
-    required public init?(coder aDecoder: NSCoder) {
+    @available(*, unavailable)
+    public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -255,7 +259,7 @@ final class RBSRealmBrowserView: UIView {
         let size = CGSize(width: min(maxWidth, bounds.size.width), height: bounds.size.height)
         var xPos: CGFloat = 0.0
         if size.width >= maxWidth {
-            xPos = (bounds.size.width - size.width)/2.0
+            xPos = (bounds.size.width - size.width) / 2.0
         }
         let origin = (CGPoint(x: xPos, y: 0.0))
         tableView.frame = (CGRect(origin: origin, size: size))
@@ -317,7 +321,7 @@ extension RBSRealmBrowser: UITableViewDataSource {
             let objectSchema = engine.objectSchema(at: indexPath.row)
             let className = engine.className(for: objectSchema)
             let count = engine.objectCount(for: objectSchema)
-            cell.updateWith(title: className, detailText: "Objects in Realm = \(count)")
+            cell.updateWith(title: className, detailText: "\(count) object(s)")
         }
         return cell
     }

@@ -6,12 +6,12 @@
 //
 //
 
-import RealmSwift
 import AVFoundation
+import RealmSwift
 
 final class BrowserTools {
     
-    private static let localVersion = "v0.4.0"
+    private static let localVersion = "v0.5.0"
     
     static func stringForProperty(_ property: Property, object: Object) -> String {
         if property.isArray || property.type == .linkingObjects {
@@ -21,13 +21,13 @@ final class BrowserTools {
     }
     
     static func previewText(for properties: [Property], object: Object) -> String {
-        return properties.prefix(2).reduce("", { result, property -> String in
-            return result + previewText(for: property, object: object)
-        })
+        properties.prefix(2).reduce(into: "") { result, property in
+            result += previewText(for: property, object: object)
+        }
     }
     
     static func previewText(for property: Property, object: Object) -> String {
-        guard property.type != .object, property.type != .data else { return "\(property.name):          Value not supported" }
+        guard property.type != .object, property.type != .data else { return "\(property.name):\t\t Value not supported" }
         return """
         \(property.name):        \(handleSupportedTypes(for: property, object: object))
         
@@ -44,8 +44,8 @@ final class BrowserTools {
                                     guard let callback = response as? HTTPURLResponse else {
                                         return
                                     }
-                                    if callback.statusCode != 200 { return }
-                                    let websiteData = String.init(data: data!, encoding: .utf8)
+                                    guard let data = data, callback.statusCode == 200 else { return }
+                                    let websiteData = String(data: data, encoding: .utf8)
                                     guard let gitVersion = websiteData?.contains(localVersion) else {
                                         return
                                     }
@@ -55,7 +55,7 @@ final class BrowserTools {
                         https://github.com/bearjaw/RBSRealmBrowser/blob/master/CHANGELOG.md
                     """)
                                     }
-        }).resume()
+                                   }).resume()
     }
     
     private static func isPlayground() -> Bool {
@@ -93,18 +93,30 @@ final class BrowserTools {
             if let objectData = object[property.name] as? Object {
                 return objectData.humanReadable
             }
+            return "nil"
         case .any, .data, .linkingObjects:
-            let data =  object[property.name]
+            let data = object[property.name]
             return "\(data.debugDescription)"
         case .date:
             if let date = object[property.name] as? Date {
                 return "\(date)"
             }
+        case .objectId:
+            if let id = object[property.name] as? ObjectId {
+                return id.stringValue
+            }
+        case .decimal128:
+            if let decimal = object[property.name] as? Decimal128 {
+                return "\(decimal)"
+            }
+        default:
+            return "\(object[property.name] as Any)"
+
         }
-        return ""
+        return "Unsupported type"
     }
 }
 
 struct RealmStyle {
-    public static let tintColor: UIColor =  UIColor(red:0.35, green:0.34, blue:0.62, alpha:1.0)
+    static let tintColor = UIColor(red:0.35, green:0.34, blue:0.62, alpha:1.0)
 }

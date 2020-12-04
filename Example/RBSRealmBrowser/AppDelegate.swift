@@ -6,8 +6,8 @@
 //  Copyright (c) 2016 Max Baumbach. All rights reserved.
 //
 
-import UIKit
 import RBSRealmBrowser
+import UIKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

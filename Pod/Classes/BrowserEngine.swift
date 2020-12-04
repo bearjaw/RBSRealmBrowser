@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Realm
 import RealmSwift
 
 final class BrowserEngine {
@@ -43,8 +44,8 @@ final class BrowserEngine {
     func filterBaseModels(_ value: Bool) {
         if value {
             objectSchemas = objectSchemas.filter({
-                !$0.className.hasPrefix("RLM") &&
-                    !$0.className.hasPrefix("RealmSwift") })
+                                                    !$0.className.hasPrefix("RLM") &&
+                                                        !$0.className.hasPrefix("RealmSwift") })
         } else {
             fetchObjects(filter)
         }
@@ -72,17 +73,14 @@ final class BrowserEngine {
     
     private func firstSortableProperty(for properties: [Property]) -> String? {
         guard let property = properties.first(where: { $0.type == .string
-            || $0.type == .int
-            || $0.type == .bool
-            || $0.type == .float
-            || $0.type == .date
-            || $0.type == .double }) else { return nil }
+                                                || $0.type == .int
+                                                || $0.type == .bool
+                                                || $0.type == .float
+                                                || $0.type == .date
+                                                || $0.type == .double }) else { return nil }
         return property.name
     }
     
-    deinit {
-//        NSLog("deinit \(self)")
-    }
 }
 
 // MARK: - Observing
@@ -99,11 +97,11 @@ extension BrowserEngine {
         }
         tokenObjects = objects.observe { updateCallback in
             switch updateCallback {
-            case .initial(let collecttion):
+            case let .initial(collecttion):
                 onInitial(collecttion)
-            case .update(let collection, let deletions, let insertions, let modifications):
+            case let .update(collection, deletions, insertions, modifications):
                 onUpdate(collection, deletions, insertions, modifications)
-            case .error(let error):
+            case let .error(error):
                 fatalError("Error: Encountered error while observing collection. Was \(error)")
             }
         }
