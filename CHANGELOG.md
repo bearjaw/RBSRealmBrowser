@@ -7,6 +7,7 @@
 - Add support for Realm 10 and later
 - Display optional types
 - Display super class of Objects
+- Select a property to be pinned in the objects browser
 
 ### Improvements
 - Clean up code
